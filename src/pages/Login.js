@@ -1,12 +1,11 @@
 import React, { useRef, useState } from "react";
 import axios from "axios";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-class App extends React.Component {
+class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      actualisation: "Bonjour",
       mail: "null",
       password: "null",
     };
@@ -15,11 +14,6 @@ class App extends React.Component {
   }
   handleChange(event) {
     this.setState({ [event.target.name]: event.target.value });
-  }
-  onClick() {
-    axios.get(`http://localhost:3001/`).then((res) => {
-      console.log(res.data);
-    });
   }
   onSubmit() {
     axios
@@ -38,17 +32,6 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <input
-          name="actualisation"
-          value={this.state.actualisation}
-          type="text"
-          onChange={this.handleChange}
-        />
-        <p>{this.state.actualisation}</p>
-        <button onClick={this.onClick} name="actualisation">
-          GET
-        </button>
-        <br />
         <label>
           Login :
           <input
@@ -66,8 +49,9 @@ class App extends React.Component {
           />
         </label>
         <input type="button" value="Envoyer" onClick={this.onSubmit} />
+        <Link to="/register">Register</Link>
       </div>
     );
   }
 }
-export default App;
+export default Login;
