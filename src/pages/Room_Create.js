@@ -1,15 +1,15 @@
 import React, { useRef, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Cookies from "js-cookie";
 
-class Register extends React.Component {
+class Room_Create extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      mail: "",
-      password: "",
-      firstname: "",
-      lastname: "",
+      jwtToken: Cookies.get("access_token"),
+      name: "",
+      comment: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -19,12 +19,14 @@ class Register extends React.Component {
   }
   onSubmit() {
     axios
-      .post(`http://localhost:3001/user/create`, {
-        mail: this.state.mail,
-        password: this.state.password,
-        firstname: this.state.firstname,
-        lastname: this.state.lastname,
-      })
+      .post(
+        `http://localhost:3001/room/create`,
+        {
+          name: this.state.name,
+          comment: this.state.comment,
+        },
+        { withCredentials: true }
+      )
       .catch(function (error) {
         console.log(error);
       })
@@ -37,32 +39,18 @@ class Register extends React.Component {
     return (
       <div>
         <label>
-          Mail :
+          Name :
           <input
-            name="mail"
-            value={this.state.mail}
+            name="name"
+            value={this.state.name}
             type="text"
             onChange={this.handleChange}
           />
-          Firstname :
+          Comment :
           <input
-            name="firstname"
-            value={this.state.firstname}
-            type="text"
-            onChange={this.handleChange}
-          />
-          Lastname :
-          <input
-            name="lastname"
-            value={this.state.lastname}
-            type="text"
-            onChange={this.handleChange}
-          />
-          Password :
-          <input
-            name="password"
-            value={this.state.password}
-            type="password"
+            name="comment"
+            value={this.state.comment}
+            type="textarea"
             onChange={this.handleChange}
           />
         </label>
@@ -77,4 +65,4 @@ class Register extends React.Component {
     );
   }
 }
-export default Register;
+export default Room_Create;

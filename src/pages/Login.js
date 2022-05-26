@@ -6,8 +6,8 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      mail: "null",
-      password: "null",
+      mail: "marcan.gallez@std.heh.be",
+      password: "marcan",
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -17,10 +17,14 @@ class Login extends React.Component {
   }
   onSubmit() {
     axios
-      .post(`http://localhost:3001/user/login`, {
-        mail: this.state.mail,
-        password: this.state.password,
-      })
+      .post(
+        `http://localhost:3001/user/login`,
+        {
+          mail: this.state.mail,
+          password: this.state.password,
+        },
+        { withCredentials: true }
+      )
       .catch(function (error) {
         console.log(error);
       })
@@ -50,6 +54,11 @@ class Login extends React.Component {
         </label>
         <input type="button" value="Envoyer" onClick={this.onSubmit} />
         <Link to="/register">Register</Link>
+        <br />
+        <Link to="/">Login</Link>
+        <br />
+        <Link to="/room/create">CreateRoom</Link>
+        <br />
       </div>
     );
   }
