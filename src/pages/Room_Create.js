@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
+import { Form, Button } from "react-bootstrap";
 
 class Room_Create extends React.Component {
   constructor(props) {
@@ -38,23 +39,32 @@ class Room_Create extends React.Component {
   render() {
     return (
       <div>
-        <label>
-          Name :
-          <input
-            name="name"
-            value={this.state.name}
-            type="text"
-            onChange={this.handleChange}
-          />
-          Comment :
-          <input
-            name="comment"
-            value={this.state.comment}
-            type="textarea"
-            onChange={this.handleChange}
-          />
-        </label>
-        <input type="button" value="Envoyer" onClick={this.onSubmit} />
+        <Form>
+          <Form.Group className="mb-3" controlId="formBasicText">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              name="name"
+              value={this.state.name}
+              type="text"
+              onChange={this.handleChange}
+              placeholder="Enter name"
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3" controlId="formBasicText">
+            <Form.Label>Comment</Form.Label>
+            <Form.Control
+              name="comment"
+              value={this.state.comment}
+              type="text"
+              onChange={this.handleChange}
+              placeholder="Enter comment"
+            />
+          </Form.Group>
+          <Button variant="primary" onClick={this.onSubmit}>
+            Submit
+          </Button>
+        </Form>
         <Link to="/register">Register</Link>
         <br />
         <Link to="/">Login</Link>

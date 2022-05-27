@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { Form, Button } from "react-bootstrap";
 
 class Register extends React.Component {
   constructor(props) {
@@ -36,37 +37,52 @@ class Register extends React.Component {
   render() {
     return (
       <div>
-        <label>
-          Mail :
-          <input
-            name="mail"
-            value={this.state.mail}
-            type="text"
-            onChange={this.handleChange}
-          />
-          Firstname :
-          <input
-            name="firstname"
-            value={this.state.firstname}
-            type="text"
-            onChange={this.handleChange}
-          />
-          Lastname :
-          <input
-            name="lastname"
-            value={this.state.lastname}
-            type="text"
-            onChange={this.handleChange}
-          />
-          Password :
-          <input
-            name="password"
-            value={this.state.password}
-            type="password"
-            onChange={this.handleChange}
-          />
-        </label>
-        <input type="button" value="Envoyer" onClick={this.onSubmit} />
+        <Form>
+          <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Label>Email address</Form.Label>
+            <Form.Control
+              name="mail"
+              value={this.state.mail}
+              type="mail"
+              onChange={this.handleChange}
+              placeholder="Enter email"
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="formBasicFirstname">
+            <Form.Label>Firstname</Form.Label>
+            <Form.Control
+              name="firstname"
+              value={this.state.firstname}
+              type="text"
+              onChange={this.handleChange}
+              placeholder="Enter firstname"
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="formBasicLastname">
+            <Form.Label>Lastname</Form.Label>
+            <Form.Control
+              name="lastname"
+              value={this.state.lastname}
+              type="lastname"
+              onChange={this.handleChange}
+              placeholder="Enter lastname"
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3" controlId="formBasicPassword">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              name="password"
+              value={this.state.password}
+              type="password"
+              onChange={this.handleChange}
+              placeholder="Enter password"
+            />
+          </Form.Group>
+          <Button variant="primary" onClick={this.onSubmit}>
+            Submit
+          </Button>
+        </Form>
         <Link to="/register">Register</Link>
         <br />
         <Link to="/">Login</Link>
