@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
@@ -28,11 +28,11 @@ class Room_Create extends React.Component {
         },
         { withCredentials: true }
       )
-      .catch(function (error) {
-        console.log(error);
-      })
       .then((res) => {
         console.log(res.data);
+      })
+      .catch(function (error) {
+        console.log(error);
       });
   }
 

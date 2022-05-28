@@ -1,15 +1,16 @@
 import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Cookies from "js-cookie";
 import { Form, Button } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
 
-class Login extends React.Component {
+class Box_Create extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      mail: "marcan.gallez@std.heh.be",
-      password: "marcan",
+      jwtToken: Cookies.get("access_token"),
+      name: "",
+      comment: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -20,10 +21,10 @@ class Login extends React.Component {
   onSubmit() {
     axios
       .post(
-        `http://localhost:3001/user/login`,
+        `http://localhost:3001/box/create`,
         {
-          mail: this.state.mail,
-          password: this.state.password,
+          name: this.state.name,
+          comment: this.state.comment,
         },
         { withCredentials: true }
       )
@@ -39,25 +40,25 @@ class Login extends React.Component {
     return (
       <div>
         <Form>
-          <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label>Email address</Form.Label>
+          <Form.Group className="mb-3" controlId="formBasicText">
+            <Form.Label>Name</Form.Label>
             <Form.Control
-              name="mail"
-              value={this.state.mail}
-              type="mail"
+              name="name"
+              value={this.state.name}
+              type="text"
               onChange={this.handleChange}
-              placeholder="Enter email"
+              placeholder="Enter name"
             />
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formBasicPassword">
-            <Form.Label>Password</Form.Label>
+          <Form.Group className="mb-3" controlId="formBasicText">
+            <Form.Label>Comment</Form.Label>
             <Form.Control
-              name="password"
-              value={this.state.password}
-              type="password"
+              name="comment"
+              value={this.state.comment}
+              type="text"
               onChange={this.handleChange}
-              placeholder="Enter password"
+              placeholder="Enter comment"
             />
           </Form.Group>
           <Button variant="primary" onClick={this.onSubmit}>
@@ -70,12 +71,8 @@ class Login extends React.Component {
         <br />
         <Link to="/room/create">CreateRoom</Link>
         <br />
-        <Link to="/room/list">ListRoom</Link>
-        <br />
-        <Link to="/box/create">CreateBox</Link>
-        <br />
       </div>
     );
   }
 }
-export default Login;
+export default Box_Create;
