@@ -1,14 +1,14 @@
 import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import Cookies from "js-cookie";
 import { Form, Button } from "react-bootstrap";
+import { withRouter } from "../withRouter";
+import { NavigationBar } from "./Nav";
 
 class Room_Create extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      jwtToken: Cookies.get("access_token"),
       name: "",
       comment: "",
     };
@@ -29,7 +29,7 @@ class Room_Create extends React.Component {
         { withCredentials: true }
       )
       .then((res) => {
-        console.log(res.data);
+        this.props.router.navigate("/room/list");
       })
       .catch(function (error) {
         console.log(error);
@@ -39,6 +39,7 @@ class Room_Create extends React.Component {
   render() {
     return (
       <div>
+        <NavigationBar />
         <Form>
           <Form.Group className="mb-3" controlId="formBasicText">
             <Form.Label>Name</Form.Label>
@@ -75,4 +76,4 @@ class Room_Create extends React.Component {
     );
   }
 }
-export default Room_Create;
+export default withRouter(Room_Create);

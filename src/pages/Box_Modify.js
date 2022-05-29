@@ -1,21 +1,36 @@
 import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import Cookies from "js-cookie";
 import { Form, Button } from "react-bootstrap";
 import { withRouter } from "../withRouter";
 import { NavigationBar } from "./Nav";
 
-class Box_Create extends React.Component {
+class Room_Create extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id_room: parseInt(props.router.params.id),
+      id: parseInt(props.router.params.id),
+      id_room: "",
       name: "",
       comment: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+
+    axios
+      .get(`http://localhost:3001/box/information/${this.state.id}`, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        this.setState({
+          name: res.data.name,
+          comment: res.data.comment,
+          id_room: res.data.id_room,
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
   handleChange(event) {
     this.setState({ [event.target.name]: event.target.value });
@@ -23,16 +38,16 @@ class Box_Create extends React.Component {
   onSubmit() {
     axios
       .post(
-        `http://localhost:3001/box/create`,
+        `http://localhost:3001/box/update`,
         {
-          id_room: this.state.id_room,
+          id: this.state.id,
           name: this.state.name,
           comment: this.state.comment,
         },
         { withCredentials: true }
       )
       .then((res) => {
-        this.props.router.navigate("/room/" + this.state.id_room);
+        this.props.router.navigate(`/room/${this.state.id_room}`);
       })
       .catch(function (error) {
         console.log(error);
@@ -43,6 +58,7 @@ class Box_Create extends React.Component {
     return (
       <div>
         <NavigationBar />
+        <h4>Modification d'une box</h4>
         <Form>
           <Form.Group className="mb-3" controlId="formBasicText">
             <Form.Label>Name</Form.Label>
@@ -79,4 +95,4 @@ class Box_Create extends React.Component {
     );
   }
 }
-export default withRouter(Box_Create);
+export default withRouter(Room_Create);

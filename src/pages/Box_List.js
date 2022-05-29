@@ -12,22 +12,16 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { withRouter } from "../withRouter";
 import { NavigationBar } from "./Nav";
 
-class Room_List extends React.Component {
+class Box_List extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: parseInt(props.router.params.id),
-      room: "",
       box: [],
-      mail: "marcan.gallez@std.heh.be",
-      password: "marcan",
     };
     axios
-      .get(`http://localhost:3001/room/${this.state.id}`, {
-        withCredentials: true,
-      })
+      .get(`http://localhost:3001/box/list`, { withCredentials: true })
       .then((res) => {
-        this.setState({ room: res.data, box: res.data.box });
+        this.setState({ box: res.data });
       })
       .catch(function (error) {
         console.log(error);
@@ -56,7 +50,7 @@ class Room_List extends React.Component {
     this.props.router.navigate(`/box/modify/${id}`);
   }
   onCreate() {
-    this.props.router.navigate("/box/create/" + this.state.id);
+    this.props.router.navigate("/box/create");
   }
 
   onClick(id) {
@@ -67,13 +61,8 @@ class Room_List extends React.Component {
     return (
       <div>
         <NavigationBar />
-        <h4>Dans la pièce : {this.state.room.name}</h4>
+        <h4>Liste des box</h4>
         <ListGroup>
-          <ListGroup.Item>
-            <Button variant="outline-secondary" onClick={() => this.onCreate()}>
-              Add new box
-            </Button>
-          </ListGroup.Item>
           {this.state.box.map((item) => (
             <ListGroup.Item key={item.id}>
               <ButtonGroup>
@@ -89,6 +78,9 @@ class Room_List extends React.Component {
                   </Dropdown.Item>
                 </DropdownButton>
               </ButtonGroup>
+              <div>
+                <small>Pièce : {item.room.name}</small>
+              </div>
             </ListGroup.Item>
           ))}
         </ListGroup>
@@ -96,7 +88,7 @@ class Room_List extends React.Component {
         <br />
         <Link to="/">Login</Link>
         <br />
-        <Link to="/room/create">CreateRoom</Link>
+        <Link to="/box/create">Createbox</Link>
         <br />
         <Link to="/box/create">CreateBox</Link>
         <br />
@@ -104,4 +96,4 @@ class Room_List extends React.Component {
     );
   }
 }
-export default withRouter(Room_List);
+export default withRouter(Box_List);

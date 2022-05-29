@@ -1,8 +1,9 @@
 import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Nav, Container, Navbar } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { withRouter } from "../withRouter";
 
 class Login extends React.Component {
   constructor(props) {
@@ -27,17 +28,27 @@ class Login extends React.Component {
         },
         { withCredentials: true }
       )
+      .then((res) => {
+        this.props.router.navigate("/room/list");
+      })
       .catch(function (error) {
         console.log(error);
-      })
-      .then((res) => {
-        console.log(res.data);
       });
   }
 
   render() {
     return (
       <div>
+        <Navbar bg="dark" variant="dark">
+          <Container>
+            <Navbar.Brand
+              href="#"
+              onClick={() => window.location.reload(false)}
+            >
+              Case App
+            </Navbar.Brand>
+          </Container>
+        </Navbar>
         <Form>
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
@@ -78,4 +89,4 @@ class Login extends React.Component {
     );
   }
 }
-export default Login;
+export default withRouter(Login);

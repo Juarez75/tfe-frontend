@@ -1,7 +1,6 @@
 import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import Cookies from "js-cookie";
 import { Form, Button } from "react-bootstrap";
 import { withRouter } from "../withRouter";
 import { NavigationBar } from "./Nav";
@@ -10,12 +9,22 @@ class Box_Create extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id_room: parseInt(props.router.params.id),
+      id: parseInt(props.router.params.id),
       name: "",
-      comment: "",
+      id_box: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    axios
+      .get(`http://localhost:3001/object/information/${this.state.id}`, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        this.setState({ name: res.data.name, id_box: res.data.id_box });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
   handleChange(event) {
     this.setState({ [event.target.name]: event.target.value });
@@ -23,16 +32,15 @@ class Box_Create extends React.Component {
   onSubmit() {
     axios
       .post(
-        `http://localhost:3001/box/create`,
+        `http://localhost:3001/object/update`,
         {
-          id_room: this.state.id_room,
+          id: this.state.id,
           name: this.state.name,
-          comment: this.state.comment,
         },
         { withCredentials: true }
       )
       .then((res) => {
-        this.props.router.navigate("/room/" + this.state.id_room);
+        this.props.router.navigate("/box/" + this.state.id_box);
       })
       .catch(function (error) {
         console.log(error);
@@ -55,16 +63,6 @@ class Box_Create extends React.Component {
             />
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formBasicText">
-            <Form.Label>Comment</Form.Label>
-            <Form.Control
-              name="comment"
-              value={this.state.comment}
-              type="text"
-              onChange={this.handleChange}
-              placeholder="Enter comment"
-            />
-          </Form.Group>
           <Button variant="primary" onClick={this.onSubmit}>
             Submit
           </Button>

@@ -12,22 +12,16 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { withRouter } from "../withRouter";
 import { NavigationBar } from "./Nav";
 
-class Room_List extends React.Component {
+class Box_List extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: parseInt(props.router.params.id),
-      room: "",
-      box: [],
-      mail: "marcan.gallez@std.heh.be",
-      password: "marcan",
+      objects: [],
     };
     axios
-      .get(`http://localhost:3001/room/${this.state.id}`, {
-        withCredentials: true,
-      })
+      .get(`http://localhost:3001/object/list`, { withCredentials: true })
       .then((res) => {
-        this.setState({ room: res.data, box: res.data.box });
+        this.setState({ objects: res.data });
       })
       .catch(function (error) {
         console.log(error);
@@ -37,7 +31,7 @@ class Room_List extends React.Component {
   onDelete(id) {
     axios
       .post(
-        `http://localhost:3001/box/delete`,
+        `http://localhost:3001/object/delete`,
         {
           id: id,
         },
@@ -53,33 +47,19 @@ class Room_List extends React.Component {
       });
   }
   onModify(id) {
-    this.props.router.navigate(`/box/modify/${id}`);
-  }
-  onCreate() {
-    this.props.router.navigate("/box/create/" + this.state.id);
-  }
-
-  onClick(id) {
-    this.props.router.navigate(`/box/${id}`);
+    this.props.router.navigate(`/object/modify/${id}`);
   }
 
   render() {
     return (
       <div>
         <NavigationBar />
-        <h4>Dans la pièce : {this.state.room.name}</h4>
+        <h4>Liste des box</h4>
         <ListGroup>
-          <ListGroup.Item>
-            <Button variant="outline-secondary" onClick={() => this.onCreate()}>
-              Add new box
-            </Button>
-          </ListGroup.Item>
-          {this.state.box.map((item) => (
+          {this.state.objects.map((item) => (
             <ListGroup.Item key={item.id}>
+              {item.name}
               <ButtonGroup>
-                <Button variant="light" onClick={() => this.onClick(item.id)}>
-                  {item.name}
-                </Button>
                 <DropdownButton title="" variant="light">
                   <Dropdown.Item onClick={() => this.onModify(item.id)}>
                     Modify
@@ -89,6 +69,11 @@ class Room_List extends React.Component {
                   </Dropdown.Item>
                 </DropdownButton>
               </ButtonGroup>
+              <div>
+                <small>Box : {item.box.name} </small>
+                <br />
+                <small>Pièce : {item.room.name}</small>
+              </div>
             </ListGroup.Item>
           ))}
         </ListGroup>
@@ -96,7 +81,7 @@ class Room_List extends React.Component {
         <br />
         <Link to="/">Login</Link>
         <br />
-        <Link to="/room/create">CreateRoom</Link>
+        <Link to="/box/create">Createbox</Link>
         <br />
         <Link to="/box/create">CreateBox</Link>
         <br />
@@ -104,4 +89,4 @@ class Room_List extends React.Component {
     );
   }
 }
-export default withRouter(Room_List);
+export default withRouter(Box_List);

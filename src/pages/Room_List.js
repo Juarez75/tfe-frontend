@@ -10,21 +10,20 @@ import {
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { withRouter } from "../withRouter";
+import { NavigationBar } from "./Nav";
 
 class Room_List extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      box: [],
+      room: [],
       mail: "marcan.gallez@std.heh.be",
       password: "marcan",
     };
     axios
       .get(`http://localhost:3001/room/list`, { withCredentials: true })
       .then((res) => {
-        console.log(res.data);
-        this.setState({ box: res.data });
-        console.log(this.state.box);
+        this.setState({ room: res.data });
       })
       .catch(function (error) {
         console.log(error);
@@ -32,7 +31,6 @@ class Room_List extends React.Component {
   }
 
   onDelete(id) {
-    console.log(id);
     axios
       .post(
         `http://localhost:3001/room/delete`,
@@ -44,12 +42,14 @@ class Room_List extends React.Component {
         }
       )
       .then((res) => {
-        // redirige vers le login
-        this.props.router.navigate("/");
+        window.location.reload(false);
       })
       .catch(function (error) {
         console.log(error);
       });
+  }
+  onModify(id) {
+    this.props.router.navigate(`/room/modify/${id}`);
   }
   onCreate() {
     this.props.router.navigate("/room/create");
@@ -62,20 +62,24 @@ class Room_List extends React.Component {
   render() {
     return (
       <div>
+        <NavigationBar />
+        <h4>Liste des pièces</h4>
         <ListGroup>
           <ListGroup.Item>
             <Button variant="outline-secondary" onClick={() => this.onCreate()}>
               Add new room
             </Button>
           </ListGroup.Item>
-          {this.state.box.map((item) => (
+          {this.state.room.map((item) => (
             <ListGroup.Item key={item.id}>
               <ButtonGroup>
                 <Button variant="light" onClick={() => this.onClick(item.id)}>
                   {item.name}
                 </Button>
                 <DropdownButton title="" variant="light">
-                  <Dropdown.Item>Modify</Dropdown.Item>
+                  <Dropdown.Item onClick={() => this.onModify(item.id)}>
+                    Modify
+                  </Dropdown.Item>
                   <Dropdown.Item onClick={() => this.onDelete(item.id)}>
                     Delete
                   </Dropdown.Item>
