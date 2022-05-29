@@ -10,7 +10,7 @@ export function NavigationBar() {
           Case App
         </Navbar.Brand>
         <Nav className="me-auto">
-          <Nav.Link href="/user">Mon compte</Nav.Link>
+          <Nav.Link href="/profile">Mon compte</Nav.Link>
           <NavDropdown title="Liste">
             <NavDropdown.Item href="/room/list">Pièces</NavDropdown.Item>
             <NavDropdown.Item href="/box/list">Box</NavDropdown.Item>

@@ -8,7 +8,6 @@ import {
   Dropdown,
   ButtonGroup,
 } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { withRouter } from "../withRouter";
 import { NavigationBar } from "./Nav";
 
