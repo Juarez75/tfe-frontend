@@ -19,6 +19,7 @@ class Search extends React.Component {
       box: [],
       object: [],
       search: "",
+      type: localStorage.getItem("type"),
     };
     this.handleChange = this.handleChange.bind(this);
   }
@@ -74,6 +75,7 @@ class Search extends React.Component {
       });
   }
   render() {
+    if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
         <NavigationBar />

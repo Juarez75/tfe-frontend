@@ -29,7 +29,9 @@ class Login extends React.Component {
         { withCredentials: true }
       )
       .then((res) => {
-        if (res.data.type == 2) this.props.router.navigate("/room/list");
+        localStorage.setItem("type", res.data.type);
+        if (res.data.type == 2 || res.data.type == 0)
+          this.props.router.navigate("/room/list");
         if (res.data.type == 1) this.props.router.navigate("/society/users");
       })
       .catch(function (error) {
@@ -76,16 +78,6 @@ class Login extends React.Component {
             Submit
           </Button>
         </Form>
-        <Link to="/register">Register</Link>
-        <br />
-        <Link to="/">Login</Link>
-        <br />
-        <Link to="/room/create">CreateRoom</Link>
-        <br />
-        <Link to="/room/list">ListRoom</Link>
-        <br />
-        <Link to="/box/create">CreateBox</Link>
-        <br />
       </div>
     );
   }

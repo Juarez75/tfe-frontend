@@ -17,6 +17,7 @@ class User_List extends React.Component {
     super(props);
     this.state = {
       room: [],
+      type: localStorage.getItem("type"),
     };
     axios
       .get(`http://localhost:3001/society/users`, { withCredentials: true })
@@ -33,6 +34,7 @@ class User_List extends React.Component {
   }
 
   render() {
+    if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
         <NavigationBarSociety />

@@ -20,6 +20,7 @@ class UserRoom extends React.Component {
       id: parseInt(props.router.params.id),
       room: "",
       box: [],
+      type: localStorage.getItem("type"),
     };
     axios
       .get(`http://localhost:3001/society/room/${this.state.id}`, {
@@ -34,6 +35,7 @@ class UserRoom extends React.Component {
   }
 
   render() {
+    if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
         <NavigationBarSociety />

@@ -17,6 +17,7 @@ class Search extends React.Component {
     this.state = {
       user: [],
       search: "",
+      type: localStorage.getItem("type"),
     };
     this.handleChange = this.handleChange.bind(this);
   }
@@ -50,6 +51,7 @@ class Search extends React.Component {
     this.props.router.navigate(`/society/user/${id}`);
   }
   render() {
+    if (this.state.type == 2) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
         <NavigationBar />

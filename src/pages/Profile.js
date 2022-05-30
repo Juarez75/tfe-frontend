@@ -14,7 +14,7 @@ class Profile extends React.Component {
       lastname: "",
       lastPwd: "",
       newPwd: "",
-      type: "",
+      type: localStorage.getItem("type"),
     };
     this.handleChange = this.handleChange.bind(this);
     this.onUpdate = this.onUpdate.bind(this);
@@ -28,7 +28,6 @@ class Profile extends React.Component {
           mail: res.data.mail,
           firstname: res.data.firstname,
           lastname: res.data.lastname,
-          type: res.data.type,
         });
       })
       .catch((error) => {

@@ -17,6 +17,7 @@ class Box_List extends React.Component {
     super(props);
     this.state = {
       box: [],
+      type: localStorage.getItem("type"),
     };
     axios
       .get(`http://localhost:3001/box/list`, { withCredentials: true })
@@ -58,6 +59,7 @@ class Box_List extends React.Component {
   }
 
   render() {
+    if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
         <NavigationBar />

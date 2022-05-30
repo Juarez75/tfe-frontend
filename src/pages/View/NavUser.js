@@ -30,6 +30,9 @@ export function NavigationBar() {
                     withCredentials: true,
                   }
                 )
+                .then(() => {
+                  localStorage.clear("type");
+                })
                 .catch(function (error) {
                   console.log(error);
                 })

@@ -18,6 +18,7 @@ class Room_List extends React.Component {
     this.state = {
       room: [],
       id_user: this.props.router.params.id,
+      type: localStorage.getItem("type"),
     };
     axios
       .get(`http://localhost:3001/society/user/${this.state.id_user}`, {
@@ -36,6 +37,7 @@ class Room_List extends React.Component {
   }
 
   render() {
+    if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
         <NavigationBarSociety />

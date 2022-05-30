@@ -12,6 +12,7 @@ class Box_Create extends React.Component {
       id: parseInt(props.router.params.id),
       name: "",
       id_box: "",
+      type: localStorage.getItem("type"),
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -48,6 +49,7 @@ class Box_Create extends React.Component {
   }
 
   render() {
+    if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
         <NavigationBar />
