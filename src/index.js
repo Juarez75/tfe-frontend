@@ -16,6 +16,7 @@ import ObjectModify from "./pages/Object_Modify";
 import BoxList from "./pages/Box_List";
 import ObjectList from "./pages/Object_List";
 import Profile from "./pages/Profile";
+import Search from "./pages/Search";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -41,6 +42,7 @@ root.render(
         <Route path="list" element={<ObjectList />}></Route>
       </Route>
       <Route path="/profile" element={<Profile />}></Route>
+      <Route path="/search" element={<Search />}></Route>
     </Routes>
   </BrowserRouter>
 );

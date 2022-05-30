@@ -16,15 +16,20 @@ export function NavigationBar() {
             <NavDropdown.Item href="/box/list">Box</NavDropdown.Item>
             <NavDropdown.Item href="/object/list">Objets</NavDropdown.Item>
           </NavDropdown>
+          <Nav.Link href="/search">Recherche</Nav.Link>
         </Nav>
         <Nav>
           <Nav.Link
             href="/"
             onClick={() =>
               axios
-                .get(`http://localhost:3001/user/disconnect`, {
-                  withCredentials: true,
-                })
+                .get(
+                  `http://localhost:3001/user/disconnect`,
+
+                  {
+                    withCredentials: true,
+                  }
+                )
                 .catch(function (error) {
                   console.log(error);
                 })
