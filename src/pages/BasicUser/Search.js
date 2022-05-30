@@ -9,7 +9,7 @@ import {
   Button,
 } from "react-bootstrap";
 import axios from "axios";
-import { NavigationBar } from "../View/Nav";
+import { NavigationBar } from "../View/NavUser";
 
 class Search extends React.Component {
   constructor(props) {

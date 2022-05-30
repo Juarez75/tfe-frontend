@@ -10,7 +10,7 @@ import {
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { withRouter } from "../../withRouter";
-import { NavigationBar } from "../View/Nav";
+import { NavigationBar } from "../View/NavUser";
 
 class Room_List extends React.Component {
   constructor(props) {

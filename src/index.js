@@ -17,6 +17,10 @@ import BoxList from "./pages/BasicUser/Box_List";
 import ObjectList from "./pages/BasicUser/Object_List";
 import Profile from "./pages/Profile";
 import Search from "./pages/BasicUser/Search";
+import UserList from "./pages/SocietyUser/User_List";
+import User from "./pages/SocietyUser/User";
+import UserRoom from "./pages/SocietyUser/UserRoom.js";
+import SearchUser from "./pages/SocietyUser/Search_User";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -43,6 +47,12 @@ root.render(
       </Route>
       <Route path="/profile" element={<Profile />}></Route>
       <Route path="/search" element={<Search />}></Route>
+      <Route path="society">
+        <Route path="users" element={<UserList />}></Route>
+        <Route path="user/:id" element={<User />}></Route>
+        <Route path="room/:id" element={<UserRoom />}></Route>
+        <Route path="search" element={<SearchUser />}></Route>
+      </Route>
     </Routes>
   </BrowserRouter>
 );

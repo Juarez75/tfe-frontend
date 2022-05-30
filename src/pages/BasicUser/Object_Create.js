@@ -3,7 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { withRouter } from "../../withRouter";
-import { NavigationBar } from "../View/Nav";
+import { NavigationBar } from "../View/NavUser";
 
 class Box_Create extends React.Component {
   constructor(props) {

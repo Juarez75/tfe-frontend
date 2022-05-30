@@ -29,7 +29,8 @@ class Login extends React.Component {
         { withCredentials: true }
       )
       .then((res) => {
-        this.props.router.navigate("/room/list");
+        if (res.data.type == 2) this.props.router.navigate("/room/list");
+        if (res.data.type == 1) this.props.router.navigate("/society/users");
       })
       .catch(function (error) {
         console.log(error);

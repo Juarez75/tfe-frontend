@@ -2,7 +2,8 @@ import React from "react";
 import axios from "axios";
 import { withRouter } from "../withRouter";
 import { Button, Form } from "react-bootstrap";
-import { NavigationBar } from "./View/Nav";
+import { NavigationBar } from "./View/NavUser";
+import { NavigationBarSociety } from "./View/NavSociety";
 
 class Profile extends React.Component {
   constructor(props) {
@@ -77,7 +78,18 @@ class Profile extends React.Component {
     let view;
     if (this.state.type == 2 || this.state.type == 0) {
       view = (
-        <Form>
+        <div>
+          <NavigationBarSociety />
+          <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Label>Email address</Form.Label>
+            <Form.Control
+              name="mail"
+              value={this.state.mail}
+              type="mail"
+              onChange={this.handleChange}
+              placeholder="Enter email"
+            />
+          </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicFirstname">
             <Form.Label>Firstname</Form.Label>
             <Form.Control
@@ -98,35 +110,37 @@ class Profile extends React.Component {
               placeholder="Enter lastname"
             />
           </Form.Group>
-        </Form>
+        </div>
       );
     } else if (this.state.type == 1) {
       view = (
-        <Form.Group className="mb-3" controlId="formBasicFirstname">
-          <Form.Label>Name</Form.Label>
-          <Form.Control
-            name="firstname"
-            value={this.state.firstname}
-            type="text"
-            onChange={this.handleChange}
-            placeholder="Enter firstname"
-          />
-        </Form.Group>
+        <div>
+          <NavigationBarSociety />
+          <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Label>Email address</Form.Label>
+            <Form.Control
+              name="mail"
+              value={this.state.mail}
+              type="mail"
+              onChange={this.handleChange}
+              placeholder="Enter email"
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="formBasicFirstname">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              name="firstname"
+              value={this.state.firstname}
+              type="text"
+              onChange={this.handleChange}
+              placeholder="Enter firstname"
+            />
+          </Form.Group>
+        </div>
       );
     }
     return (
       <div>
-        <NavigationBar />
-        <Form.Group className="mb-3" controlId="formBasicEmail">
-          <Form.Label>Email address</Form.Label>
-          <Form.Control
-            name="mail"
-            value={this.state.mail}
-            type="mail"
-            onChange={this.handleChange}
-            placeholder="Enter email"
-          />
-        </Form.Group>
         {view}
         <Button variant="primary" type="button" onClick={this.onUpdate}>
           Submit
