@@ -9,25 +9,21 @@ import {
   ButtonGroup,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { withRouter } from "../withRouter";
-import { NavigationBar } from "./Nav";
+import { withRouter } from "../../withRouter";
+import { NavigationBar } from "../View/Nav";
 
 class Room_List extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: parseInt(props.router.params.id),
-      room: "",
-      box: [],
+      room: [],
       mail: "marcan.gallez@std.heh.be",
       password: "marcan",
     };
     axios
-      .get(`http://localhost:3001/room/${this.state.id}`, {
-        withCredentials: true,
-      })
+      .get(`http://localhost:3001/room/list`, { withCredentials: true })
       .then((res) => {
-        this.setState({ room: res.data, box: res.data.box });
+        this.setState({ room: res.data });
       })
       .catch(function (error) {
         console.log(error);
@@ -37,7 +33,7 @@ class Room_List extends React.Component {
   onDelete(id) {
     axios
       .post(
-        `http://localhost:3001/box/delete`,
+        `http://localhost:3001/room/delete`,
         {
           id: id,
         },
@@ -53,28 +49,28 @@ class Room_List extends React.Component {
       });
   }
   onModify(id) {
-    this.props.router.navigate(`/box/modify/${id}`);
+    this.props.router.navigate(`/room/modify/${id}`);
   }
   onCreate() {
-    this.props.router.navigate("/box/create/" + this.state.id);
+    this.props.router.navigate("/room/create");
   }
 
   onClick(id) {
-    this.props.router.navigate(`/box/${id}`);
+    this.props.router.navigate(`/room/${id}`);
   }
 
   render() {
     return (
       <div>
         <NavigationBar />
-        <h4>Dans la pièce : {this.state.room.name}</h4>
+        <h4>Liste des pièces</h4>
         <ListGroup>
           <ListGroup.Item>
             <Button variant="outline-secondary" onClick={() => this.onCreate()}>
-              Add new box
+              Add new room
             </Button>
           </ListGroup.Item>
-          {this.state.box.map((item) => (
+          {this.state.room.map((item) => (
             <ListGroup.Item key={item.id}>
               <ButtonGroup>
                 <Button variant="light" onClick={() => this.onClick(item.id)}>

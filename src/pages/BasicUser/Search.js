@@ -1,5 +1,5 @@
 import React from "react";
-import { withRouter } from "../withRouter";
+import { withRouter } from "../../withRouter";
 import {
   ListGroup,
   Form,
@@ -9,6 +9,7 @@ import {
   Button,
 } from "react-bootstrap";
 import axios from "axios";
+import { NavigationBar } from "../View/Nav";
 
 class Search extends React.Component {
   constructor(props) {
@@ -23,7 +24,7 @@ class Search extends React.Component {
   }
   handleChange(event) {
     this.setState({ [event.target.name]: event.target.value });
-    if (event.target.value != "") {
+    if (event.target.value !== "") {
       axios
         .post(
           "http://localhost:3001/search",
@@ -75,6 +76,7 @@ class Search extends React.Component {
   render() {
     return (
       <div>
+        <NavigationBar />
         <h4>Recherche</h4>
         <Form.Control
           name="search"

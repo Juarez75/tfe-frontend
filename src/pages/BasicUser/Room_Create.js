@@ -2,8 +2,8 @@ import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
-import { withRouter } from "../withRouter";
-import { NavigationBar } from "./Nav";
+import { withRouter } from "../../withRouter";
+import { NavigationBar } from "../View/Nav";
 
 class Room_Create extends React.Component {
   constructor(props) {

@@ -4,19 +4,19 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import RoomCreate from "./pages/Room_Create";
-import RoomList from "./pages/Room_List";
-import Room from "./pages/Room";
-import RoomModify from "./pages/Room_Modify";
-import BoxCreate from "./pages/Box_Create";
-import BoxModify from "./pages/Box_Modify";
-import Box from "./pages/Box";
-import ObjectCreate from "./pages/Object_Create";
-import ObjectModify from "./pages/Object_Modify";
-import BoxList from "./pages/Box_List";
-import ObjectList from "./pages/Object_List";
+import RoomCreate from "./pages/BasicUser/Room_Create";
+import RoomList from "./pages/BasicUser/Room_List";
+import Room from "./pages/BasicUser/Room";
+import RoomModify from "./pages/BasicUser/Room_Modify";
+import BoxCreate from "./pages/BasicUser/Box_Create";
+import BoxModify from "./pages/BasicUser/Box_Modify";
+import Box from "./pages/BasicUser/Box";
+import ObjectCreate from "./pages/BasicUser/Object_Create";
+import ObjectModify from "./pages/BasicUser/Object_Modify";
+import BoxList from "./pages/BasicUser/Box_List";
+import ObjectList from "./pages/BasicUser/Object_List";
 import Profile from "./pages/Profile";
-import Search from "./pages/Search";
+import Search from "./pages/BasicUser/Search";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

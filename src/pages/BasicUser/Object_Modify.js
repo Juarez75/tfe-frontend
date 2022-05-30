@@ -2,26 +2,25 @@ import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
-import { withRouter } from "../withRouter";
-import { NavigationBar } from "./Nav";
+import { withRouter } from "../../withRouter";
+import { NavigationBar } from "../View/Nav";
 
-class Room_Create extends React.Component {
+class Box_Create extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       id: parseInt(props.router.params.id),
       name: "",
-      comment: "",
+      id_box: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-
     axios
-      .get(`http://localhost:3001/room/information/${this.state.id}`, {
+      .get(`http://localhost:3001/object/information/${this.state.id}`, {
         withCredentials: true,
       })
       .then((res) => {
-        this.setState({ name: res.data.name, comment: res.data.comment });
+        this.setState({ name: res.data.name, id_box: res.data.id_box });
       })
       .catch(function (error) {
         console.log(error);
@@ -33,16 +32,15 @@ class Room_Create extends React.Component {
   onSubmit() {
     axios
       .post(
-        `http://localhost:3001/room/update`,
+        `http://localhost:3001/object/update`,
         {
           id: this.state.id,
           name: this.state.name,
-          comment: this.state.comment,
         },
         { withCredentials: true }
       )
       .then((res) => {
-        this.props.router.navigate(`/room/list`);
+        this.props.router.navigate("/box/" + this.state.id_box);
       })
       .catch(function (error) {
         console.log(error);
@@ -53,7 +51,6 @@ class Room_Create extends React.Component {
     return (
       <div>
         <NavigationBar />
-        <h4>Modification d'une pièce</h4>
         <Form>
           <Form.Group className="mb-3" controlId="formBasicText">
             <Form.Label>Name</Form.Label>
@@ -66,16 +63,6 @@ class Room_Create extends React.Component {
             />
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formBasicText">
-            <Form.Label>Comment</Form.Label>
-            <Form.Control
-              name="comment"
-              value={this.state.comment}
-              type="text"
-              onChange={this.handleChange}
-              placeholder="Enter comment"
-            />
-          </Form.Group>
           <Button variant="primary" onClick={this.onSubmit}>
             Submit
           </Button>
@@ -90,4 +77,4 @@ class Room_Create extends React.Component {
     );
   }
 }
-export default withRouter(Room_Create);
+export default withRouter(Box_Create);

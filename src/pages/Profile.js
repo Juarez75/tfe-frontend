@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 import { withRouter } from "../withRouter";
 import { Button, Form } from "react-bootstrap";
-import { NavigationBar } from "./Nav";
+import { NavigationBar } from "./View/Nav";
 
 class Profile extends React.Component {
   constructor(props) {
@@ -13,6 +13,7 @@ class Profile extends React.Component {
       lastname: "",
       lastPwd: "",
       newPwd: "",
+      type: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.onUpdate = this.onUpdate.bind(this);
@@ -26,6 +27,7 @@ class Profile extends React.Component {
           mail: res.data.mail,
           firstname: res.data.firstname,
           lastname: res.data.lastname,
+          type: res.data.type,
         });
       })
       .catch((error) => {
@@ -72,20 +74,10 @@ class Profile extends React.Component {
   }
 
   render() {
-    return (
-      <div>
-        <NavigationBar />
+    let view;
+    if (this.state.type == 2 || this.state.type == 0) {
+      view = (
         <Form>
-          <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label>Email address</Form.Label>
-            <Form.Control
-              name="mail"
-              value={this.state.mail}
-              type="mail"
-              onChange={this.handleChange}
-              placeholder="Enter email"
-            />
-          </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicFirstname">
             <Form.Label>Firstname</Form.Label>
             <Form.Control
@@ -106,33 +98,62 @@ class Profile extends React.Component {
               placeholder="Enter lastname"
             />
           </Form.Group>
-          <Button variant="primary" type="button" onClick={this.onUpdate}>
-            Submit
-          </Button>
-          <Form.Group className="mb-3" controlId="formBasicPassword">
-            <Form.Label>Actual password</Form.Label>
-            <Form.Control
-              name="lastPwd"
-              value={this.state.lastPwd}
-              type="password"
-              onChange={this.handleChange}
-              placeholder=""
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicPassword">
-            <Form.Label>New password</Form.Label>
-            <Form.Control
-              name="newPwd"
-              value={this.state.newPwd}
-              type="password"
-              onChange={this.handleChange}
-              placeholder=""
-            />
-          </Form.Group>
-          <Button variant="primary" type="button" onClick={this.onUpdatePwd}>
-            Submit
-          </Button>
         </Form>
+      );
+    } else if (this.state.type == 1) {
+      view = (
+        <Form.Group className="mb-3" controlId="formBasicFirstname">
+          <Form.Label>Name</Form.Label>
+          <Form.Control
+            name="firstname"
+            value={this.state.firstname}
+            type="text"
+            onChange={this.handleChange}
+            placeholder="Enter firstname"
+          />
+        </Form.Group>
+      );
+    }
+    return (
+      <div>
+        <NavigationBar />
+        <Form.Group className="mb-3" controlId="formBasicEmail">
+          <Form.Label>Email address</Form.Label>
+          <Form.Control
+            name="mail"
+            value={this.state.mail}
+            type="mail"
+            onChange={this.handleChange}
+            placeholder="Enter email"
+          />
+        </Form.Group>
+        {view}
+        <Button variant="primary" type="button" onClick={this.onUpdate}>
+          Submit
+        </Button>
+        <Form.Group className="mb-3" controlId="formBasicPassword">
+          <Form.Label>Actual password</Form.Label>
+          <Form.Control
+            name="lastPwd"
+            value={this.state.lastPwd}
+            type="password"
+            onChange={this.handleChange}
+            placeholder=""
+          />
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="formBasicPassword">
+          <Form.Label>New password</Form.Label>
+          <Form.Control
+            name="newPwd"
+            value={this.state.newPwd}
+            type="password"
+            onChange={this.handleChange}
+            placeholder=""
+          />
+        </Form.Group>
+        <Button variant="primary" type="button" onClick={this.onUpdatePwd}>
+          Submit
+        </Button>
       </div>
     );
   }

@@ -2,25 +2,31 @@ import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
-import { withRouter } from "../withRouter";
-import { NavigationBar } from "./Nav";
+import { withRouter } from "../../withRouter";
+import { NavigationBar } from "../View/Nav";
 
-class Box_Create extends React.Component {
+class Room_Create extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id_box: parseInt(props.router.params.id),
-      name: "",
+      id: parseInt(props.router.params.id),
       id_room: "",
+      name: "",
+      comment: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+
     axios
-      .get(`http://localhost:3001/box/information/${this.state.id_box}`, {
+      .get(`http://localhost:3001/box/information/${this.state.id}`, {
         withCredentials: true,
       })
       .then((res) => {
-        this.setState({ id_room: res.data.id_room });
+        this.setState({
+          name: res.data.name,
+          comment: res.data.comment,
+          id_room: res.data.id_room,
+        });
       })
       .catch(function (error) {
         console.log(error);
@@ -32,16 +38,16 @@ class Box_Create extends React.Component {
   onSubmit() {
     axios
       .post(
-        `http://localhost:3001/object/create`,
+        `http://localhost:3001/box/update`,
         {
-          id_box: this.state.id_box,
+          id: this.state.id,
           name: this.state.name,
-          id_room: this.state.id_room,
+          comment: this.state.comment,
         },
         { withCredentials: true }
       )
       .then((res) => {
-        this.props.router.navigate("/box/" + this.state.id_box);
+        this.props.router.navigate(`/room/${this.state.id_room}`);
       })
       .catch(function (error) {
         console.log(error);
@@ -52,6 +58,7 @@ class Box_Create extends React.Component {
     return (
       <div>
         <NavigationBar />
+        <h4>Modification d'une box</h4>
         <Form>
           <Form.Group className="mb-3" controlId="formBasicText">
             <Form.Label>Name</Form.Label>
@@ -64,6 +71,16 @@ class Box_Create extends React.Component {
             />
           </Form.Group>
 
+          <Form.Group className="mb-3" controlId="formBasicText">
+            <Form.Label>Comment</Form.Label>
+            <Form.Control
+              name="comment"
+              value={this.state.comment}
+              type="text"
+              onChange={this.handleChange}
+              placeholder="Enter comment"
+            />
+          </Form.Group>
           <Button variant="primary" onClick={this.onSubmit}>
             Submit
           </Button>
@@ -78,4 +95,4 @@ class Box_Create extends React.Component {
     );
   }
 }
-export default withRouter(Box_Create);
+export default withRouter(Room_Create);
