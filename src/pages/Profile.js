@@ -84,6 +84,23 @@ class Profile extends React.Component {
 
   render() {
     let view;
+    let society_view = (
+      <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Label>Code société</Form.Label>
+        <Form.Control
+          name="society_code"
+          value={this.state.society_code}
+          type="number"
+          onChange={this.handleChange}
+          placeholder=""
+          disabled
+          readOnly
+        />
+      </Form.Group>
+    );
+    if (this.state.society_code == 0) {
+      society_view = null;
+    }
     if (this.state.type == 2 || this.state.type == 0) {
       view = (
         <div>
@@ -159,18 +176,7 @@ class Profile extends React.Component {
     return (
       <div>
         {view}
-        <Form.Group className="mb-3" controlId="formBasicEmail">
-          <Form.Label>Code société</Form.Label>
-          <Form.Control
-            name="society_code"
-            value={this.state.society_code}
-            type="number"
-            onChange={this.handleChange}
-            placeholder=""
-            disabled
-            readOnly
-          />
-        </Form.Group>
+        {society_view}
         <Button variant="primary" type="button" onClick={this.onUpdate}>
           Submit
         </Button>
