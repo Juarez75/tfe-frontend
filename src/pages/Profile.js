@@ -15,7 +15,7 @@ class Profile extends React.Component {
       lastPwd: "",
       newPwd: "",
       type: localStorage.getItem("type"),
-      society_code: "",
+      society_code: localStorage.getItem("society_code"),
       color: localStorage.getItem("color"),
       nameTag: "",
       tags: [],
@@ -27,12 +27,12 @@ class Profile extends React.Component {
     this.onCreateTag = this.onCreateTag.bind(this);
     this.onDeleteTag = this.onDeleteTag.bind(this);
     this.onSelectChange = this.onSelectChange.bind(this);
+    this.loadTag = this.loadTag.bind(this);
     axios
       .get(`http://localhost:3001/user/information`, {
         withCredentials: true,
       })
       .then((res) => {
-        console.log(res.data.tag);
         this.setState({
           mail: res.data.mail,
           firstname: res.data.firstname,
@@ -102,7 +102,9 @@ class Profile extends React.Component {
         },
         { withCredentials: true }
       )
-      .then((res) => console.log(res))
+      .then((res) => {
+        this.loadTag();
+      })
       .catch((error) => console.log(error));
   }
   onDeleteTag() {
@@ -115,7 +117,17 @@ class Profile extends React.Component {
         },
         { withCredentials: true }
       )
-      .then((res) => console.log(res))
+      .then((res) => {
+        this.loadTag();
+      })
+      .catch((error) => console.log(error));
+  }
+  loadTag() {
+    axios
+      .get("http://localhost:3001/tag/user", { withCredentials: true })
+      .then((res) => {
+        this.setState({ tags: res.data });
+      })
       .catch((error) => console.log(error));
   }
 
@@ -131,6 +143,7 @@ class Profile extends React.Component {
               name="selectedTag"
               onChange={this.onSelectChange}
             >
+              <option>--Sélectionne--</option>
               {this.state.tags.map((item) => (
                 <option key={item.id} value={item.id}>
                   {item.name}
@@ -138,7 +151,7 @@ class Profile extends React.Component {
               ))}
             </Form.Select>
             <Button variant="secondary" onClick={this.onDeleteTag}>
-              Supprimer
+              Ajouter
             </Button>
           </InputGroup>
         </Col>
@@ -176,6 +189,7 @@ class Profile extends React.Component {
       society_view = null;
     }
     if (this.state.type == 2 || this.state.type == 0) {
+      if (this.state.society_code != 0) tag_view = null;
       view = (
         <div>
           <NavigationBar color={this.state.color} />
@@ -200,6 +214,8 @@ class Profile extends React.Component {
                 placeholder="Enter lastname"
               />
             </Col>
+          </Row>
+          <Row>
             <Col>
               <Form.Label>Email address</Form.Label>
               <Form.Control
@@ -210,7 +226,13 @@ class Profile extends React.Component {
                 placeholder="Enter email"
               />
             </Col>
+            <Col>{society_view}</Col>
           </Row>
+          <Button variant="secondary" type="button" onClick={this.onUpdate}>
+            Submit
+          </Button>
+          <br />
+          {tag_view}
         </div>
       );
     } else if (this.state.type == 1) {
