@@ -90,6 +90,12 @@ class Room_List extends React.Component {
                   </Dropdown.Item>
                 </DropdownButton>
               </ButtonGroup>
+              <div>
+                <small>Tags :</small>
+                {item.TagOnBox.map((item2) => (
+                  <small key={item2.id_tag}> {item2.tag.name} </small>
+                ))}
+              </div>
             </ListGroup.Item>
           ))}
         </ListGroup>

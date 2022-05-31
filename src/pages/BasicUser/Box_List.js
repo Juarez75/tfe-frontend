@@ -83,6 +83,12 @@ class Box_List extends React.Component {
               </ButtonGroup>
               <div>
                 <small>Pièce : {item.room.name}</small>
+                <div>
+                  <small>Tags :</small>
+                  {item.TagOnBox.map((item2) => (
+                    <small key={item2.id_tag}> {item2.tag.name} </small>
+                  ))}
+                </div>
               </div>
             </ListGroup.Item>
           ))}
