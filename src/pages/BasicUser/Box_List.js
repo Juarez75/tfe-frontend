@@ -87,14 +87,6 @@ class Box_List extends React.Component {
             </ListGroup.Item>
           ))}
         </ListGroup>
-        <Link to="/register">Register</Link>
-        <br />
-        <Link to="/">Login</Link>
-        <br />
-        <Link to="/box/create">Createbox</Link>
-        <br />
-        <Link to="/box/create">CreateBox</Link>
-        <br />
       </div>
     );
   }
