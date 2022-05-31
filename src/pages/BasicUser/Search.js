@@ -18,6 +18,7 @@ class Search extends React.Component {
       room: [],
       box: [],
       object: [],
+      tag: [],
       search: "",
       type: localStorage.getItem("type"),
       color: localStorage.getItem("color"),
@@ -42,13 +43,14 @@ class Search extends React.Component {
             room: res.data.room,
             box: res.data.box,
             object: res.data.object,
+            tag: res.data.tag,
           });
         })
         .catch(function (error) {
           console.log(error);
         });
     } else {
-      this.setState({ room: [], box: [], object: [] });
+      this.setState({ room: [], box: [], object: [], tag: [] });
     }
   }
   onClick(id, name) {
@@ -162,6 +164,38 @@ class Search extends React.Component {
                 <small>Pièce : {item.room.name}</small>
               </div>
             </ListGroup.Item>
+          ))}
+        </ListGroup>
+        <h5>Box contenant Tag correspondant :</h5>
+        <ListGroup>
+          {this.state.tag.map((item) => (
+            <>
+              {item.link.map((item2) => (
+                <ListGroup.Item key={item2.id_box}>
+                  {item2.box.name}
+                  <ButtonGroup>
+                    <DropdownButton title="" variant="light">
+                      <Dropdown.Item
+                        onClick={() => this.onModify(item2.box.id, "box")}
+                      >
+                        Modify
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => this.onDelete(item2.box.id, "box")}
+                      >
+                        Delete
+                      </Dropdown.Item>
+                    </DropdownButton>
+                  </ButtonGroup>
+                  <div>
+                    <small>Pièce : {item2.box.room.name}</small>
+                  </div>
+                  <div>
+                    <small>Tag : {item.name}</small>
+                  </div>
+                </ListGroup.Item>
+              ))}
+            </>
           ))}
         </ListGroup>
       </div>
