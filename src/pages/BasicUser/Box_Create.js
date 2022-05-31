@@ -68,16 +68,10 @@ class Box_Create extends React.Component {
               placeholder="Enter comment"
             />
           </Form.Group>
-          <Button variant="primary" onClick={this.onSubmit}>
+          <Button variant="secondary" onClick={this.onSubmit}>
             Submit
           </Button>
         </Form>
-        <Link to="/register">Register</Link>
-        <br />
-        <Link to="/">Login</Link>
-        <br />
-        <Link to="/room/create">CreateRoom</Link>
-        <br />
       </div>
     );
   }

@@ -98,7 +98,7 @@ class Register extends React.Component {
               placeholder="Enter password"
             />
           </Form.Group>
-          <Button variant="primary" onClick={this.onSubmit}>
+          <Button variant="secondary" onClick={this.onSubmit}>
             Submit
           </Button>
         </Form>
@@ -136,7 +136,7 @@ class Register extends React.Component {
               placeholder="Enter password"
             />
           </Form.Group>
-          <Button variant="primary" onClick={this.onSubmit}>
+          <Button variant="secondary" onClick={this.onSubmit}>
             Submit
           </Button>
         </Form>

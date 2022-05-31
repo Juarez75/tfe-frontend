@@ -177,7 +177,7 @@ class Profile extends React.Component {
       <div>
         {view}
         {society_view}
-        <Button variant="primary" type="button" onClick={this.onUpdate}>
+        <Button variant="secondary" type="button" onClick={this.onUpdate}>
           Submit
         </Button>
         <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -200,7 +200,7 @@ class Profile extends React.Component {
             placeholder=""
           />
         </Form.Group>
-        <Button variant="primary" type="button" onClick={this.onUpdatePwd}>
+        <Button variant="secondary" type="button" onClick={this.onUpdatePwd}>
           Submit
         </Button>
       </div>
