@@ -2,9 +2,9 @@ import axios from "axios";
 import React from "react";
 import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
 
-export function NavigationBarSociety() {
+export function NavigationBarSociety(props) {
   return (
-    <Navbar bg="dark" variant="dark">
+    <Navbar variant="dark" style={{ backgroundColor: props.color }}>
       <Container>
         <Navbar.Brand href="#" onClick={() => window.location.reload(false)}>
           Case App

@@ -17,6 +17,7 @@ class Box_List extends React.Component {
     this.state = {
       objects: [],
       type: localStorage.getItem("type"),
+      color: localStorage.getItem("color"),
     };
     axios
       .get(`http://localhost:3001/object/list`, { withCredentials: true })
@@ -54,7 +55,7 @@ class Box_List extends React.Component {
     if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
-        <NavigationBar />
+        <NavigationBar color={this.state.color} />
         <h4>Liste des box</h4>
         <ListGroup>
           {this.state.objects.map((item) => (

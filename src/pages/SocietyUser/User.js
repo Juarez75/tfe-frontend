@@ -19,6 +19,7 @@ class Room_List extends React.Component {
       room: [],
       id_user: this.props.router.params.id,
       type: localStorage.getItem("type"),
+      color: localStorage.getItem("color"),
     };
     axios
       .get(`http://localhost:3001/society/user/${this.state.id_user}`, {
@@ -27,8 +28,8 @@ class Room_List extends React.Component {
       .then((res) => {
         this.setState({ room: res.data });
       })
-      .catch(function (error) {
-        console.log(error);
+      .catch((res) => {
+        console.log(res);
       });
   }
 
@@ -37,10 +38,10 @@ class Room_List extends React.Component {
   }
 
   render() {
-    if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
+    if (this.state.type == 2) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
-        <NavigationBarSociety />
+        <NavigationBarSociety color={this.state.color} />
         <h4>Liste des pièces de l'utilisateur</h4>
         <ListGroup>
           {this.state.room.map((item) => (

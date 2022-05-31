@@ -18,6 +18,7 @@ class User_List extends React.Component {
     this.state = {
       room: [],
       type: localStorage.getItem("type"),
+      color: localStorage.getItem("color"),
     };
     axios
       .get(`http://localhost:3001/society/users`, { withCredentials: true })
@@ -34,10 +35,10 @@ class User_List extends React.Component {
   }
 
   render() {
-    if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
+    if (this.state.type == 2) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
-        <NavigationBarSociety />
+        <NavigationBarSociety color={this.state.color} />
         <h4>Liste des utilisateurs</h4>
         <ListGroup>
           {this.state.room.map((item) => (

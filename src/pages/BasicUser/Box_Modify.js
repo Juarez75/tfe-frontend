@@ -14,6 +14,7 @@ class Room_Create extends React.Component {
       name: "",
       comment: "",
       type: localStorage.getItem("type"),
+      color: localStorage.getItem("color"),
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -59,7 +60,7 @@ class Room_Create extends React.Component {
     if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
-        <NavigationBar />
+        <NavigationBar color={this.state.color} />
         <h4>Modification d'une box</h4>
         <Form>
           <Form.Group className="mb-3" controlId="formBasicText">

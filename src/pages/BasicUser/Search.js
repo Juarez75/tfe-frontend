@@ -20,6 +20,7 @@ class Search extends React.Component {
       object: [],
       search: "",
       type: localStorage.getItem("type"),
+      color: localStorage.getItem("color"),
     };
     this.handleChange = this.handleChange.bind(this);
   }
@@ -78,7 +79,7 @@ class Search extends React.Component {
     if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
-        <NavigationBar />
+        <NavigationBar color={this.state.color} />
         <h4>Recherche</h4>
         <Form.Control
           name="search"

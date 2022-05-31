@@ -30,6 +30,7 @@ class Login extends React.Component {
       )
       .then((res) => {
         localStorage.setItem("type", res.data.type);
+        localStorage.setItem("color", res.data.color);
         if (res.data.type == 2 || res.data.type == 0)
           this.props.router.navigate("/room/list");
         if (res.data.type == 1) this.props.router.navigate("/society/users");

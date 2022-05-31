@@ -1,15 +1,8 @@
 import React from "react";
 import { withRouter } from "../../withRouter";
-import {
-  ListGroup,
-  Form,
-  ButtonGroup,
-  DropdownButton,
-  Dropdown,
-  Button,
-} from "react-bootstrap";
+import { ListGroup, Form, ButtonGroup, Button } from "react-bootstrap";
 import axios from "axios";
-import { NavigationBar } from "../View/NavUser";
+import { NavigationBarSociety } from "../View/NavSociety";
 
 class Search extends React.Component {
   constructor(props) {
@@ -18,6 +11,9 @@ class Search extends React.Component {
       user: [],
       search: "",
       type: localStorage.getItem("type"),
+      error: "",
+      code_error: false,
+      color: localStorage.getItem("color"),
     };
     this.handleChange = this.handleChange.bind(this);
   }
@@ -41,7 +37,10 @@ class Search extends React.Component {
           });
         })
         .catch(function (error) {
-          console.log(error);
+          this.setState({
+            code_error: true,
+            error: error,
+          });
         });
     } else {
       this.setState({ user: [] });
@@ -54,7 +53,7 @@ class Search extends React.Component {
     if (this.state.type == 2) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
-        <NavigationBar />
+        <NavigationBarSociety color={this.state.color} />
         <h4>Recherche</h4>
         <Form.Control
           name="search"

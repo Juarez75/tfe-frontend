@@ -18,6 +18,7 @@ class Room_List extends React.Component {
     this.state = {
       room: [],
       type: localStorage.getItem("type"),
+      color: localStorage.getItem("color"),
     };
     axios
       .get(`http://localhost:3001/room/list`, { withCredentials: true })
@@ -62,7 +63,7 @@ class Room_List extends React.Component {
     if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
-        <NavigationBar />
+        <NavigationBar color={this.state.color} />
         <h4>Liste des pièces</h4>
         <ListGroup>
           <ListGroup.Item>
