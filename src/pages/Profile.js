@@ -151,7 +151,7 @@ class Profile extends React.Component {
               ))}
             </Form.Select>
             <Button variant="secondary" onClick={this.onDeleteTag}>
-              Ajouter
+              Supprimer
             </Button>
           </InputGroup>
         </Col>

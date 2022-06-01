@@ -24,15 +24,16 @@ class Search extends React.Component {
       color: localStorage.getItem("color"),
     };
     this.handleChange = this.handleChange.bind(this);
+    this.loadData = this.loadData.bind(this);
+    this.updateEmpty = this.updateEmpty.bind(this);
   }
-  handleChange(event) {
-    this.setState({ [event.target.name]: event.target.value });
-    if (event.target.value !== "") {
+  loadData(search) {
+    if (search !== "") {
       axios
         .post(
           "http://localhost:3001/search",
           {
-            search: event.target.value,
+            search: search,
           },
           {
             withCredentials: true,
@@ -52,6 +53,10 @@ class Search extends React.Component {
     } else {
       this.setState({ room: [], box: [], object: [], tag: [] });
     }
+  }
+  handleChange(event) {
+    this.setState({ [event.target.name]: event.target.value });
+    this.loadData(event.target.value);
   }
   onClick(id, name) {
     this.props.router.navigate("/" + name + "/" + id);
@@ -76,6 +81,19 @@ class Search extends React.Component {
       .catch(function (error) {
         console.log(error);
       });
+  }
+  updateEmpty(empty, id) {
+    axios
+      .post(
+        "http://localhost:3001/box/empty",
+        {
+          id: id,
+          empty: empty,
+        },
+        { withCredentials: true }
+      )
+      .then(() => this.loadData(this.state.search))
+      .catch((error) => console.log(error));
   }
   render() {
     if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
@@ -116,7 +134,7 @@ class Search extends React.Component {
         <h5>Caisse :</h5>
         <ListGroup>
           {this.state.box.map((item) => (
-            <ListGroup.Item key={item.id}>
+            <ListGroup.Item key={item.id} variant={item.empty ? "danger" : ""}>
               <ButtonGroup>
                 <Button
                   variant="light"
@@ -132,6 +150,14 @@ class Search extends React.Component {
                     Delete
                   </Dropdown.Item>
                 </DropdownButton>
+                <Form.Check
+                  className="my-auto ms-3"
+                  label="Vidée"
+                  checked={item.empty}
+                  onChange={() =>
+                    this.updateEmpty((item.empty = !item.empty), item.id)
+                  }
+                />
               </ButtonGroup>
               <div>
                 <small>Pièce : {item.room.name}</small>
@@ -171,7 +197,10 @@ class Search extends React.Component {
           {this.state.tag.map((item) => (
             <>
               {item.link.map((item2) => (
-                <ListGroup.Item key={item2.id_box}>
+                <ListGroup.Item
+                  key={item2.id_box}
+                  variant={item2.box.empty ? "danger" : ""}
+                >
                   {item2.box.name}
                   <ButtonGroup>
                     <DropdownButton title="" variant="light">
@@ -186,6 +215,17 @@ class Search extends React.Component {
                         Delete
                       </Dropdown.Item>
                     </DropdownButton>
+                    <Form.Check
+                      className="my-auto ms-3"
+                      label="Vidée"
+                      checked={item2.box.empty}
+                      onChange={() =>
+                        this.updateEmpty(
+                          (item2.box.empty = !item2.box.empty),
+                          item2.box.id
+                        )
+                      }
+                    />
                   </ButtonGroup>
                   <div>
                     <small>Pièce : {item2.box.room.name}</small>

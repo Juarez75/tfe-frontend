@@ -7,6 +7,7 @@ import {
   Row,
   Col,
   FormControl,
+  CloseButton,
 } from "react-bootstrap";
 import { withRouter } from "../../withRouter";
 import { NavigationBar } from "../View/NavUser";
@@ -24,7 +25,7 @@ class Room_Create extends React.Component {
       society_code: localStorage.getItem("society_code"),
       tagBox: [],
       tags: [],
-      selectedTag: "",
+      selectedTag: "--Sélectionne--",
       id_box: "",
     };
     this.handleChange = this.handleChange.bind(this);
@@ -91,9 +92,11 @@ class Room_Create extends React.Component {
       });
   }
   onSelectChange(event) {
+    console.log(event.target.value);
     this.setState({ selectedTag: event.target.value });
   }
   addTag() {
+    if (isNaN(this.state.selectedTag)) return;
     axios
       .post(
         "http://localhost:3001/tag/link",
@@ -166,14 +169,6 @@ class Room_Create extends React.Component {
     let fakecol = null;
     if (this.state.tagBox.length == 3)
       tagSelection = <small>Max 3 tags par box</small>;
-    else if (this.state.tagBox.length == 2) fakecol = <Col></Col>;
-    else if (this.state.tagBox.length == 1)
-      fakecol = (
-        <>
-          <Col></Col>
-          <Col></Col>
-        </>
-      );
     return (
       <div>
         <NavigationBar color={this.state.color} />
@@ -207,19 +202,18 @@ class Room_Create extends React.Component {
         <br />
         <Row>
           {this.state.tagBox.map((item) => (
-            <Col key={item.id_tag}>
+            <Col key={item.id_tag} md={4}>
               <InputGroup>
                 <FormControl disabled readOnly value={item.tag.name} />
                 <Button
                   variant="secondary"
                   onClick={() => this.deleteTag(item.id_box, item.id_tag)}
                 >
-                  X
+                  <CloseButton />
                 </Button>
               </InputGroup>
             </Col>
           ))}
-          {fakecol}
         </Row>
         <br />
         {tagSelection}
