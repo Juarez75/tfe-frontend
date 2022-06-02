@@ -20,8 +20,7 @@ import Profile from "./pages/Profile";
 import Search from "./pages/BasicUser/Search";
 import UserList from "./pages/SocietyUser/User_List";
 import User from "./pages/SocietyUser/User";
-import UserRoom from "./pages/SocietyUser/UserRoom.js";
-import SearchUser from "./pages/SocietyUser/Search_User";
+import Personalize from "./pages/SocietyUser/Personalize";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -42,7 +41,7 @@ root.render(
         <Route path="list" element={<BoxList />}></Route>
       </Route>
       <Route path="object">
-        <Route path="create/:id" element={<ObjectCreate />}></Route>
+        <Route path="create/:id/:type" element={<ObjectCreate />}></Route>
         <Route path="modify/:id" element={<ObjectModify />}></Route>
         <Route path="list" element={<ObjectList />}></Route>
       </Route>
@@ -51,8 +50,7 @@ root.render(
       <Route path="society">
         <Route path="users" element={<UserList />}></Route>
         <Route path="user/:id" element={<User />}></Route>
-        <Route path="room/:id" element={<UserRoom />}></Route>
-        <Route path="search" element={<SearchUser />}></Route>
+        <Route path="personalize" element={<Personalize />}></Route>
       </Route>
     </Routes>
   </BrowserRouter>

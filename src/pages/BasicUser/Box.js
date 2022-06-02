@@ -18,9 +18,8 @@ class Room_List extends React.Component {
     this.state = {
       id: parseInt(props.router.params.id),
       box: "",
+      room: "",
       objects: [],
-      mail: "marcan.gallez@std.heh.be",
-      password: "marcan",
       type: localStorage.getItem("type"),
       color: localStorage.getItem("color"),
     };
@@ -29,7 +28,11 @@ class Room_List extends React.Component {
         withCredentials: true,
       })
       .then((res) => {
-        this.setState({ box: res.data, objects: res.data.objects });
+        this.setState({
+          box: res.data,
+          objects: res.data.objects,
+          room: res.data.room,
+        });
       })
       .catch(function (error) {
         console.log(error);
@@ -58,7 +61,9 @@ class Room_List extends React.Component {
     this.props.router.navigate(`/object/modify/${id}`);
   }
   onCreate() {
-    this.props.router.navigate("/object/create/" + this.state.id);
+    this.props.router.navigate(
+      "/object/create/" + this.state.id + "/" + this.state.room.type
+    );
   }
 
   render() {

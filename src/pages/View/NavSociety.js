@@ -12,7 +12,7 @@ export function NavigationBarSociety(props) {
         <Nav className="me-auto">
           <Nav.Link href="/profile">Mon compte</Nav.Link>
           <Nav.Link href="/society/users">Utilisateurs</Nav.Link>
-          <Nav.Link href="/society/search">Recherche</Nav.Link>
+          <Nav.Link href="/society/personalize">Personnalisation</Nav.Link>
         </Nav>
         <Nav>
           <Nav.Link

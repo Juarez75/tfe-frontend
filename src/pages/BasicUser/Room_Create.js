@@ -11,11 +11,13 @@ class Room_Create extends React.Component {
     this.state = {
       name: "",
       comment: "",
-      type: localStorage.getItem("type"),
+      type: "",
+      typeUser: localStorage.getItem("type"),
       color: localStorage.getItem("color"),
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.onSelectChange = this.onSelectChange.bind(this);
   }
   handleChange(event) {
     this.setState({ [event.target.name]: event.target.value });
@@ -27,6 +29,7 @@ class Room_Create extends React.Component {
         {
           name: this.state.name,
           comment: this.state.comment,
+          type: this.state.type,
         },
         { withCredentials: true }
       )
@@ -37,9 +40,19 @@ class Room_Create extends React.Component {
         console.log(error);
       });
   }
+  onSelectChange(event) {
+    this.setState({ type: event.target.value });
+  }
 
   render() {
-    if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
+    const defaultPiece = [
+      { id: 1, name: "Chambre" },
+      { id: 2, name: "Cuisine" },
+      { id: 3, name: "Salon" },
+      { id: 4, name: "Bureau" },
+      { id: 5, name: "Salle de bain" },
+    ];
+    if (this.state.typeUser == 1) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
         <NavigationBar color={this.state.color} />
@@ -65,6 +78,23 @@ class Room_Create extends React.Component {
               placeholder="Enter comment"
             />
           </Form.Group>
+          <Form.Group>
+            <Form.Label>Type de pièce</Form.Label>
+            <Form.Select
+              aria-label="Exemple"
+              name="selectedTag"
+              onChange={this.onSelectChange}
+              defaultValue={this.state.type}
+            >
+              <option>--Sélectionne--</option>
+              {defaultPiece.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+          <br />
           <Button variant="secondary" onClick={this.onSubmit}>
             Submit
           </Button>

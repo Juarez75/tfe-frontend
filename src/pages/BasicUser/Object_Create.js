@@ -1,9 +1,11 @@
 import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Alert } from "react-bootstrap";
 import { withRouter } from "../../withRouter";
 import { NavigationBar } from "../View/NavUser";
+import { DEFAULT_BREAKPOINTS } from "react-bootstrap/esm/ThemeProvider";
+import { delay } from "lodash";
 
 class Box_Create extends React.Component {
   constructor(props) {
@@ -12,11 +14,16 @@ class Box_Create extends React.Component {
       id_box: parseInt(props.router.params.id),
       name: "",
       id_room: "",
-      type: localStorage.getItem("type"),
+      typeRoom: parseInt(props.router.params.type),
+      typeUser: localStorage.getItem("type"),
       color: localStorage.getItem("color"),
+      success: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.onAdd = this.onAdd.bind(this);
+    this.ifSuccess = this.ifSuccess.bind(this);
+    this.cancelSuccess = this.cancelSuccess.bind(this);
     axios
       .get(`http://localhost:3001/box/information/${this.state.id_box}`, {
         withCredentials: true,
@@ -31,13 +38,13 @@ class Box_Create extends React.Component {
   handleChange(event) {
     this.setState({ [event.target.name]: event.target.value });
   }
-  onSubmit() {
+  onSubmit(name) {
     axios
       .post(
         `http://localhost:3001/object/create`,
         {
           id_box: this.state.id_box,
-          name: this.state.name,
+          name: name,
           id_room: this.state.id_room,
         },
         { withCredentials: true }
@@ -49,12 +56,134 @@ class Box_Create extends React.Component {
         console.log(error);
       });
   }
+  onAdd(name) {
+    axios
+      .post(
+        `http://localhost:3001/object/create`,
+        {
+          id_box: this.state.id_box,
+          name: name,
+          id_room: this.state.id_room,
+        },
+        { withCredentials: true }
+      )
+      .then((res) => {
+        console.log(res);
+        this.ifSuccess();
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+  ifSuccess() {
+    this.setState({ success: true });
+    this.cancelSuccess(true);
+  }
+  cancelSuccess(delay) {
+    setTimeout(() => this.setState({ success: false }), 500);
+  }
 
   render() {
-    if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
+    var successAlert;
+    if (this.state.success)
+      successAlert = (
+        <Alert
+          variant="success"
+          onClose={() => this.setState({ success: false })}
+          dismissible
+        >
+          Objet ajouté !
+        </Alert>
+      );
+    else successAlert = "";
+    var listDefault = [
+      "Verre",
+      "Livre",
+      "Lampe",
+      "Cadre",
+      "Vêtements",
+      "Produits de ménage",
+      "Chaussures",
+      "Souvenirs",
+      "Assiette",
+    ];
+    var listBedroom = [
+      "Lampe de chevet",
+      "Radio réveil",
+      "BD",
+      "Livre",
+      "Coussin",
+      "Vetement",
+      "Couette",
+      "Peluche",
+      "Cadre",
+      "Tv",
+      "Console de jeu",
+    ];
+    var listKitchen = [
+      "Ustensile",
+      "Couverts",
+      "Casserole",
+      "Verre",
+      "Tupperware",
+      "Tasse",
+      "Passoir",
+      "Bol",
+      "Poele",
+      "Assietes",
+    ];
+    var listLivingroom = [
+      "Lampe",
+      "Console de jeu",
+      "Couverture",
+      "Box Internet",
+      "Décodeur",
+      "Cables TV",
+      "Decorations",
+      "Livre",
+      "Magazine",
+      "DVD",
+    ];
+    var listOffice = [
+      "Ecran",
+      "Bloc de feuille",
+      "Cahier",
+      "Clavier",
+      "Souris",
+      "Bic",
+      "Crayons",
+      "Imprimante",
+      "Farde",
+    ];
+    var listBathroom = [
+      "Essui",
+      "Gant de toilette",
+      "Dentifrice",
+      "Brosse à dents",
+      "Ventouse",
+      "Produits entretien douche",
+      "Produits entretien WC",
+      "Brosse à cheveux",
+      "Produits de beauté",
+      "Savon",
+    ];
+    if (this.state.typeUser == 1) <div>"Vous n'avez pas accès à ça "</div>;
+    var listObjects;
+    this.state.typeRoom == 1
+      ? (listObjects = listBedroom)
+      : this.state.typeRoom == 2
+      ? (listObjects = listKitchen)
+      : this.state.typeRoom == 3
+      ? (listObjects = listLivingroom)
+      : this.state.typeRoom == 4
+      ? (listObjects = listOffice)
+      : this.state.typeRoom == 5
+      ? (listObjects = listBathroom)
+      : (listObjects = listDefault);
     return (
       <div>
         <NavigationBar color={this.state.color} />
+        {successAlert}
         <Form>
           <Form.Group className="mb-3" controlId="formBasicText">
             <Form.Label>Name</Form.Label>
@@ -67,10 +196,25 @@ class Box_Create extends React.Component {
             />
           </Form.Group>
 
-          <Button variant="secondary" onClick={this.onSubmit}>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              this.onSubmit(this.state.name);
+            }}
+          >
             Submit
           </Button>
         </Form>
+        {listObjects.map((item) => (
+          <Button
+            key={item}
+            onClick={() => this.onAdd(item)}
+            variant="outline-secondary"
+            className="mx-1 mb-1"
+          >
+            {item} +
+          </Button>
+        ))}
       </div>
     );
   }

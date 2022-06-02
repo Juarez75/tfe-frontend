@@ -262,17 +262,7 @@ class Profile extends React.Component {
             </Col>
           </Row>
           <Row>
-            <Col>{society_view}</Col>
-            <Col>
-              <Form.Label htmlFor="exampleColorInput">Color picker</Form.Label>
-              <Form.Control
-                type="color"
-                id="exampleColorInput"
-                title="Choose your color"
-                value={this.state.color}
-                onChange={this.onChange}
-              />
-            </Col>
+            <Col md={6}>{society_view}</Col>
           </Row>
           <Button variant="secondary" type="button" onClick={this.onUpdate}>
             Submit

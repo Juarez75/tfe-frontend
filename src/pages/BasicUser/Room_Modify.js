@@ -12,18 +12,23 @@ class Room_Create extends React.Component {
       id: parseInt(props.router.params.id),
       name: "",
       comment: "",
-      type: localStorage.getItem("type"),
+      type: "",
+      typeUser: localStorage.getItem("type"),
       color: localStorage.getItem("color"),
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-
+    this.onSelectChange = this.onSelectChange.bind(this);
     axios
       .get(`http://localhost:3001/room/information/${this.state.id}`, {
         withCredentials: true,
       })
       .then((res) => {
-        this.setState({ name: res.data.name, comment: res.data.comment });
+        this.setState({
+          name: res.data.name,
+          comment: res.data.comment,
+          type: res.data.type,
+        });
       })
       .catch(function (error) {
         console.log(error);
@@ -33,6 +38,7 @@ class Room_Create extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
   }
   onSubmit() {
+    console.log(this.state.id);
     axios
       .post(
         `http://localhost:3001/room/update`,
@@ -40,19 +46,30 @@ class Room_Create extends React.Component {
           id: this.state.id,
           name: this.state.name,
           comment: this.state.comment,
+          type: this.state.type,
         },
         { withCredentials: true }
       )
-      .then((res) => {
+      .then(() => {
         this.props.router.navigate(`/room/list`);
       })
       .catch(function (error) {
         console.log(error);
       });
   }
+  onSelectChange(event) {
+    this.setState({ type: event.target.value });
+  }
 
   render() {
-    if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
+    const defaultPiece = [
+      { id: 1, name: "Chambre" },
+      { id: 2, name: "Cuisine" },
+      { id: 3, name: "Salon" },
+      { id: 4, name: "Bureau" },
+      { id: 5, name: "Salle de bain" },
+    ];
+    if (this.state.typeUser == 1) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
         <NavigationBar color={this.state.color} />
@@ -79,6 +96,23 @@ class Room_Create extends React.Component {
               placeholder="Enter comment"
             />
           </Form.Group>
+          <Form.Group>
+            <Form.Label>Type de pièce</Form.Label>
+            <Form.Select
+              aria-label="Exemple"
+              name="selectedTag"
+              onChange={this.onSelectChange}
+              value={this.state.type}
+            >
+              <option>--Sélectionne--</option>
+              {defaultPiece.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+          <br />
           <Button variant="secondary" onClick={this.onSubmit}>
             Submit
           </Button>

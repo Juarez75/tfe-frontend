@@ -72,12 +72,12 @@ class Room_List extends React.Component {
     this.props.router.navigate(`/box/${id}`);
   }
 
-  onRoomDelete(id) {
+  onRoomDelete() {
     axios
       .post(
         `http://localhost:3001/room/delete`,
         {
-          id: id,
+          id: this.state.id,
         },
         {
           withCredentials: true,
@@ -90,8 +90,8 @@ class Room_List extends React.Component {
         console.log(error.message);
       });
   }
-  onRoomModify(id) {
-    this.props.router.navigate(`/room/modify/${id}`);
+  onRoomModify() {
+    this.props.router.navigate(`/room/modify/${this.state.id}}`);
   }
   updateEmpty(empty, id) {
     axios
