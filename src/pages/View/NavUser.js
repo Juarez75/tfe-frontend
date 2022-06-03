@@ -4,7 +4,11 @@ import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
 
 export function NavigationBar(props) {
   return (
-    <Navbar variant="dark" style={{ backgroundColor: props.color }}>
+    <Navbar
+      className="w-100"
+      variant="dark"
+      style={{ backgroundColor: props.color }}
+    >
       <Container>
         <Navbar.Brand href="#" onClick={() => window.location.reload(false)}>
           Case App
@@ -32,6 +36,8 @@ export function NavigationBar(props) {
                 )
                 .then(() => {
                   localStorage.clear("type");
+                  localStorage.clear("society_code");
+                  localStorage.clear("color");
                 })
                 .catch(function (error) {
                   console.log(error);

@@ -50,25 +50,14 @@ class Room_Create extends React.Component {
       .catch(function (error) {
         console.log(error);
       });
-    if (this.state.society_code == 0) {
-      axios
-        .get("http://localhost:3001/tag/user", { withCredentials: true })
-        .then((res) => {
-          this.setState({ tags: res.data });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else {
-      axios
-        .get("http://localhost:3001/tag/society", { withCredentials: true })
-        .then((res) => {
-          this.setState({ tags: res.data });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+    axios
+      .get("http://localhost:3001/tag/user", { withCredentials: true })
+      .then((res) => {
+        this.setState({ tags: res.data });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
   handleChange(event) {
     this.setState({ [event.target.name]: event.target.value });
@@ -99,7 +88,7 @@ class Room_Create extends React.Component {
     if (isNaN(this.state.selectedTag)) return;
     axios
       .post(
-        "http://localhost:3001/tag/link",
+        "http://localhost:3001/tag/linkbox",
         {
           id_box: this.state.id_box,
           id_tag: this.state.selectedTag,
@@ -117,7 +106,7 @@ class Room_Create extends React.Component {
   deleteTag(id_box, id_tag) {
     axios
       .post(
-        "http://localhost:3001/tag/deletelink",
+        "http://localhost:3001/tag/deletelinkbox",
         {
           id_box: id_box,
           id_tag: id_tag,
@@ -166,7 +155,6 @@ class Room_Create extends React.Component {
         </Button>
       </InputGroup>
     );
-    let fakecol = null;
     if (this.state.tagBox.length == 3)
       tagSelection = <small>Max 3 tags par box</small>;
     return (
@@ -209,7 +197,7 @@ class Room_Create extends React.Component {
                   variant="secondary"
                   onClick={() => this.deleteTag(item.id_box, item.id_tag)}
                 >
-                  <CloseButton />
+                  X
                 </Button>
               </InputGroup>
             </Col>

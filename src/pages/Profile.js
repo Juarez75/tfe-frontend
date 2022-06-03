@@ -133,44 +133,6 @@ class Profile extends React.Component {
 
   render() {
     let view;
-    let tag_view = (
-      <Row>
-        <h5>Tag</h5>
-        <Col>
-          <InputGroup>
-            <Form.Select
-              aria-label="Exemple"
-              name="selectedTag"
-              onChange={this.onSelectChange}
-            >
-              <option>--Sélectionne--</option>
-              {this.state.tags.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </Form.Select>
-            <Button variant="secondary" onClick={this.onDeleteTag}>
-              Supprimer
-            </Button>
-          </InputGroup>
-        </Col>
-        <Col>
-          <InputGroup>
-            <Form.Control
-              type="text"
-              name="nameTag"
-              value={this.state.nameTag}
-              onChange={this.handleChange}
-              placeholder="Ajouter tag"
-            />
-            <Button variant="secondary" onClick={this.onCreateTag}>
-              Ajouter
-            </Button>
-          </InputGroup>
-        </Col>
-      </Row>
-    );
     let society_view = (
       <div>
         <Form.Label>Code société</Form.Label>
@@ -189,7 +151,6 @@ class Profile extends React.Component {
       society_view = null;
     }
     if (this.state.type == 2 || this.state.type == 0) {
-      if (this.state.society_code != 0) tag_view = null;
       view = (
         <div>
           <NavigationBar color={this.state.color} />
@@ -232,7 +193,42 @@ class Profile extends React.Component {
             Submit
           </Button>
           <br />
-          {tag_view}
+          <Row>
+            <h5>Tag</h5>
+            <Col>
+              <InputGroup>
+                <Form.Select
+                  aria-label="Exemple"
+                  name="selectedTag"
+                  onChange={this.onSelectChange}
+                >
+                  <option>--Sélectionne--</option>
+                  {this.state.tags.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
+                </Form.Select>
+                <Button variant="secondary" onClick={this.onDeleteTag}>
+                  Supprimer
+                </Button>
+              </InputGroup>
+            </Col>
+            <Col>
+              <InputGroup>
+                <Form.Control
+                  type="text"
+                  name="nameTag"
+                  value={this.state.nameTag}
+                  onChange={this.handleChange}
+                  placeholder="Ajouter tag"
+                />
+                <Button variant="secondary" onClick={this.onCreateTag}>
+                  Ajouter
+                </Button>
+              </InputGroup>
+            </Col>
+          </Row>
         </div>
       );
     } else if (this.state.type == 1) {
@@ -267,9 +263,6 @@ class Profile extends React.Component {
           <Button variant="secondary" type="button" onClick={this.onUpdate}>
             Submit
           </Button>
-          <br />
-          <br />
-          {tag_view}
         </div>
       );
     }

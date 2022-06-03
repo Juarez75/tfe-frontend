@@ -1,7 +1,14 @@
 import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { Form, Button, Alert } from "react-bootstrap";
+import {
+  Form,
+  Button,
+  Alert,
+  ModalHeader,
+  Modal,
+  ModalBody,
+} from "react-bootstrap";
 import { withRouter } from "../../withRouter";
 import { NavigationBar } from "../View/NavUser";
 import { DEFAULT_BREAKPOINTS } from "react-bootstrap/esm/ThemeProvider";
@@ -84,18 +91,6 @@ class Box_Create extends React.Component {
   }
 
   render() {
-    var successAlert;
-    if (this.state.success)
-      successAlert = (
-        <Alert
-          variant="success"
-          onClose={() => this.setState({ success: false })}
-          dismissible
-        >
-          Objet ajouté !
-        </Alert>
-      );
-    else successAlert = "";
     var listDefault = [
       "Verre",
       "Livre",
@@ -183,7 +178,18 @@ class Box_Create extends React.Component {
     return (
       <div>
         <NavigationBar color={this.state.color} />
-        {successAlert}
+        <Modal
+          size="sm"
+          show={this.state.success}
+          onHide={() => this.setState({ success: false })}
+        >
+          <ModalHeader
+            style={{ backgroundColor: "#77DD77", color: "#00561B" }}
+            closeButton
+          >
+            Objet ajouté !
+          </ModalHeader>
+        </Modal>
         <Form>
           <Form.Group className="mb-3" controlId="formBasicText">
             <Form.Label>Name</Form.Label>

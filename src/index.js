@@ -5,7 +5,6 @@ import "./style.css";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import RoomCreate from "./pages/BasicUser/Room_Create";
 import RoomList from "./pages/BasicUser/Room_List";
 import Room from "./pages/BasicUser/Room";
 import RoomModify from "./pages/BasicUser/Room_Modify";
@@ -29,7 +28,6 @@ root.render(
       <Route path="/" element={<Login />}></Route>
       <Route path="/register" element={<Register />}></Route>
       <Route path="room">
-        <Route path="create" element={<RoomCreate />}></Route>
         <Route path="list" element={<RoomList />}></Route>
         <Route path=":id" element={<Room />}></Route>
         <Route path="modify/:id" element={<RoomModify />}></Route>

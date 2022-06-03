@@ -23,6 +23,11 @@ class Room_List extends React.Component {
       type: localStorage.getItem("type"),
       color: localStorage.getItem("color"),
     };
+    this.loadData = this.loadData.bind(this);
+    this.onDelete = this.onDelete.bind(this);
+    this.loadData();
+  }
+  loadData() {
     axios
       .get(`http://localhost:3001/box/${this.state.id}`, {
         withCredentials: true,
@@ -51,7 +56,7 @@ class Room_List extends React.Component {
         }
       )
       .then((res) => {
-        window.location.reload(false);
+        this.loadData();
       })
       .catch(function (error) {
         console.log(error);

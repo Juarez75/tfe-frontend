@@ -12,7 +12,7 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 import { withRouter } from "../../withRouter";
 import { NavigationBarSociety } from "../View/NavSociety";
-import _ from "lodash";
+import _, { isUndefined } from "lodash";
 
 class Room_List extends React.Component {
   constructor(props) {
@@ -40,6 +40,7 @@ class Room_List extends React.Component {
   }
 
   render() {
+    var color;
     if (this.state.type == 2) return <div>Vous n'avez pas accès à ça</div>;
     const rooms = _.chunk(this.state.room, 3);
     return (
@@ -51,7 +52,15 @@ class Room_List extends React.Component {
             <Row key={i}>
               {row.map((item) => (
                 <Col key={item.id} md={4}>
-                  <Card border="dark" className="d-grip mx-1 my-1">
+                  <Card
+                    border="dark"
+                    className="d-grip mx-1 my-1"
+                    style={{
+                      backgroundColor: isUndefined(item.TagOnRoom[0])
+                        ? (color = "#FFFFFF")
+                        : (color = item.TagOnRoom[0].tag.color),
+                    }}
+                  >
                     <Card.Title className="mx-auto">{item.name}</Card.Title>
                     <Card.Subtitle className="mx-auto">
                       Nombre de box : {item._count.box}

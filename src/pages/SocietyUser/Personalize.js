@@ -13,9 +13,10 @@ class Personalize extends React.Component {
       type: localStorage.getItem("type"),
       tags: [],
       selectedTag: "",
+      nameTag: "",
+      tagColor: "#707070",
     };
 
-    this.handleChange = this.handleChange.bind(this);
     this.loadData = this.loadData.bind(this);
     this.deleteTag = this.deleteTag.bind(this);
     this.addTag = this.addTag.bind(this);
@@ -23,8 +24,6 @@ class Personalize extends React.Component {
 
     this.loadData();
   }
-
-  handleChange(event) {}
 
   loadData() {
     axios
@@ -50,7 +49,19 @@ class Personalize extends React.Component {
       .catch((error) => console.log(error));
   }
 
-  addTag() {}
+  addTag() {
+    axios
+      .post(
+        "http://localhost:3001/tag/create",
+        {
+          name: this.state.nameTag,
+          color: this.state.tagColor,
+        },
+        { withCredentials: true }
+      )
+      .then((res) => this.loadData())
+      .catch((error) => console.log(error));
+  }
 
   updateColor() {
     axios
@@ -107,21 +118,23 @@ class Personalize extends React.Component {
                 type="text"
                 name="nameTag"
                 value={this.state.nameTag}
-                onChange={this.handleChange}
+                onChange={(event) =>
+                  this.setState({ nameTag: event.target.value })
+                }
                 placeholder="Ajouter tag"
               />
             </Col>
             <Col md={1}>
               <Form.Control
                 type="color"
-                value={this.state.color}
+                value={this.state.tagColor}
                 onChange={(event) =>
-                  this.setState({ color: event.target.value })
+                  this.setState({ tagColor: event.target.value })
                 }
               />
             </Col>
             <Col className="mx-1">
-              <Button variant="secondary" onClick={this.onCreateTag}>
+              <Button variant="secondary" onClick={this.addTag}>
                 Ajouter
               </Button>
             </Col>
@@ -141,7 +154,7 @@ class Personalize extends React.Component {
               <option>--Sélectionne--</option>
               {this.state.tags.map((item) => (
                 <option
-                  style={{ backgroundColor: this.state.color }}
+                  style={{ backgroundColor: item.color }}
                   key={item.id}
                   value={item.id}
                 >

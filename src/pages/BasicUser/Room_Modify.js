@@ -1,9 +1,19 @@
 import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { Form, Button } from "react-bootstrap";
+import {
+  Form,
+  Button,
+  Row,
+  Col,
+  InputGroup,
+  CloseButton,
+  FormControl,
+  Card,
+} from "react-bootstrap";
 import { withRouter } from "../../withRouter";
 import { NavigationBar } from "../View/NavUser";
+import { isUndefined } from "lodash";
 
 class Room_Create extends React.Component {
   constructor(props) {
@@ -15,20 +25,64 @@ class Room_Create extends React.Component {
       type: "",
       typeUser: localStorage.getItem("type"),
       color: localStorage.getItem("color"),
+      tags: [],
+      tagRoom: null,
+      selectedTag: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onSelectChange = this.onSelectChange.bind(this);
+    this.loadRoom = this.loadRoom.bind(this);
+    this.addTag = this.addTag.bind(this);
+    this.deleteTag = this.deleteTag.bind(this);
+    this.loadRoom();
+    axios
+      .get("http://localhost:3001/tag/society", { withCredentials: true })
+      .then((res) => {
+        this.setState({ tags: res.data });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+  deleteTag(id_room, id_tag) {
+    axios
+      .post(
+        "http://localhost:3001/tag/deletelinkroom",
+        {
+          id_room: id_room,
+          id_tag: id_tag,
+        },
+        { withCredentials: true }
+      )
+      .then((res) => {
+        this.setState({ tagRoom: null, selectedTag: "" });
+        this.loadRoom();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+  loadRoom() {
     axios
       .get(`http://localhost:3001/room/information/${this.state.id}`, {
         withCredentials: true,
       })
       .then((res) => {
-        this.setState({
-          name: res.data.name,
-          comment: res.data.comment,
-          type: res.data.type,
-        });
+        if (isUndefined(res.data.TagOnRoom[0])) {
+          this.setState({
+            name: res.data.name,
+            comment: res.data.comment,
+            type: res.data.type,
+          });
+        } else {
+          this.setState({
+            name: res.data.name,
+            comment: res.data.comment,
+            type: res.data.type,
+            tagRoom: res.data.TagOnRoom[0].tag,
+          });
+        }
       })
       .catch(function (error) {
         console.log(error);
@@ -58,10 +112,78 @@ class Room_Create extends React.Component {
       });
   }
   onSelectChange(event) {
-    this.setState({ type: event.target.value });
+    this.setState({ [event.target.name]: event.target.value });
+  }
+
+  addTag() {
+    if (isNaN(this.state.selectedTag)) return;
+    axios
+      .post(
+        "http://localhost:3001/tag/linkroom",
+        {
+          id_room: this.state.id,
+          id_tag: this.state.selectedTag,
+        },
+        { withCredentials: true }
+      )
+      .then((res) => {
+        this.loadRoom();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   render() {
+    var tagView;
+    if (this.state.tagRoom == null)
+      tagView = (
+        <>
+          <Form.Label>Ajouter un tag</Form.Label>
+          <Form.Select
+            aria-label="Exemple"
+            name="selectedTag"
+            value={this.state.selectedTag}
+            onChange={this.onSelectChange}
+          >
+            <option>--Sélectionne--</option>
+            {this.state.tags.map((item) => (
+              <option
+                key={item.id}
+                value={item.id}
+                style={{ backgroundColor: item.color }}
+              >
+                {item.name}
+              </option>
+            ))}
+          </Form.Select>
+          <Button variant="secondary" onClick={this.addTag}>
+            Ajouter
+          </Button>
+        </>
+      );
+    else
+      tagView = (
+        <>
+          <Form.Label>Tag:</Form.Label>
+          <InputGroup>
+            <FormControl
+              style={{ backgroundColor: this.state.tagRoom.color }}
+              disabled
+              readOnly
+              value={this.state.tagRoom.name}
+            />
+            <Button
+              variant="secondary"
+              onClick={() =>
+                this.deleteTag(this.state.id, this.state.tagRoom.id)
+              }
+            >
+              X
+            </Button>
+          </InputGroup>
+        </>
+      );
     const defaultPiece = [
       { id: 1, name: "Chambre" },
       { id: 2, name: "Cuisine" },
@@ -96,26 +218,32 @@ class Room_Create extends React.Component {
               placeholder="Enter comment"
             />
           </Form.Group>
-          <Form.Group>
-            <Form.Label>Type de pièce</Form.Label>
-            <Form.Select
-              aria-label="Exemple"
-              name="selectedTag"
-              onChange={this.onSelectChange}
-              value={this.state.type}
-            >
-              <option>--Sélectionne--</option>
-              {defaultPiece.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-          <br />
-          <Button variant="secondary" onClick={this.onSubmit}>
-            Submit
-          </Button>
+          <Row>
+            <Col>
+              <Form.Group>
+                <Form.Label>Type de pièce</Form.Label>
+                <Form.Select
+                  aria-label="Exemple"
+                  name="type"
+                  onChange={this.onSelectChange}
+                  value={this.state.type}
+                >
+                  <option>--Sélectionne--</option>
+                  {defaultPiece.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
+                </Form.Select>
+                <Button variant="secondary" onClick={this.onSubmit}>
+                  Sauvegarder
+                </Button>
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group>{tagView}</Form.Group>
+            </Col>
+          </Row>
         </Form>
       </div>
     );

@@ -4,7 +4,11 @@ import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
 
 export function NavigationBarSociety(props) {
   return (
-    <Navbar variant="dark" style={{ backgroundColor: props.color }}>
+    <Navbar
+      className="w-100"
+      variant="dark"
+      style={{ backgroundColor: props.color }}
+    >
       <Container>
         <Navbar.Brand href="#" onClick={() => window.location.reload(false)}>
           Case App
