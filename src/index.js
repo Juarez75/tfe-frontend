@@ -7,7 +7,6 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import RoomList from "./pages/BasicUser/Room_List";
 import Room from "./pages/BasicUser/Room";
-import RoomModify from "./pages/BasicUser/Room_Modify";
 import BoxCreate from "./pages/BasicUser/Box_Create";
 import BoxModify from "./pages/BasicUser/Box_Modify";
 import Box from "./pages/BasicUser/Box";
@@ -30,7 +29,6 @@ root.render(
       <Route path="room">
         <Route path="list" element={<RoomList />}></Route>
         <Route path=":id" element={<Room />}></Route>
-        <Route path="modify/:id" element={<RoomModify />}></Route>
       </Route>
       <Route path="box">
         <Route path="create/:id" element={<BoxCreate />}></Route>
