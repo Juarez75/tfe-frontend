@@ -2,7 +2,7 @@ import axios from "axios";
 import React from "react";
 import { Row, Col, Form, Button, InputGroup } from "react-bootstrap";
 import { withRouter } from "../../withRouter";
-import { NavigationBarSociety } from "../View/NavSociety";
+import { NavigationBarSociety } from "../Component/NavSociety";
 
 class Personalize extends React.Component {
   constructor(props) {

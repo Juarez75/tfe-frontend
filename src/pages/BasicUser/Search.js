@@ -7,9 +7,13 @@ import {
   DropdownButton,
   Dropdown,
   Button,
+  Modal,
 } from "react-bootstrap";
 import axios from "axios";
-import { NavigationBar } from "../View/NavUser";
+import { NavigationBar } from "../Component/NavUser";
+import { ModifyObject } from "../Component/ModifyObject";
+import { ModifyRoom } from "../Component/ModifyRoom";
+import { ModifyBox } from "../Component/ModifiyBox";
 
 class Search extends React.Component {
   constructor(props) {
@@ -20,6 +24,10 @@ class Search extends React.Component {
       object: [],
       tag: [],
       search: "",
+      id: null,
+      showBox: false,
+      showRoom: false,
+      showObject: false,
       type: localStorage.getItem("type"),
       color: localStorage.getItem("color"),
     };
@@ -61,8 +69,11 @@ class Search extends React.Component {
   onClick(id, name) {
     this.props.router.navigate("/" + name + "/" + id);
   }
-  onModify(id, name) {
-    this.props.router.navigate("/" + name + "/modify/" + id);
+  onModify(id, type) {
+    // type 0 => Room | type 1 => Box | type 2 => Object
+    if (type == 0) this.setState({ id: id, showRoom: true });
+    else if (type == 1) this.setState({ id: id, showBox: true });
+    else if (type == 2) this.setState({ id: id, showObject: true });
   }
   onDelete(id, name) {
     axios
@@ -82,18 +93,32 @@ class Search extends React.Component {
         console.log(error);
       });
   }
-  updateEmpty(empty, id) {
-    axios
-      .post(
-        "http://localhost:3001/box/empty",
-        {
-          id: id,
-          empty: empty,
-        },
-        { withCredentials: true }
-      )
-      .then(() => this.loadData(this.state.search))
-      .catch((error) => console.log(error));
+  updateEmpty(data, id, empty) {
+    if (empty) {
+      axios
+        .post(
+          "http://localhost:3001/box/empty",
+          {
+            id: id,
+            empty: data,
+          },
+          { withCredentials: true }
+        )
+        .then(() => this.loadData(this.state.search))
+        .catch((error) => console.log(error));
+    } else {
+      axios
+        .post(
+          "http://localhost:3001/box/fragile",
+          {
+            id: id,
+            fragile: data,
+          },
+          { withCredentials: true }
+        )
+        .then(() => this.loadData(this.state.search))
+        .catch((error) => console.log(error));
+    }
   }
   render() {
     if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
@@ -101,6 +126,24 @@ class Search extends React.Component {
       <div>
         <NavigationBar color={this.state.color} />
         <h4>Recherche</h4>
+        <Modal
+          show={this.state.showRoom}
+          onHide={() => this.setState({ showRoom: false })}
+        >
+          <ModifyRoom id={this.state.id} />
+        </Modal>
+        <Modal
+          show={this.state.showBox}
+          onHide={() => this.setState({ showBox: false })}
+        >
+          <ModifyBox id={this.state.id} />
+        </Modal>
+        <Modal
+          show={this.state.showObject}
+          onHide={() => this.setState({ showObject: false })}
+        >
+          <ModifyObject id={this.state.id} />
+        </Modal>
         <Form.Control
           name="search"
           value={this.state.search}
@@ -120,7 +163,7 @@ class Search extends React.Component {
                   {item.name}
                 </Button>
                 <DropdownButton title="" variant="light">
-                  <Dropdown.Item onClick={() => this.onModify(item.id, "room")}>
+                  <Dropdown.Item onClick={() => this.onModify(item.id, 0)}>
                     Modify
                   </Dropdown.Item>
                   <Dropdown.Item onClick={() => this.onDelete(item.id, "room")}>
@@ -143,7 +186,7 @@ class Search extends React.Component {
                   {item.name}
                 </Button>
                 <DropdownButton title="" variant="light">
-                  <Dropdown.Item onClick={() => this.onModify(item.id, "box")}>
+                  <Dropdown.Item onClick={() => this.onModify(item.id, 1)}>
                     Modify
                   </Dropdown.Item>
                   <Dropdown.Item onClick={() => this.onDelete(item.id, "box")}>
@@ -155,7 +198,19 @@ class Search extends React.Component {
                   label="Vidée"
                   checked={item.empty}
                   onChange={() =>
-                    this.updateEmpty((item.empty = !item.empty), item.id)
+                    this.updateEmpty((item.empty = !item.empty), item.id, true)
+                  }
+                />
+                <Form.Check
+                  className="my-auto ms-3"
+                  label="Fragile"
+                  checked={item.fragile}
+                  onChange={() =>
+                    this.updateEmpty(
+                      (item.fragile = !item.fragile),
+                      item.id,
+                      false
+                    )
                   }
                 />
               </ButtonGroup>
@@ -169,12 +224,15 @@ class Search extends React.Component {
         <ListGroup>
           {this.state.object.map((item) => (
             <ListGroup.Item key={item.id}>
-              {item.name}
+              <Button
+                variant="light"
+                onClick={() => this.onClick(item.id_box, "box")}
+              >
+                {item.name}
+              </Button>
               <ButtonGroup>
                 <DropdownButton title="" variant="light">
-                  <Dropdown.Item
-                    onClick={() => this.onModify(item.id, "object")}
-                  >
+                  <Dropdown.Item onClick={() => this.onModify(item.id, 2)}>
                     Modify
                   </Dropdown.Item>
                   <Dropdown.Item
@@ -222,7 +280,20 @@ class Search extends React.Component {
                       onChange={() =>
                         this.updateEmpty(
                           (item2.box.empty = !item2.box.empty),
-                          item2.box.id
+                          item2.box.id,
+                          true
+                        )
+                      }
+                    />
+                    <Form.Check
+                      className="my-auto ms-3"
+                      label="Fragile"
+                      checked={item2.box.fragile}
+                      onChange={() =>
+                        this.updateEmpty(
+                          (item2.box.fragile = !item2.box.fragile),
+                          item2.box.id,
+                          false
                         )
                       }
                     />

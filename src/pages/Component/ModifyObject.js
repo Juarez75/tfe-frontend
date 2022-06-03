@@ -1,15 +1,12 @@
 import React from "react";
+import { ModalBody, ModalTitle, Form, Button } from "react-bootstrap";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import { Form, Button } from "react-bootstrap";
-import { withRouter } from "../../withRouter";
-import { NavigationBar } from "../View/NavUser";
 
-class Box_Create extends React.Component {
+export class ModifyObject extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: parseInt(props.router.params.id),
+      id: props.id,
       name: "",
       id_box: "",
       type: localStorage.getItem("type"),
@@ -42,36 +39,35 @@ class Box_Create extends React.Component {
         { withCredentials: true }
       )
       .then((res) => {
-        this.props.router.navigate("/box/" + this.state.id_box);
+        window.location.reload(false);
       })
       .catch(function (error) {
         console.log(error);
       });
   }
-
   render() {
-    if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
     return (
-      <div>
-        <NavigationBar color={this.state.color} />
-        <Form>
-          <Form.Group className="mb-3" controlId="formBasicText">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              name="name"
-              value={this.state.name}
-              type="text"
-              onChange={this.handleChange}
-              placeholder="Enter name"
-            />
-          </Form.Group>
+      <>
+        <ModalTitle>Modification de l'objet</ModalTitle>
+        <ModalBody>
+          <Form>
+            <Form.Group className="mb-3" controlId="formBasicText">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                name="name"
+                value={this.state.name}
+                type="text"
+                onChange={this.handleChange}
+                placeholder="Enter name"
+              />
+            </Form.Group>
 
-          <Button variant="secondary" onClick={this.onSubmit}>
-            Submit
-          </Button>
-        </Form>
-      </div>
+            <Button variant="secondary" onClick={this.onSubmit}>
+              Submit
+            </Button>
+          </Form>
+        </ModalBody>
+      </>
     );
   }
 }
-export default withRouter(Box_Create);

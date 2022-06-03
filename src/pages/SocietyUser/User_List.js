@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button, ListGroup, Form, Col } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { withRouter } from "../../withRouter";
-import { NavigationBarSociety } from "../View/NavSociety";
+import { NavigationBarSociety } from "../Component/NavSociety";
 
 class User_List extends React.Component {
   constructor(props) {

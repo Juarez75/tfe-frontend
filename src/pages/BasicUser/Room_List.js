@@ -14,7 +14,7 @@ import {
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { withRouter } from "../../withRouter";
-import { NavigationBar } from "../View/NavUser";
+import { NavigationBar } from "../Component/NavUser";
 import _, { isUndefined } from "lodash";
 
 class Room_List extends React.Component {

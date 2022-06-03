@@ -8,10 +8,12 @@ import {
   Dropdown,
   ButtonGroup,
   Form,
+  Modal,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { withRouter } from "../../withRouter";
-import { NavigationBar } from "../View/NavUser";
+import { NavigationBar } from "../Component/NavUser";
+import { ModifyBox } from "../Component/ModifiyBox";
 
 class Box_List extends React.Component {
   constructor(props) {
@@ -20,6 +22,8 @@ class Box_List extends React.Component {
       box: [],
       type: localStorage.getItem("type"),
       color: localStorage.getItem("color"),
+      show: false,
+      id_box: "",
     };
     this.loadData = this.loadData.bind(this);
     this.loadData();
@@ -54,7 +58,7 @@ class Box_List extends React.Component {
       });
   }
   onModify(id) {
-    this.props.router.navigate(`/box/modify/${id}`);
+    this.setState({ id_box: id, show: true });
   }
   onCreate() {
     this.props.router.navigate("/box/create");
@@ -63,18 +67,32 @@ class Box_List extends React.Component {
   onClick(id) {
     this.props.router.navigate(`/box/${id}`);
   }
-  updateEmpty(empty, id) {
-    axios
-      .post(
-        "http://localhost:3001/box/empty",
-        {
-          id: id,
-          empty: empty,
-        },
-        { withCredentials: true }
-      )
-      .then(() => this.loadData())
-      .catch((error) => console.log(error));
+  updateEmpty(data, id, empty) {
+    if (empty) {
+      axios
+        .post(
+          "http://localhost:3001/box/empty",
+          {
+            id: id,
+            empty: data,
+          },
+          { withCredentials: true }
+        )
+        .then(() => this.loadData())
+        .catch((error) => console.log(error));
+    } else {
+      axios
+        .post(
+          "http://localhost:3001/box/fragile",
+          {
+            id: id,
+            fragile: data,
+          },
+          { withCredentials: true }
+        )
+        .then(() => this.loadData())
+        .catch((error) => console.log(error));
+    }
   }
 
   render() {
@@ -83,6 +101,12 @@ class Box_List extends React.Component {
       <div>
         <NavigationBar color={this.state.color} />
         <h4>Liste des box</h4>
+        <Modal
+          show={this.state.show}
+          onHide={() => this.setState({ show: false })}
+        >
+          <ModifyBox id={this.state.id_box} />
+        </Modal>
         <ListGroup>
           {this.state.box.map((item) => (
             <ListGroup.Item variant={item.empty ? "danger" : ""} key={item.id}>
@@ -103,7 +127,19 @@ class Box_List extends React.Component {
                   label="Vidée"
                   checked={item.empty}
                   onChange={() =>
-                    this.updateEmpty((item.empty = !item.empty), item.id)
+                    this.updateEmpty((item.empty = !item.empty), item.id, true)
+                  }
+                />
+                <Form.Check
+                  className="my-auto ms-3"
+                  label="Fragile"
+                  checked={item.fragile}
+                  onChange={() =>
+                    this.updateEmpty(
+                      (item.fragile = !item.fragile),
+                      item.id,
+                      false
+                    )
                   }
                 />
               </ButtonGroup>

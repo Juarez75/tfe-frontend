@@ -2,8 +2,8 @@ import React from "react";
 import axios from "axios";
 import { withRouter } from "../withRouter";
 import { Button, Form, Row, Col, InputGroup } from "react-bootstrap";
-import { NavigationBar } from "./View/NavUser";
-import { NavigationBarSociety } from "./View/NavSociety";
+import { NavigationBar } from "./Component/NavUser";
+import { NavigationBarSociety } from "./Component/NavSociety";
 
 class Profile extends React.Component {
   constructor(props) {

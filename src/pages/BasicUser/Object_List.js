@@ -9,7 +9,7 @@ import {
   ButtonGroup,
 } from "react-bootstrap";
 import { withRouter } from "../../withRouter";
-import { NavigationBar } from "../View/NavUser";
+import { NavigationBar } from "../Component/NavUser";
 
 class Box_List extends React.Component {
   constructor(props) {

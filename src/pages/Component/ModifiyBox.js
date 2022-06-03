@@ -1,22 +1,27 @@
-import React from "react";
-import axios from "axios";
 import {
-  Form,
   Button,
-  InputGroup,
+  ListGroup,
+  DropdownButton,
+  Dropdown,
+  ButtonGroup,
+  Form,
   Row,
+  ModalTitle,
+  Modal,
   Col,
+  InputGroup,
   FormControl,
-  CloseButton,
+  ModalBody,
 } from "react-bootstrap";
-import { withRouter } from "../../withRouter";
-import { NavigationBar } from "../View/NavUser";
+import axios from "axios";
+import { isUndefined } from "lodash";
+import React from "react";
 
-class Room_Create extends React.Component {
+export class ModifyBox extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: parseInt(props.router.params.id),
+      id: props.id,
       id_room: "",
       name: "",
       comment: "",
@@ -33,7 +38,6 @@ class Room_Create extends React.Component {
     this.addTag = this.addTag.bind(this);
     this.onSelectChange = this.onSelectChange.bind(this);
     this.loadTag = this.loadTag.bind(this);
-
     axios
       .get(`http://localhost:3001/box/information/${this.state.id}`, {
         withCredentials: true,
@@ -74,7 +78,7 @@ class Room_Create extends React.Component {
         { withCredentials: true }
       )
       .then((res) => {
-        this.props.router.navigate(`/room/${this.state.id_room}`);
+        window.location.reload(false);
       })
       .catch(function (error) {
         console.log(error);
@@ -133,9 +137,7 @@ class Room_Create extends React.Component {
         console.log(error);
       });
   }
-
   render() {
-    if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
     let tagSelection = (
       <InputGroup>
         <Form.Select
@@ -158,55 +160,56 @@ class Room_Create extends React.Component {
     if (this.state.tagBox.length == 3)
       tagSelection = <small>Max 3 tags par box</small>;
     return (
-      <div>
-        <NavigationBar color={this.state.color} />
-        <h4>Modification d'une box</h4>
-        <Form>
-          <Form.Group className="mb-3" controlId="formBasicText">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              name="name"
-              value={this.state.name}
-              type="text"
-              onChange={this.handleChange}
-              placeholder="Enter name"
-            />
-          </Form.Group>
+      <>
+        <ModalTitle>Modification d'une box</ModalTitle>
+        <ModalBody>
+          {" "}
+          <Form>
+            <Form.Group className="mb-3" controlId="formBasicText">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                name="name"
+                value={this.state.name}
+                type="text"
+                onChange={this.handleChange}
+                placeholder="Enter name"
+              />
+            </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formBasicText">
-            <Form.Label>Comment</Form.Label>
-            <Form.Control
-              name="comment"
-              value={this.state.comment}
-              type="text"
-              onChange={this.handleChange}
-              placeholder="Enter comment"
-            />
-          </Form.Group>
-          <Button variant="secondary" onClick={this.onSubmit}>
-            Submit
-          </Button>
-        </Form>
-        <br />
-        <Row>
-          {this.state.tagBox.map((item) => (
-            <Col key={item.id_tag} md={4}>
-              <InputGroup>
-                <FormControl disabled readOnly value={item.tag.name} />
-                <Button
-                  variant="secondary"
-                  onClick={() => this.deleteTag(item.id_box, item.id_tag)}
-                >
-                  X
-                </Button>
-              </InputGroup>
-            </Col>
-          ))}
-        </Row>
-        <br />
-        {tagSelection}
-      </div>
+            <Form.Group className="mb-3" controlId="formBasicText">
+              <Form.Label>Comment</Form.Label>
+              <Form.Control
+                name="comment"
+                value={this.state.comment}
+                type="text"
+                onChange={this.handleChange}
+                placeholder="Enter comment"
+              />
+            </Form.Group>
+            <Button variant="secondary" onClick={this.onSubmit}>
+              Submit
+            </Button>
+          </Form>
+          <br />
+          <Row>
+            {this.state.tagBox.map((item) => (
+              <Col key={item.id_tag} md={4}>
+                <InputGroup>
+                  <FormControl disabled readOnly value={item.tag.name} />
+                  <Button
+                    variant="secondary"
+                    onClick={() => this.deleteTag(item.id_box, item.id_tag)}
+                  >
+                    X
+                  </Button>
+                </InputGroup>
+              </Col>
+            ))}
+          </Row>
+          <br />
+          {tagSelection}
+        </ModalBody>
+      </>
     );
   }
 }
-export default withRouter(Room_Create);
