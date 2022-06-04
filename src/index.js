@@ -8,7 +8,6 @@ import Register from "./pages/Register";
 import RoomList from "./pages/BasicUser/Room_List";
 import Room from "./pages/BasicUser/Room";
 import Box from "./pages/BasicUser/Box";
-import ObjectModify from "./pages/BasicUser/Object_Modify";
 import BoxList from "./pages/BasicUser/Box_List";
 import ObjectList from "./pages/BasicUser/Object_List";
 import Profile from "./pages/Profile";
@@ -32,7 +31,6 @@ root.render(
         <Route path="list" element={<BoxList />}></Route>
       </Route>
       <Route path="object">
-        <Route path="modify/:id" element={<ObjectModify />}></Route>
         <Route path="list" element={<ObjectList />}></Route>
       </Route>
       <Route path="/profile" element={<Profile />}></Route>

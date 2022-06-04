@@ -44,12 +44,15 @@ class Room_List extends React.Component {
       selectedTag: "",
       nameBox: "",
       commentBox: "",
+      selectedNumber: "1",
     };
     this.onRoomDelete = this.onRoomDelete.bind(this);
     this.onRoomModify = this.onRoomModify.bind(this);
     this.loadData = this.loadData.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.onMultCreate = this.onMultCreate.bind(this);
+    this.onSelectChange = this.onSelectChange.bind(this);
     this.loadData();
   }
 
@@ -176,8 +179,36 @@ class Room_List extends React.Component {
         console.log(error);
       });
   }
+  onMultCreate() {
+    axios
+      .post(
+        "http://localhost:3001/box/createmany",
+        {
+          id_room: this.state.id,
+          number: this.state.selectedNumber,
+        },
+        { withCredentials: true }
+      )
+      .then((res) => {
+        this.loadData();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+  onSelectChange(event) {
+    this.setState({ [event.target.name]: event.target.value });
+  }
 
   render() {
+    var stages = [];
+    for (var i = 1; i < 51; i++) {
+      stages.push(
+        <option key={i} value={i}>
+          {i}
+        </option>
+      );
+    }
     if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
@@ -242,10 +273,43 @@ class Room_List extends React.Component {
         </h4>
         <ListGroup>
           <ListGroup.Item>
-            <Button variant="outline-secondary" onClick={() => this.onCreate()}>
-              Add new box
-            </Button>
+            <Row>
+              <Col md={2}>
+                <Button
+                  variant="outline-secondary"
+                  onClick={() => this.onCreate()}
+                >
+                  Add new box
+                </Button>
+              </Col>
+              <Col>
+                <InputGroup>
+                  <Form.Label className="my-auto">
+                    Ajout rapide de caisse :
+                  </Form.Label>
+                  <div id="selectNumber">
+                    <Form.Select
+                      aria-label="Exemple"
+                      name="selectedNumber"
+                      onChange={this.onSelectChange}
+                      value={this.state.selectedNumber}
+                      id="test"
+                    >
+                      {stages}
+                    </Form.Select>
+                  </div>
+
+                  <Button
+                    variant="outline-secondary"
+                    onClick={() => this.onMultCreate()}
+                  >
+                    Ajouter
+                  </Button>
+                </InputGroup>
+              </Col>
+            </Row>
           </ListGroup.Item>
+
           {this.state.box.map((item) => (
             <div key={item.id}>
               <ListGroup.Item variant={item.empty ? "danger" : ""}>

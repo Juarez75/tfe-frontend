@@ -32,12 +32,14 @@ export class ModifyBox extends React.Component {
       tags: [],
       selectedTag: "--Sélectionne--",
       id_box: "",
+      room: [],
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.addTag = this.addTag.bind(this);
     this.onSelectChange = this.onSelectChange.bind(this);
     this.loadTag = this.loadTag.bind(this);
+    this.loadRoom = this.loadRoom.bind(this);
     axios
       .get(`http://localhost:3001/box/information/${this.state.id}`, {
         withCredentials: true,
@@ -62,6 +64,17 @@ export class ModifyBox extends React.Component {
       .catch((error) => {
         console.log(error);
       });
+    this.loadRoom();
+  }
+  loadRoom() {
+    axios
+      .get(`http://localhost:3001/room/list`, { withCredentials: true })
+      .then((res) => {
+        this.setState({ room: res.data });
+      })
+      .catch(function (error) {
+        console.log(error.response.data);
+      });
   }
   handleChange(event) {
     this.setState({ [event.target.name]: event.target.value });
@@ -74,6 +87,7 @@ export class ModifyBox extends React.Component {
           id: this.state.id,
           name: this.state.name,
           comment: this.state.comment,
+          id_room: this.state.id_room,
         },
         { withCredentials: true }
       )
@@ -85,8 +99,7 @@ export class ModifyBox extends React.Component {
       });
   }
   onSelectChange(event) {
-    console.log(event.target.value);
-    this.setState({ selectedTag: event.target.value });
+    this.setState({ [event.target.name]: event.target.value });
   }
   addTag() {
     if (isNaN(this.state.selectedTag)) return;
@@ -138,6 +151,7 @@ export class ModifyBox extends React.Component {
       });
   }
   render() {
+    var color;
     let tagSelection = (
       <InputGroup>
         <Form.Select
@@ -165,16 +179,45 @@ export class ModifyBox extends React.Component {
         <ModalBody>
           {" "}
           <Form>
-            <Form.Group className="mb-3" controlId="formBasicText">
-              <Form.Label>Name</Form.Label>
-              <Form.Control
-                name="name"
-                value={this.state.name}
-                type="text"
-                onChange={this.handleChange}
-                placeholder="Enter name"
-              />
-            </Form.Group>
+            <Row>
+              <Col>
+                <Form.Group className="mb-3" controlId="formBasicText">
+                  <Form.Label>Name</Form.Label>
+                  <Form.Control
+                    name="name"
+                    value={this.state.name}
+                    type="text"
+                    onChange={this.handleChange}
+                    placeholder="Enter name"
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group>
+                  <Form.Label>Pièce</Form.Label>
+                  <Form.Select
+                    aria-label="Exemple"
+                    name="id_room"
+                    onChange={this.onSelectChange}
+                    value={this.state.id_room}
+                  >
+                    {this.state.room.map((item) => (
+                      <option
+                        key={item.id}
+                        value={item.id}
+                        style={{
+                          backgroundColor: isUndefined(item.TagOnRoom[0])
+                            ? (color = "#FFFFFF")
+                            : (color = item.TagOnRoom[0].tag.color),
+                        }}
+                      >
+                        {item.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+            </Row>
 
             <Form.Group className="mb-3" controlId="formBasicText">
               <Form.Label>Comment</Form.Label>

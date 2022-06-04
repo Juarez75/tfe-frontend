@@ -1,3 +1,6 @@
 body{
     overflow-x: hidden
 }
+#selectNumber{
+    width: 4em;
+}
