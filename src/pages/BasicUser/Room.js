@@ -240,6 +240,7 @@ class Room_List extends React.Component {
                   type="text"
                   onChange={this.handleChange}
                   placeholder="Enter name"
+                  maxLength={14}
                 />
               </Form.Group>
 

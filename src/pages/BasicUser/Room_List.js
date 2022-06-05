@@ -76,7 +76,7 @@ class Room_List extends React.Component {
         {
           name: this.state.name,
           comment: this.state.comment,
-          type: this.state.type,
+          type: this.state.typeRoom,
           stage: this.state.stage,
           tag: this.state.selectedTag,
         },

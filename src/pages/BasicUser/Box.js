@@ -209,15 +209,15 @@ class Room_List extends React.Component {
     ];
     if (this.state.typeUser == 1) <div>"Vous n'avez pas accès à ça "</div>;
     var listObjects;
-    this.state.typeRoom == 1
+    this.state.room.type == 1
       ? (listObjects = listBedroom)
-      : this.state.typeRoom == 2
+      : this.state.room.type == 2
       ? (listObjects = listKitchen)
-      : this.state.typeRoom == 3
+      : this.state.room.type == 3
       ? (listObjects = listLivingroom)
-      : this.state.typeRoom == 4
+      : this.state.room.type == 4
       ? (listObjects = listOffice)
-      : this.state.typeRoom == 5
+      : this.state.room.type == 5
       ? (listObjects = listBathroom)
       : (listObjects = listDefault);
     return (

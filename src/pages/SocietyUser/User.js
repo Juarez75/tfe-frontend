@@ -13,6 +13,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { withRouter } from "../../withRouter";
 import { NavigationBarSociety } from "../Component/NavSociety";
 import _, { isUndefined } from "lodash";
+import Fragile from "../../image/fragile.svg";
 
 class Room_List extends React.Component {
   constructor(props) {
@@ -36,7 +37,7 @@ class Room_List extends React.Component {
   }
 
   onClick(id) {
-    this.props.router.navigate(`/society/room/${id}`);
+    this.props.router.navigate(`/society/pdf/${id}`, { replace: true });
   }
 
   render() {
@@ -47,6 +48,15 @@ class Room_List extends React.Component {
       <div>
         <NavigationBarSociety color={this.state.color} />
         <h4>Liste des pièces de l'utilisateur</h4>
+        <Button variant="secondary">
+          <a
+            id="pdf"
+            target="_blank"
+            href={`/society/pdf/${this.state.id_user}`}
+          >
+            PDF de l'utilisateur
+          </a>
+        </Button>
         <ListGroup>
           {rooms.map((row, i) => (
             <Row key={i}>

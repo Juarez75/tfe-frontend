@@ -15,6 +15,7 @@ import Search from "./pages/BasicUser/Search";
 import UserList from "./pages/SocietyUser/User_List";
 import User from "./pages/SocietyUser/User";
 import Personalize from "./pages/SocietyUser/Personalize";
+import Pdf from "./pages/SocietyUser/Pdf";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -36,6 +37,7 @@ root.render(
       <Route path="/profile" element={<Profile />}></Route>
       <Route path="/search" element={<Search />}></Route>
       <Route path="society">
+        <Route path="pdf/:id" element={<Pdf />}></Route>
         <Route path="users" element={<UserList />}></Route>
         <Route path="user/:id" element={<User />}></Route>
         <Route path="personalize" element={<Personalize />}></Route>

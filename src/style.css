@@ -1,6 +1,14 @@
 body{
-    overflow-x: hidden
+    overflow-x: hidden;
+    width: 100%;
 }
 #selectNumber{
     width: 4em;
+}
+#pdf{
+    text-decoration:none;
+    color: white;
+}
+#text{
+    margin: 300px !important;
 }
