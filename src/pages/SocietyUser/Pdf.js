@@ -12,7 +12,7 @@ import {
 import axios from "axios";
 
 import { withRouter } from "../../withRouter";
-import _, { isUndefined, sortedLastIndex } from "lodash";
+import _, { isUndefined } from "lodash";
 import { Col, Row, Card, Modal } from "react-bootstrap";
 import { ModifyBox } from "../Component/ModifiyBox";
 import Fragile from "../../image/fragile.png";
