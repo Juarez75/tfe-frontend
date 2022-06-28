@@ -8,12 +8,14 @@ import {
   Row,
   ButtonGroup,
   Card,
+  Modal,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { withRouter } from "../../withRouter";
 import { NavigationBarSociety } from "../Component/NavSociety";
 import _, { isUndefined } from "lodash";
-import Fragile from "../../image/fragile.svg";
+import WrongPage from "../Component/WrongPage";
+import ErrorHappened from "../Component/ErrorHappened";
 
 class Room_List extends React.Component {
   constructor(props) {
@@ -23,6 +25,8 @@ class Room_List extends React.Component {
       id_user: this.props.router.params.id,
       type: localStorage.getItem("type"),
       color: localStorage.getItem("color"),
+      WRONG_PAGE: false,
+      ERROR_HAPPENED: false,
     };
     axios
       .get(`http://localhost:3001/society/user/${this.state.id_user}`, {
@@ -31,8 +35,15 @@ class Room_List extends React.Component {
       .then((res) => {
         this.setState({ room: res.data });
       })
-      .catch((res) => {
-        console.log(res);
+      .catch((error) => {
+        if (error.response.statusText == "Unauthorized")
+          this.props.router.navigate("/");
+        else if (error.response.data == "WRONG_PAGE")
+          this.setState({ WRONG_PAGE: true });
+        else if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
       });
   }
 
@@ -41,46 +52,56 @@ class Room_List extends React.Component {
   }
 
   render() {
+    if (this.state.WRONG_PAGE) return <WrongPage></WrongPage>;
     var color;
     if (this.state.type == 2) return <div>Vous n'avez pas accès à ça</div>;
     const rooms = _.chunk(this.state.room, 3);
     return (
       <div>
+        <Modal
+          show={this.state.ERROR_HAPPENED}
+          onHide={() => this.setState({ ERROR_HAPPENED: false })}
+        >
+          <ErrorHappened></ErrorHappened>
+        </Modal>
         <NavigationBarSociety color={this.state.color} />
-        <h4>Liste des pièces de l'utilisateur</h4>
-        <Button variant="secondary">
-          <a
-            id="pdf"
-            target="_blank"
-            href={`/society/pdf/${this.state.id_user}`}
-          >
-            PDF de l'utilisateur
-          </a>
-        </Button>
-        <ListGroup>
-          {rooms.map((row, i) => (
-            <Row key={i}>
-              {row.map((item) => (
-                <Col key={item.id} md={4}>
-                  <Card
-                    border="dark"
-                    className="d-grip mx-1 my-1"
-                    style={{
-                      backgroundColor: isUndefined(item.TagOnRoom[0])
-                        ? (color = "#FFFFFF")
-                        : (color = item.TagOnRoom[0].tag.color),
-                    }}
-                  >
-                    <Card.Title className="mx-auto">{item.name}</Card.Title>
-                    <Card.Subtitle className="mx-auto">
-                      Nombre de box : {item._count.box}
-                    </Card.Subtitle>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-          ))}
-        </ListGroup>
+        <div id="center_list">
+          <h4>Liste des pièces de l'utilisateur</h4>
+          <Button variant="secondary">
+            <a
+              id="pdf"
+              target="_blank"
+              href={`/society/pdf/${this.state.id_user}`}
+            >
+              PDF de l'utilisateur
+            </a>
+          </Button>
+          <ListGroup>
+            {rooms.map((row, i) => (
+              <Row key={i}>
+                {row.map((item) => (
+                  <Col key={item.id} md={4}>
+                    <Card
+                      border="dark"
+                      className="d-grip mx-1 my-1"
+                      style={{
+                        backgroundColor:
+                          item.id_TagSociety == null
+                            ? (color = "#FFFFFF")
+                            : (color = item.TagSociety.color),
+                      }}
+                    >
+                      <Card.Title className="mx-auto">{item.name}</Card.Title>
+                      <Card.Subtitle className="mx-auto">
+                        Nombre de box : {item._count.box}
+                      </Card.Subtitle>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            ))}
+          </ListGroup>
+        </div>
       </div>
     );
   }

@@ -11,11 +11,16 @@ import {
   ModalHeader,
   Form,
   ModalBody,
+  Breadcrumb,
+  ModalTitle,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { withRouter } from "../../withRouter";
 import { NavigationBar } from "../Component/NavUser";
 import { ModifyObject } from "../Component/ModifyObject";
+import Delete from "../Component/Delete";
+import WrongPage from "../Component/WrongPage";
+import ErrorHappened from "../Component/ErrorHappened";
 
 class Room_List extends React.Component {
   constructor(props) {
@@ -32,6 +37,14 @@ class Room_List extends React.Component {
       objects: [],
       type: localStorage.getItem("type"),
       color: localStorage.getItem("color"),
+      showDelete: false,
+      id_data: "",
+      url_data: "",
+      name_data: "",
+      url_return: "",
+      type_delete: "",
+      WRONG_PAGE: false,
+      ERROR_HAPPENED: false,
     };
     this.loadData = this.loadData.bind(this);
     this.onDelete = this.onDelete.bind(this);
@@ -55,28 +68,27 @@ class Room_List extends React.Component {
           room: res.data.room,
         });
       })
-      .catch(function (error) {
-        console.log(error);
+      .catch((error) => {
+        if (error.response.statusText == "Unauthorized")
+          this.props.router.navigate("/");
+        else if (error.response.data == "WRONG_PAGE")
+          this.setState({ WRONG_PAGE: true });
+        else if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
       });
   }
 
-  onDelete(id) {
-    axios
-      .post(
-        `http://localhost:3001/object/delete`,
-        {
-          id: id,
-        },
-        {
-          withCredentials: true,
-        }
-      )
-      .then((res) => {
-        this.loadData();
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+  onDelete(id, name) {
+    this.setState({
+      url_data: "http://localhost:3001/object/delete",
+      id_data: id,
+      name_data: name,
+      showDelete: true,
+      url_return: `/box/${this.state.id}`,
+      type_delete: 0,
+    });
   }
   onModify(id) {
     console.log(id);
@@ -89,23 +101,27 @@ class Room_List extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
   }
   onSubmit(name) {
-    console.log(this.state.room.id);
-    axios
-      .post(
-        `http://localhost:3001/object/create`,
-        {
-          id_box: this.state.box.id,
-          name: name,
-          id_room: this.state.room.id,
-        },
-        { withCredentials: true }
-      )
-      .then((res) => {
-        this.loadData();
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    if (name != "") {
+      axios
+        .post(
+          `http://localhost:3001/object/create`,
+          {
+            id_box: this.state.box.id,
+            name: name,
+          },
+          { withCredentials: true }
+        )
+        .then((res) => {
+          this.loadData();
+          this.setState({ show: false });
+        })
+        .catch(function (error) {
+          if (error.response.data == "ERROR") {
+            this.setState({ ERROR_HAPPENED: true });
+            setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+          }
+        });
+    }
   }
   onAdd(name) {
     axios
@@ -123,7 +139,10 @@ class Room_List extends React.Component {
         this.loadData();
       })
       .catch(function (error) {
-        console.log(error);
+        if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
       });
   }
   ifSuccess() {
@@ -220,89 +239,128 @@ class Room_List extends React.Component {
       : this.state.room.type == 5
       ? (listObjects = listBathroom)
       : (listObjects = listDefault);
+
+    if (this.state.WRONG_PAGE) return <WrongPage></WrongPage>;
     return (
       <div>
+        <Modal
+          show={this.state.ERROR_HAPPENED}
+          onHide={() => this.setState({ ERROR_HAPPENED: false })}
+        >
+          <ErrorHappened></ErrorHappened>
+        </Modal>
         <NavigationBar color={this.state.color} />
-        <h4>Dans la box : {this.state.box.name}</h4>
-        <Modal
-          show={this.state.showModify}
-          onHide={() => this.setState({ showModify: false })}
-        >
-          <ModifyObject id={this.state.id_object} />
-        </Modal>
-        <Modal
-          show={this.state.show}
-          onHide={() => this.setState({ show: false })}
-        >
-          <ModalHeader>Ajouter un objet</ModalHeader>
-          <ModalBody>
-            <Modal
-              size="sm"
-              show={this.state.success}
-              onHide={() => this.setState({ success: false })}
-            >
-              <ModalHeader
-                style={{ backgroundColor: "#77DD77", color: "#00561B" }}
-                closeButton
+        <div id="center_list">
+          <h4>Dans la caisse : {this.state.box.name}</h4>
+          <div>Commentaire: {this.state.box.comment}</div>
+          <Breadcrumb>
+            <Breadcrumb.Item href="/room/list">
+              Liste des pièces
+            </Breadcrumb.Item>
+            <Breadcrumb.Item href={"/room/" + parseInt(this.state.room.id)}>
+              {this.state.room.name}
+            </Breadcrumb.Item>
+            <Breadcrumb.Item href="#" active>
+              {this.state.box.name}
+            </Breadcrumb.Item>
+          </Breadcrumb>
+          <Modal
+            show={this.state.showModify}
+            onHide={() => this.setState({ showModify: false })}
+          >
+            <ModifyObject id={this.state.id_object} />
+          </Modal>
+          <Modal
+            show={this.state.showDelete}
+            onHide={() => this.setState({ showDelete: false })}
+          >
+            <Delete
+              id={this.state.id_data}
+              url={this.state.url_data}
+              name={this.state.name_data}
+              url_return={this.state.url_return}
+              type={this.state.type_delete}
+            />
+          </Modal>
+          <Modal
+            show={this.state.show}
+            onHide={() => this.setState({ show: false })}
+          >
+            <ModalTitle>Ajouter un objet</ModalTitle>
+            <ModalBody>
+              <Modal
+                size="sm"
+                show={this.state.success}
+                onHide={() => this.setState({ success: false })}
               >
-                Objet ajouté !
-              </ModalHeader>
-            </Modal>
-            <Form>
-              <Form.Group className="mb-3" controlId="formBasicText">
-                <Form.Label>Name</Form.Label>
-                <Form.Control
-                  name="name"
-                  value={this.state.name}
-                  type="text"
-                  onChange={this.handleChange}
-                  placeholder="Enter name"
-                />
-              </Form.Group>
+                <ModalHeader
+                  style={{ backgroundColor: "#77DD77", color: "#00561B" }}
+                  closeButton
+                >
+                  Objet ajouté !
+                </ModalHeader>
+              </Modal>
+              <Form>
+                <Form.Group className="mb-3" controlId="formBasicText">
+                  <Form.Label>Nom</Form.Label>
+                  <Form.Control
+                    name="name"
+                    value={this.state.name}
+                    type="text"
+                    onChange={this.handleChange}
+                    placeholder="Exemple"
+                  />
+                </Form.Group>
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    this.onSubmit(this.state.name);
+                  }}
+                >
+                  Sauvegarder
+                </Button>
+              </Form>
+              Ajout rapide:
+              {listObjects.map((item) => (
+                <Button
+                  key={item}
+                  onClick={() => this.onAdd(item)}
+                  variant="outline-secondary"
+                  className="mx-1 mb-1"
+                >
+                  {item} +
+                </Button>
+              ))}
+            </ModalBody>
+          </Modal>
+          <ListGroup>
+            <ListGroup.Item>
               <Button
-                variant="secondary"
-                onClick={() => {
-                  this.onSubmit(this.state.name);
-                }}
-              >
-                Submit
-              </Button>
-            </Form>
-            Ajout rapide:
-            {listObjects.map((item) => (
-              <Button
-                key={item}
-                onClick={() => this.onAdd(item)}
                 variant="outline-secondary"
-                className="mx-1 mb-1"
+                onClick={() => this.onCreate()}
               >
-                {item} +
+                Ajouter un objet
               </Button>
-            ))}
-          </ModalBody>
-        </Modal>
-        <ListGroup>
-          <ListGroup.Item>
-            <Button variant="outline-secondary" onClick={() => this.onCreate()}>
-              Add new object
-            </Button>
-          </ListGroup.Item>
-          {this.state.objects.map((item) => (
-            <ListGroup.Item key={item.id}>
-              {item.name}
-              <ButtonGroup>
-                <DropdownButton title="" variant="light">
-                  <Dropdown.Item onClick={() => this.onModify(item.id)}>
-                    Modify
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={() => this.onDelete(item.id)}>
-                    Delete
-                  </Dropdown.Item>
-                </DropdownButton>
-              </ButtonGroup>
             </ListGroup.Item>
-          ))}
-        </ListGroup>
+            {this.state.objects.map((item) => (
+              <ListGroup.Item key={item.id}>
+                {item.name}
+                <ButtonGroup>
+                  <DropdownButton title="" variant="light">
+                    <Dropdown.Item onClick={() => this.onModify(item.id)}>
+                      Modifier
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      onClick={() => this.onDelete(item.id, item.name)}
+                    >
+                      Supprimer
+                    </Dropdown.Item>
+                  </DropdownButton>
+                </ButtonGroup>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        </div>
       </div>
     );
   }

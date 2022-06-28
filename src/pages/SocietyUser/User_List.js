@@ -1,10 +1,11 @@
 import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { Button, ListGroup, Form, Col } from "react-bootstrap";
+import { Button, ListGroup, Form, Col, Modal } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { withRouter } from "../../withRouter";
 import { NavigationBarSociety } from "../Component/NavSociety";
+import ErrorHappened from "../Component/ErrorHappened";
 
 class User_List extends React.Component {
   constructor(props) {
@@ -14,6 +15,7 @@ class User_List extends React.Component {
       search: "",
       type: localStorage.getItem("type"),
       color: localStorage.getItem("color"),
+      ERROR_HAPPENED: false,
     };
     this.loadData = this.loadData.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -25,8 +27,13 @@ class User_List extends React.Component {
       .then((res) => {
         this.setState({ user: res.data });
       })
-      .catch(function (error) {
-        console.log(error);
+      .catch((error) => {
+        if (error.response.statusText == "Unauthorized")
+          this.props.router.navigate("/");
+        else if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
       });
   }
 
@@ -48,8 +55,11 @@ class User_List extends React.Component {
             user: res.data,
           });
         })
-        .catch(function (error) {
-          console.log(error);
+        .catch((error) => {
+          if (error.response.data == "ERROR") {
+            this.setState({ ERROR_HAPPENED: true });
+            setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+          }
         });
     } else {
       this.loadData();
@@ -60,31 +70,39 @@ class User_List extends React.Component {
     if (this.state.type == 2) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
+        <Modal
+          show={this.state.ERROR_HAPPENED}
+          onHide={() => this.setState({ ERROR_HAPPENED: false })}
+        >
+          <ErrorHappened></ErrorHappened>
+        </Modal>
         <NavigationBarSociety color={this.state.color} />
-        <h4>Liste des utilisateurs</h4>
-        <Col md={5} className="my-1">
-          <Form.Control
-            name="search"
-            value={this.state.search}
-            type="text"
-            onChange={this.handleChange}
-            placeholder="Rechercher"
-          />
-        </Col>
-        <ListGroup>
-          {this.state.user.map((item) => (
-            <ListGroup.Item key={item.id}>
-              <Button
-                variant="outline-dark"
-                onClick={() =>
-                  this.props.router.navigate(`/society/user/${item.id}`)
-                }
-              >
-                {item.firstname} {item.lastname}
-              </Button>
-            </ListGroup.Item>
-          ))}
-        </ListGroup>
+        <div id="center_list">
+          <h4>Liste des utilisateurs</h4>
+          <Col md={5} className="my-1">
+            <Form.Control
+              name="search"
+              value={this.state.search}
+              type="text"
+              onChange={this.handleChange}
+              placeholder="Rechercher"
+            />
+          </Col>
+          <ListGroup>
+            {this.state.user.map((item) => (
+              <ListGroup.Item key={item.id}>
+                <Button
+                  variant="outline-dark"
+                  onClick={() =>
+                    this.props.router.navigate(`/society/user/${item.id}`)
+                  }
+                >
+                  {item.firstname} {item.lastname}
+                </Button>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        </div>
       </div>
     );
   }

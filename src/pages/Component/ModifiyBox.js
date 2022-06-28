@@ -16,6 +16,7 @@ import {
 import axios from "axios";
 import { isUndefined } from "lodash";
 import React from "react";
+import ErrorHappened from "./ErrorHappened";
 
 export class ModifyBox extends React.Component {
   constructor(props) {
@@ -27,12 +28,15 @@ export class ModifyBox extends React.Component {
       comment: "",
       type: localStorage.getItem("type"),
       color: localStorage.getItem("color"),
-      society_code: localStorage.getItem("society_code"),
+      id_society: localStorage.getItem("id_society"),
       tagBox: [],
       tags: [],
       selectedTag: "--Sélectionne--",
       id_box: "",
       room: [],
+      EMPTY_NAME: false,
+
+      ERROR_HAPPENED: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -45,16 +49,28 @@ export class ModifyBox extends React.Component {
         withCredentials: true,
       })
       .then((res) => {
-        this.setState({
-          name: res.data.name,
-          comment: res.data.comment,
-          id_room: res.data.id_room,
-          tagBox: res.data.TagOnBox,
-          id_box: res.data.id,
-        });
+        if (res.data.comment == null) {
+          this.setState({
+            name: res.data.name,
+            id_room: res.data.id_room,
+            tagBox: res.data.TagOnBox,
+            id_box: res.data.id,
+          });
+        } else {
+          this.setState({
+            name: res.data.name,
+            comment: res.data.comment,
+            id_room: res.data.id_room,
+            tagBox: res.data.TagOnBox,
+            id_box: res.data.id,
+          });
+        }
       })
-      .catch(function (error) {
-        console.log(error);
+      .catch((error) => {
+        if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
       });
     axios
       .get("http://localhost:3001/tag/user", { withCredentials: true })
@@ -62,7 +78,10 @@ export class ModifyBox extends React.Component {
         this.setState({ tags: res.data });
       })
       .catch((error) => {
-        console.log(error);
+        if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
       });
     this.loadRoom();
   }
@@ -70,33 +89,41 @@ export class ModifyBox extends React.Component {
     axios
       .get(`http://localhost:3001/room/list`, { withCredentials: true })
       .then((res) => {
-        this.setState({ room: res.data });
+        this.setState({ room: res.data, EMPTY_NAME: false });
       })
-      .catch(function (error) {
-        console.log(error.response.data);
+      .catch((error) => {
+        if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
       });
   }
   handleChange(event) {
     this.setState({ [event.target.name]: event.target.value });
   }
   onSubmit() {
-    axios
-      .post(
-        `http://localhost:3001/box/update`,
-        {
-          id: this.state.id,
-          name: this.state.name,
-          comment: this.state.comment,
-          id_room: this.state.id_room,
-        },
-        { withCredentials: true }
-      )
-      .then((res) => {
-        window.location.reload(false);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    if (this.state.name != "") {
+      axios
+        .post(
+          `http://localhost:3001/box/update`,
+          {
+            id: this.state.id,
+            name: this.state.name,
+            comment: this.state.comment,
+            id_room: this.state.id_room,
+          },
+          { withCredentials: true }
+        )
+        .then((res) => {
+          window.location.reload(false);
+        })
+        .catch((error) => {
+          if (error.response.data == "ERROR") {
+            this.setState({ ERROR_HAPPENED: true });
+            setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+          }
+        });
+    } else this.setState({ EMPTY_NAME: true });
   }
   onSelectChange(event) {
     this.setState({ [event.target.name]: event.target.value });
@@ -117,13 +144,16 @@ export class ModifyBox extends React.Component {
         this.loadTag();
       })
       .catch((error) => {
-        console.log(error);
+        if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
       });
   }
   deleteTag(id_box, id_tag) {
     axios
       .post(
-        "http://localhost:3001/tag/deletelinkbox",
+        "http://localhost:3001/tag/user/deletelink",
         {
           id_box: id_box,
           id_tag: id_tag,
@@ -135,7 +165,10 @@ export class ModifyBox extends React.Component {
         this.loadTag();
       })
       .catch((error) => {
-        console.log(error);
+        if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
       });
   }
   loadTag() {
@@ -147,7 +180,10 @@ export class ModifyBox extends React.Component {
         this.setState({ tagBox: res.data });
       })
       .catch((error) => {
-        console.log(error);
+        if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
       });
   }
   render() {
@@ -175,20 +211,31 @@ export class ModifyBox extends React.Component {
       tagSelection = <small>Max 3 tags par box</small>;
     return (
       <>
-        <ModalTitle>Modification d'une box</ModalTitle>
+        <Modal
+          show={this.state.ERROR_HAPPENED}
+          onHide={() => this.setState({ ERROR_HAPPENED: false })}
+        >
+          <ErrorHappened></ErrorHappened>
+        </Modal>
+        <ModalTitle>Modification d'une caisse</ModalTitle>
         <ModalBody>
           {" "}
           <Form>
             <Row>
               <Col>
                 <Form.Group className="mb-3" controlId="formBasicText">
-                  <Form.Label>Name</Form.Label>
+                  <Form.Label>Nom</Form.Label>
                   <Form.Control
+                    style={{
+                      backgroundColor: this.state.EMPTY_PASSWORD
+                        ? "#f7786f"
+                        : " ",
+                    }}
                     name="name"
                     value={this.state.name}
                     type="text"
                     onChange={this.handleChange}
-                    placeholder="Enter name"
+                    placeholder="Exemple"
                   />
                 </Form.Group>
               </Col>
@@ -206,9 +253,10 @@ export class ModifyBox extends React.Component {
                         key={item.id}
                         value={item.id}
                         style={{
-                          backgroundColor: isUndefined(item.TagOnRoom[0])
-                            ? (color = "#FFFFFF")
-                            : (color = item.TagOnRoom[0].tag.color),
+                          backgroundColor:
+                            item.id_TagSociety == null
+                              ? (color = "#FFFFFF")
+                              : (color = item.TagSociety.color),
                         }}
                       >
                         {item.name}
@@ -220,17 +268,17 @@ export class ModifyBox extends React.Component {
             </Row>
 
             <Form.Group className="mb-3" controlId="formBasicText">
-              <Form.Label>Comment</Form.Label>
+              <Form.Label>Commentaire</Form.Label>
               <Form.Control
                 name="comment"
                 value={this.state.comment}
                 type="text"
                 onChange={this.handleChange}
-                placeholder="Enter comment"
+                placeholder="Ceci est une caisse"
               />
             </Form.Group>
             <Button variant="secondary" onClick={this.onSubmit}>
-              Submit
+              Sauvegarder
             </Button>
           </Form>
           <br />

@@ -12,3 +12,105 @@ body{
 #text{
     margin: 300px !important;
 }
+img{
+    width: 2em;
+}
+#center{
+    width: 75vh !important;
+    margin: 1rem auto;
+    max-width: 90%;
+}
+#WRONG_LOGIN{
+    padding: 0.5rem;
+}
+Form{
+    max-width: 100%;
+}
+#center_list{
+    width: 90% !important;
+    margin: 1rem auto;
+    max-width: 90%;
+}
+#hamburger{
+    display: none;
+}
+.navbar-brand{
+    font-weight: 650;
+}
+h5{
+    margin-top: 1rem !important;
+}
+.modal-content
+{margin-top: 25%;
+    padding: 0.5rem;
+max-width: 100vw;}
+#multBox{
+    display: flex;
+    }
+#multBox button{
+    border-radius:0 0.25rem 0.25rem 0;
+}
+.input-group:not(.has-validation)>.dropdown-toggle:nth-last-child(n+3), .input-group:not(.has-validation)>:not(:last-child):not(.dropdown-toggle):not(.dropdown-menu){
+    margin: 0.5rem 0 !important;
+}
+.profile{
+    margin-bottom: 0.8rem;
+}
+
+.input-group:not(.has-validation)>.dropdown-toggle:nth-last-child(n+3), .input-group:not(.has-validation)>:not(:last-child):not(.dropdown-toggle):not(.dropdown-menu){
+    margin: 0 !important
+}
+.h5-profile{
+    margin-top: 2rem !important;
+}
+.h5Room{
+    margin:0 !important;
+}
+
+@media screen and (max-width : 500px) {
+    .profile{
+        width: 100%;
+    }
+    .btn-group, .btn-group-vertical{
+        max-width: 90%;
+    }
+
+#navComputer{
+    display: none;
+}
+#disconnect{
+    display: none;
+}
+#hamburger{
+    display: block;
+    
+}
+#hamburger img{
+    width: 3.5rem !important;
+}
+#navUser{
+    height: 10vh !important;
+    
+}
+.navbar-brand{
+    font-size: 2rem !important;
+}
+#menuPhone{
+    padding: 0.2rem;
+    width: 60%;
+    margin:auto;
+    text-align: center;
+    
+}
+.nav-link{
+    color: white !important;
+    font-size: 1.2rem ;
+}
+.dropdown-menu.show{
+    text-align: center !important;
+}
+#dropdown_menu{
+    margin-left: 16vw;
+    margin-right: 33vw;
+}
+}

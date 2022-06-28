@@ -7,27 +7,31 @@ import {
   InputGroup,
   FormControl,
   ModalBody,
+  Modal,
 } from "react-bootstrap";
 import axios from "axios";
 import { isUndefined } from "lodash";
 import React from "react";
+import ErrorHappened from "./ErrorHappened";
 
 export class ModifyRoom extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: parseInt(props.id),
-      society_code: localStorage.getItem("society_code"),
-      name: "",
-      stage: "",
-      comment: "",
-      type_room: "",
-      box: [],
+      id_society: localStorage.getItem("id_society"),
       type: localStorage.getItem("type"),
       color: localStorage.getItem("color"),
+      id: parseInt(props.id),
+      name: "",
+      stage: "",
+      type_room: "",
+      box: [],
       show: false,
       tags: [],
       selectedTag: "",
+      defaultTag: "",
+      EMPTY_NAME: false,
+      ERROR_HAPPENED: false,
     };
     this.loadData = this.loadData.bind(this);
     this.loadTag = this.loadTag.bind(this);
@@ -35,7 +39,9 @@ export class ModifyRoom extends React.Component {
     this.onUpdate = this.onUpdate.bind(this);
     this.deleteTag = this.deleteTag.bind(this);
     this.onSelectChange = this.onSelectChange.bind(this);
+
     this.loadData();
+    if (localStorage.getItem("id_society") != "null") this.loadTag();
   }
   loadData() {
     axios
@@ -43,24 +49,28 @@ export class ModifyRoom extends React.Component {
         withCredentials: true,
       })
       .then((res) => {
-        if (isUndefined(res.data.TagOnRoom[0])) {
+        if (res.data.id_TagSociety == 0) {
           this.setState({
             name: res.data.name,
-            comment: res.data.comment,
             type_room: res.data.type,
             stage: res.data.stage,
             box: res.data.box,
           });
         } else {
           this.setState({
-            room: res.data,
+            name: res.data.name,
+            type_room: res.data.type,
+            stage: res.data.stage,
             box: res.data.box,
-            selectedTag: res.data.TagOnRoom[0].tag,
+            defaultTag: res.data.TagSociety,
           });
         }
       })
-      .catch(function (error) {
-        console.log(error);
+      .catch((error) => {
+        if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
       });
   }
   loadTag() {
@@ -70,7 +80,10 @@ export class ModifyRoom extends React.Component {
         this.setState({ tags: res.data });
       })
       .catch((error) => {
-        console.log(error);
+        if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
       });
   }
   handleChange(event) {
@@ -80,30 +93,34 @@ export class ModifyRoom extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
   }
   onUpdate() {
-    axios
-      .post(
-        `http://localhost:3001/room/update`,
-        {
-          id: this.state.id,
-          name: this.state.name,
-          comment: this.state.comment,
-          type: this.state.type_room,
-          stage: this.state.stage,
-          tag: this.state.selectedTag,
-        },
-        { withCredentials: true }
-      )
-      .then((res) => {
-        window.location.reload(false);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    if (this.state.name != "") {
+      axios
+        .post(
+          `http://localhost:3001/room/update`,
+          {
+            id: this.state.id,
+            name: this.state.name,
+            type: this.state.type_room,
+            stage: this.state.stage,
+            tag: this.state.selectedTag,
+          },
+          { withCredentials: true }
+        )
+        .then((res) => {
+          window.location.reload(false);
+        })
+        .catch((error) => {
+          if (error.response.data == "ERROR") {
+            this.setState({ ERROR_HAPPENED: true });
+            setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+          }
+        });
+    } else this.setState({ EMPTY_NAME: true });
   }
   deleteTag() {
     axios
       .post(
-        "http://localhost:3001/tag/deletelinkroom",
+        "http://localhost:3001/tag/society/deletelink",
         {
           id_room: this.state.id,
           id_tag: this.state.selectedTag.id,
@@ -111,11 +128,14 @@ export class ModifyRoom extends React.Component {
         { withCredentials: true }
       )
       .then((res) => {
-        this.setState({ selectedTag: "" });
+        this.setState({ defaultTag: "" });
         this.loadData();
       })
       .catch((error) => {
-        console.log(error);
+        if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
       });
   }
   render() {
@@ -128,9 +148,8 @@ export class ModifyRoom extends React.Component {
     ];
     var tagView = "";
 
-    if (this.state.society_code != 0) {
-      this.loadTag();
-      if (this.state.selectedTag == "")
+    if (this.state.id_society != "null") {
+      if (this.state.defaultTag == null)
         tagView = (
           <Row className>
             <Form.Group>
@@ -161,10 +180,10 @@ export class ModifyRoom extends React.Component {
             <Form.Label>Tag:</Form.Label>
             <InputGroup>
               <FormControl
-                style={{ backgroundColor: this.state.selectedTag.color }}
+                style={{ backgroundColor: this.state.defaultTag.color }}
                 disabled
                 readOnly
-                value={this.state.selectedTag.name}
+                value={this.state.defaultTag.name}
               />
               <Button variant="secondary" onClick={() => this.deleteTag()}>
                 X
@@ -175,7 +194,7 @@ export class ModifyRoom extends React.Component {
     }
 
     var stages = [];
-    for (var i = 0; i < 164; i++) {
+    for (var i = -10; i < 164; i++) {
       stages.push(
         <option key={i} value={i}>
           {i}
@@ -184,30 +203,29 @@ export class ModifyRoom extends React.Component {
     }
     return (
       <>
+        <Modal
+          show={this.state.ERROR_HAPPENED}
+          onHide={() => this.setState({ ERROR_HAPPENED: false })}
+        >
+          <ErrorHappened></ErrorHappened>
+        </Modal>
         <ModalTitle className="mx-1">Modifier la pièce</ModalTitle>
         <ModalBody>
           <Form>
             <Form.Group className="mb-3" controlId="formBasicText">
-              <Form.Label>Name</Form.Label>
+              <Form.Label>Nom</Form.Label>
               <Form.Control
+                style={{
+                  backgroundColor: this.state.EMPTY_PASSWORD ? "#f7786f" : " ",
+                }}
                 name="name"
                 value={this.state.name}
                 type="text"
                 onChange={this.handleChange}
-                placeholder="Enter name"
+                placeholder="Exemple"
               />
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formBasicText">
-              <Form.Label>Comment</Form.Label>
-              <Form.Control
-                name="comment"
-                value={this.state.comment}
-                type="text"
-                onChange={this.handleChange}
-                placeholder="Enter comment"
-              />
-            </Form.Group>
             <Row>
               <Col>
                 <Row>
@@ -230,7 +248,7 @@ export class ModifyRoom extends React.Component {
                 </Row>
                 {tagView}
               </Col>
-              <Col md={2}>
+              <Col md={3}>
                 <Form.Group>
                   <Form.Label>Etage</Form.Label>
                   <Form.Select
@@ -238,7 +256,6 @@ export class ModifyRoom extends React.Component {
                     name="stage"
                     onChange={this.onSelectChange}
                     value={this.state.stage}
-                    htmlSize={4}
                   >
                     {stages}
                   </Form.Select>
@@ -247,7 +264,7 @@ export class ModifyRoom extends React.Component {
             </Row>
             <br />
             <Button variant="secondary" onClick={this.onUpdate}>
-              Submit
+              Sauvegarder
             </Button>
           </Form>
         </ModalBody>

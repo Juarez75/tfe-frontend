@@ -1,66 +1,106 @@
 import axios from "axios";
 import React from "react";
-import { Row, Col, Form, Button, InputGroup } from "react-bootstrap";
+import {
+  Row,
+  Col,
+  Form,
+  Button,
+  InputGroup,
+  Modal,
+  ModalHeader,
+} from "react-bootstrap";
 import { withRouter } from "../../withRouter";
 import { NavigationBarSociety } from "../Component/NavSociety";
+import Delete from "../Component/Delete";
+import ErrorHappened from "../Component/ErrorHappened";
 
 class Personalize extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       color: localStorage.getItem("color"),
-      society_code: localStorage.getItem("society_code"),
+      id_society: localStorage.getItem("id_society"),
       type: localStorage.getItem("type"),
       tags: [],
       selectedTag: "",
       nameTag: "",
       tagColor: "#707070",
+      showDelete: false,
+      id_data: "",
+      url_data: "",
+      name_data: "",
+      url_return: "",
+      type_delete: "",
+      ERROR_HAPPENED: false,
+      success: false,
     };
 
     this.loadData = this.loadData.bind(this);
     this.deleteTag = this.deleteTag.bind(this);
     this.addTag = this.addTag.bind(this);
     this.updateColor = this.updateColor.bind(this);
+    this.ifSuccess = this.ifSuccess.bind(this);
+    this.cancelSuccess = this.cancelSuccess.bind(this);
 
     this.loadData();
   }
 
   loadData() {
     axios
-      .get("http://localhost:3001/tag/user", { withCredentials: true })
+      .get("http://localhost:3001/tag/society", { withCredentials: true })
       .then((res) => {
         this.setState({ tags: res.data });
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        if (error.response.statusText == "Unauthorized")
+          this.props.router.navigate("/");
+        else if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
+      });
   }
 
+  ifSuccess() {
+    this.setState({ success: true });
+    this.cancelSuccess(true);
+  }
+  cancelSuccess() {
+    setTimeout(() => this.setState({ success: false }), 500);
+  }
   deleteTag() {
-    axios
-      .post(
-        "http://localhost:3001/tag/delete",
-        {
-          id: this.state.selectedTag,
-        },
-        { withCredentials: true }
-      )
-      .then((res) => {
-        this.loadData();
-      })
-      .catch((error) => console.log(error));
+    this.setState({
+      url_data: "http://localhost:3001/tag/society/delete",
+      id_data: this.state.tags[parseInt(this.state.selectedTag)].id,
+      name_data: this.state.tags[parseInt(this.state.selectedTag)].name,
+      showDelete: true,
+      url_return: "",
+      type_delete: 0,
+    });
   }
 
   addTag() {
-    axios
-      .post(
-        "http://localhost:3001/tag/create",
-        {
-          name: this.state.nameTag,
-          color: this.state.tagColor,
-        },
-        { withCredentials: true }
-      )
-      .then((res) => this.loadData())
-      .catch((error) => console.log(error));
+    if (this.state.name != "") {
+      axios
+        .post(
+          "http://localhost:3001/tag/society/create",
+          {
+            name: this.state.nameTag,
+            color: this.state.tagColor,
+          },
+          { withCredentials: true }
+        )
+        .then((res) => {
+          this.loadData();
+          this.ifSuccess();
+        })
+        .catch((error) => {
+          if (error.response.data == "ERROR") {
+            this.setState({ ERROR_HAPPENED: true });
+            setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+          }
+        });
+    }
   }
 
   updateColor() {
@@ -76,7 +116,10 @@ class Personalize extends React.Component {
         localStorage.setItem("color", this.state.color);
       })
       .catch((error) => {
-        console.log(error);
+        if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
       });
   }
 
@@ -85,14 +128,41 @@ class Personalize extends React.Component {
       return <div>Nous n'êtes pas autorisé sur cette page</div>;
     return (
       <>
+        <Modal
+          show={this.state.showDelete}
+          onHide={() => this.setState({ showDelete: false })}
+        >
+          <Delete
+            id={this.state.id_data}
+            url={this.state.url_data}
+            name={this.state.name_data}
+            url_return={this.state.url_return}
+            type={this.state.type_delete}
+          />
+        </Modal>
+        <Modal
+          show={this.state.ERROR_HAPPENED}
+          onHide={() => this.setState({ ERROR_HAPPENED: false })}
+        >
+          <ErrorHappened></ErrorHappened>
+        </Modal>
         <NavigationBarSociety color={this.state.color} />
-        <h4>Personalisation</h4>
-        <Col md={5} className="my-2">
-          <Form.Group as={Row}>
-            <Form.Label column className="my-auto">
-              Couleur du site:
-            </Form.Label>
-            <Col md={2}>
+        <div id="center_list">
+          <h4>Personalisation</h4>
+          <div className="my-2">
+            <Form.Group style={{ display: "flex", flexFlow: "row wrap" }}>
+              <Form.Label
+                column
+                className="my-auto"
+                style={{
+                  minWidth: "100%",
+                  marginRight: "1rem",
+                  marginBottom: "1rem",
+                }}
+              >
+                Couleur du site:
+              </Form.Label>
+
               <Form.Control
                 type="color"
                 value={this.state.color}
@@ -100,31 +170,34 @@ class Personalize extends React.Component {
                   this.setState({ color: event.target.value })
                 }
               />
-            </Col>
-            <Col>
+
               <Button variant="secondary" onClick={this.updateColor}>
                 Sauvegarder
               </Button>
-            </Col>
-          </Form.Group>
-        </Col>
-        <Col md={8} className="my-2">
-          <Form.Group as={Row}>
-            <Col md={3}>
-              <Form.Label className="my-auto">Couleur du site:</Form.Label>
-            </Col>
-            <Col md={5}>
+            </Form.Group>
+          </div>
+          <div className="my-2">
+            <Form.Group style={{ display: "flex", flexFlow: "row wrap" }}>
+              <Form.Label
+                className="my-auto"
+                style={{
+                  minWidth: "100%",
+                  marginRight: "1rem",
+                  marginBottom: "2rem ",
+                }}
+              >
+                Ajouter un tag:
+              </Form.Label>
               <Form.Control
                 type="text"
                 name="nameTag"
                 value={this.state.nameTag}
+                style={{ maxWidth: "40vh" }}
                 onChange={(event) =>
                   this.setState({ nameTag: event.target.value })
                 }
                 placeholder="Ajouter tag"
               />
-            </Col>
-            <Col md={1}>
               <Form.Control
                 type="color"
                 value={this.state.tagColor}
@@ -132,41 +205,64 @@ class Personalize extends React.Component {
                   this.setState({ tagColor: event.target.value })
                 }
               />
-            </Col>
-            <Col className="mx-1">
+
               <Button variant="secondary" onClick={this.addTag}>
                 Ajouter
               </Button>
-            </Col>
-          </Form.Group>
-        </Col>
-        <Col md={6}>
-          <InputGroup className="my-2">
-            <Form.Label>Supprimer un tag :</Form.Label>
-            <Form.Select
-              aria-label="Exemple"
-              className="mx-1 "
-              name="selectedTag"
-              onChange={(event) =>
-                this.setState({ selectedTag: event.target.value })
-              }
+            </Form.Group>
+          </div>
+          <Modal
+            size="sm"
+            show={this.state.success}
+            onHide={() => this.setState({ success: false })}
+          >
+            <ModalHeader
+              style={{ backgroundColor: "#77DD77", color: "#00561B" }}
+              closeButton
             >
-              <option>--Sélectionne--</option>
-              {this.state.tags.map((item) => (
-                <option
-                  style={{ backgroundColor: item.color }}
-                  key={item.id}
-                  value={item.id}
-                >
-                  {item.name}
-                </option>
-              ))}
-            </Form.Select>
-            <Button variant="secondary" onClick={this.deleteTag}>
-              Supprimer
-            </Button>
-          </InputGroup>
-        </Col>
+              Tag ajouté !
+            </ModalHeader>
+          </Modal>
+          <div>
+            <InputGroup
+              className="my-2"
+              style={{ display: "flex", flexFlow: "row wrap" }}
+            >
+              <Form.Label
+                style={{
+                  minWidth: "100%",
+                  marginRight: "1rem",
+                  marginBottom: "1rem",
+                }}
+              >
+                Supprimer un tag :
+              </Form.Label>
+              <Form.Select
+                aria-label="Exemple"
+                className="mx-1 "
+                name="selectedTag"
+                style={{ maxWidth: "40vh" }}
+                onChange={(event) =>
+                  this.setState({ selectedTag: event.target.value })
+                }
+              >
+                <option>--Sélectionne--</option>
+                {this.state.tags.map((item, i) => (
+                  <option
+                    style={{ backgroundColor: item.color }}
+                    key={item.id}
+                    value={i}
+                  >
+                    {item.name}
+                  </option>
+                ))}
+              </Form.Select>
+              <Button variant="secondary" onClick={this.deleteTag}>
+                Supprimer
+              </Button>
+            </InputGroup>
+          </div>
+        </div>
       </>
     );
   }

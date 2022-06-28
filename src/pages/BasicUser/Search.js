@@ -14,6 +14,8 @@ import { NavigationBar } from "../Component/NavUser";
 import { ModifyObject } from "../Component/ModifyObject";
 import { ModifyRoom } from "../Component/ModifyRoom";
 import { ModifyBox } from "../Component/ModifiyBox";
+import Delete from "../Component/Delete";
+import ErrorHappened from "../Component/ErrorHappened";
 
 class Search extends React.Component {
   constructor(props) {
@@ -30,6 +32,13 @@ class Search extends React.Component {
       showObject: false,
       type: localStorage.getItem("type"),
       color: localStorage.getItem("color"),
+      showDelete: false,
+      id_data: "",
+      url_data: "",
+      name_data: "",
+      url_return: "",
+      type_delete: "",
+      ERROR_HAPPENED: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.loadData = this.loadData.bind(this);
@@ -55,8 +64,13 @@ class Search extends React.Component {
             tag: res.data.tag,
           });
         })
-        .catch(function (error) {
-          console.log(error);
+        .catch((error) => {
+          if (error.response.statusText == "Unauthorized")
+            this.props.router.navigate("/");
+          else if (error.response.data == "ERROR") {
+            this.setState({ ERROR_HAPPENED: true });
+            setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+          }
         });
     } else {
       this.setState({ room: [], box: [], object: [], tag: [] });
@@ -75,23 +89,15 @@ class Search extends React.Component {
     else if (type == 1) this.setState({ id: id, showBox: true });
     else if (type == 2) this.setState({ id: id, showObject: true });
   }
-  onDelete(id, name) {
-    axios
-      .post(
-        "http://localhost:3001/" + name + "/delete",
-        {
-          id: id,
-        },
-        {
-          withCredentials: true,
-        }
-      )
-      .then((res) => {
-        window.location.reload(false);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+  onDelete(id, type, name) {
+    this.setState({
+      url_data: `http://localhost:3001/${type}/delete`,
+      id_data: id,
+      name_data: name,
+      showDelete: true,
+      url_return: "",
+      type_delete: 0,
+    });
   }
   updateEmpty(data, id, empty) {
     if (empty) {
@@ -105,7 +111,12 @@ class Search extends React.Component {
           { withCredentials: true }
         )
         .then(() => this.loadData(this.state.search))
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          if (error.response.data == "ERROR") {
+            this.setState({ ERROR_HAPPENED: true });
+            setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+          }
+        });
     } else {
       axios
         .post(
@@ -117,198 +128,244 @@ class Search extends React.Component {
           { withCredentials: true }
         )
         .then(() => this.loadData(this.state.search))
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          if (error.response.data == "ERROR") {
+            this.setState({ ERROR_HAPPENED: true });
+            setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+          }
+        });
     }
   }
   render() {
     if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
+        <Modal
+          show={this.state.ERROR_HAPPENED}
+          onHide={() => this.setState({ ERROR_HAPPENED: false })}
+        >
+          <ErrorHappened></ErrorHappened>
+        </Modal>
         <NavigationBar color={this.state.color} />
-        <h4>Recherche</h4>
-        <Modal
-          show={this.state.showRoom}
-          onHide={() => this.setState({ showRoom: false })}
-        >
-          <ModifyRoom id={this.state.id} />
-        </Modal>
-        <Modal
-          show={this.state.showBox}
-          onHide={() => this.setState({ showBox: false })}
-        >
-          <ModifyBox id={this.state.id} />
-        </Modal>
-        <Modal
-          show={this.state.showObject}
-          onHide={() => this.setState({ showObject: false })}
-        >
-          <ModifyObject id={this.state.id} />
-        </Modal>
-        <Form.Control
-          name="search"
-          value={this.state.search}
-          type="text"
-          onChange={this.handleChange}
-          placeholder="Search"
-        />
-        <h5>Pièces :</h5>
-        <ListGroup>
-          {this.state.room.map((item) => (
-            <ListGroup.Item key={item.id}>
-              <ButtonGroup>
-                <Button
-                  variant="light"
-                  onClick={() => this.onClick(item.id, "room")}
-                >
-                  {item.name}
-                </Button>
-                <DropdownButton title="" variant="light">
-                  <Dropdown.Item onClick={() => this.onModify(item.id, 0)}>
-                    Modify
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={() => this.onDelete(item.id, "room")}>
-                    Delete
-                  </Dropdown.Item>
-                </DropdownButton>
-              </ButtonGroup>
-            </ListGroup.Item>
-          ))}
-        </ListGroup>
-        <h5>Caisse :</h5>
-        <ListGroup>
-          {this.state.box.map((item) => (
-            <ListGroup.Item key={item.id} variant={item.empty ? "danger" : ""}>
-              <ButtonGroup>
-                <Button
-                  variant="light"
-                  onClick={() => this.onClick(item.id, "box")}
-                >
-                  {item.name}
-                </Button>
-                <DropdownButton title="" variant="light">
-                  <Dropdown.Item onClick={() => this.onModify(item.id, 1)}>
-                    Modify
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={() => this.onDelete(item.id, "box")}>
-                    Delete
-                  </Dropdown.Item>
-                </DropdownButton>
-                <Form.Check
-                  className="my-auto ms-3"
-                  label="Vidée"
-                  checked={item.empty}
-                  onChange={() =>
-                    this.updateEmpty((item.empty = !item.empty), item.id, true)
-                  }
-                />
-                <Form.Check
-                  className="my-auto ms-3"
-                  label="Fragile"
-                  checked={item.fragile}
-                  onChange={() =>
-                    this.updateEmpty(
-                      (item.fragile = !item.fragile),
-                      item.id,
-                      false
-                    )
-                  }
-                />
-              </ButtonGroup>
-              <div>
-                <small>Pièce : {item.room.name}</small>
-              </div>
-            </ListGroup.Item>
-          ))}
-        </ListGroup>
-        <h5>Objets :</h5>
-        <ListGroup>
-          {this.state.object.map((item) => (
-            <ListGroup.Item key={item.id}>
-              <Button
-                variant="light"
-                onClick={() => this.onClick(item.id_box, "box")}
-              >
-                {item.name}
-              </Button>
-              <ButtonGroup>
-                <DropdownButton title="" variant="light">
-                  <Dropdown.Item onClick={() => this.onModify(item.id, 2)}>
-                    Modify
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    onClick={() => this.onDelete(item.id, "object")}
+        <div id="center_list">
+          {" "}
+          <h4>Recherche</h4>
+          <Modal
+            show={this.state.showRoom}
+            onHide={() => this.setState({ showRoom: false })}
+          >
+            <ModifyRoom id={this.state.id} />
+          </Modal>
+          <Modal
+            show={this.state.showBox}
+            onHide={() => this.setState({ showBox: false })}
+          >
+            <ModifyBox id={this.state.id} />
+          </Modal>
+          <Modal
+            show={this.state.showDelete}
+            onHide={() => this.setState({ showDelete: false })}
+          >
+            <Delete
+              id={this.state.id_data}
+              url={this.state.url_data}
+              name={this.state.name_data}
+              url_return={this.state.url_return}
+              type={this.state.type_delete}
+            />
+          </Modal>
+          <Modal
+            show={this.state.showObject}
+            onHide={() => this.setState({ showObject: false })}
+          >
+            <ModifyObject id={this.state.id} />
+          </Modal>
+          <Form.Control
+            name="search"
+            value={this.state.search}
+            type="text"
+            onChange={this.handleChange}
+            placeholder="Exemple"
+          />
+          {this.state.room[0] == undefined ? "" : <h5>Pièces :</h5>}
+          <ListGroup>
+            {this.state.room.map((item, i) => (
+              <ListGroup.Item key={i}>
+                <ButtonGroup>
+                  <Button
+                    variant="light"
+                    onClick={() => this.onClick(item.id, "room")}
                   >
-                    Delete
-                  </Dropdown.Item>
-                </DropdownButton>
-              </ButtonGroup>
-              <div>
-                <small>Box : {item.box.name} </small>
+                    {item.name}
+                  </Button>
+                  <DropdownButton title="" variant="light">
+                    <Dropdown.Item onClick={() => this.onModify(item.id, 0)}>
+                      Modifier
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      onClick={() => this.onDelete(item.id, "room", item.name)}
+                    >
+                      Supprimer
+                    </Dropdown.Item>
+                  </DropdownButton>
+                </ButtonGroup>
                 <br />
-                <small>Pièce : {item.room.name}</small>
-              </div>
-            </ListGroup.Item>
-          ))}
-        </ListGroup>
-        <h5>Box contenant Tag correspondant :</h5>
-        <ListGroup>
-          {this.state.tag.map((item) => (
-            <>
-              {item.link.map((item2) => (
-                <ListGroup.Item
-                  key={item2.id_box}
-                  variant={item2.box.empty ? "danger" : ""}
+                <small>Nombre de box: {item._count.box}</small>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+          {this.state.box[0] == undefined ? "" : <h5>Caisses :</h5>}
+          <ListGroup>
+            {this.state.box.map((item, i) => (
+              <ListGroup.Item key={i} variant={item.empty ? "danger" : ""}>
+                <ButtonGroup>
+                  <Button
+                    variant="light"
+                    onClick={() => this.onClick(item.id, "box")}
+                  >
+                    {item.name}
+                  </Button>
+                  <DropdownButton title="" variant="light">
+                    <Dropdown.Item onClick={() => this.onModify(item.id, 1)}>
+                      Modifier
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      onClick={() => this.onDelete(item.id, "box", item.name)}
+                    >
+                      Supprimer
+                    </Dropdown.Item>
+                  </DropdownButton>
+                  <Form.Check
+                    className="my-auto ms-3"
+                    label="Vidée"
+                    checked={item.empty}
+                    onChange={() =>
+                      this.updateEmpty(
+                        (item.empty = !item.empty),
+                        item.id,
+                        true
+                      )
+                    }
+                  />
+                  <Form.Check
+                    className="my-auto ms-3"
+                    label="Fragile"
+                    checked={item.fragile}
+                    onChange={() =>
+                      this.updateEmpty(
+                        (item.fragile = !item.fragile),
+                        item.id,
+                        false
+                      )
+                    }
+                  />
+                </ButtonGroup>
+                <br />
+                <small>Nombre d'objets: {item._count.objects}</small>
+                <div>
+                  <small>Pièce : {item.room.name}</small>
+                </div>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+          {this.state.object[0] == undefined ? "" : <h5>Objets :</h5>}
+          <ListGroup>
+            {this.state.object.map((item, i) => (
+              <ListGroup.Item key={i}>
+                <Button
+                  variant="light"
+                  onClick={() => this.onClick(item.id_box, "box")}
                 >
-                  {item2.box.name}
-                  <ButtonGroup>
-                    <DropdownButton title="" variant="light">
-                      <Dropdown.Item
-                        onClick={() => this.onModify(item2.box.id, "box")}
-                      >
-                        Modify
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        onClick={() => this.onDelete(item2.box.id, "box")}
-                      >
-                        Delete
-                      </Dropdown.Item>
-                    </DropdownButton>
-                    <Form.Check
-                      className="my-auto ms-3"
-                      label="Vidée"
-                      checked={item2.box.empty}
-                      onChange={() =>
-                        this.updateEmpty(
-                          (item2.box.empty = !item2.box.empty),
-                          item2.box.id,
-                          true
-                        )
+                  {item.name}
+                </Button>
+                <ButtonGroup>
+                  <DropdownButton title="" variant="light">
+                    <Dropdown.Item onClick={() => this.onModify(item.id, 2)}>
+                      Modifier
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      onClick={() =>
+                        this.onDelete(item.id, "object", item.name)
                       }
-                    />
-                    <Form.Check
-                      className="my-auto ms-3"
-                      label="Fragile"
-                      checked={item2.box.fragile}
-                      onChange={() =>
-                        this.updateEmpty(
-                          (item2.box.fragile = !item2.box.fragile),
-                          item2.box.id,
-                          false
-                        )
-                      }
-                    />
-                  </ButtonGroup>
-                  <div>
-                    <small>Pièce : {item2.box.room.name}</small>
-                  </div>
-                  <div>
-                    <small>Tag : {item.name}</small>
-                  </div>
-                </ListGroup.Item>
-              ))}
-            </>
-          ))}
-        </ListGroup>
+                    >
+                      Supprimer
+                    </Dropdown.Item>
+                  </DropdownButton>
+                </ButtonGroup>
+                <div>
+                  <small>Caisse : {item.box.name} </small>
+                  <br />
+                  <small>Pièce : {item.box.room.name}</small>
+                </div>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+          {this.state.tag[0] == undefined ? (
+            ""
+          ) : (
+            <h5>Caisse contenant le tag correspondant :</h5>
+          )}
+          <ListGroup>
+            {this.state.tag.map((item, i) => (
+              <div key={i}>
+                {item.link.map((item2, i2) => (
+                  <ListGroup.Item
+                    key={i2}
+                    variant={item2.box.empty ? "danger" : ""}
+                  >
+                    {item2.box.name}
+                    <ButtonGroup>
+                      <DropdownButton title="" variant="light">
+                        <Dropdown.Item
+                          onClick={() => this.onModify(item2.box.id, "box")}
+                        >
+                          Modifier
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                          onClick={() =>
+                            this.onDelete(item2.box.id, "box", item2.box.name)
+                          }
+                        >
+                          Supprimer
+                        </Dropdown.Item>
+                      </DropdownButton>
+                      <Form.Check
+                        className="my-auto ms-3"
+                        label="Vidée"
+                        checked={item2.box.empty}
+                        onChange={() =>
+                          this.updateEmpty(
+                            (item2.box.empty = !item2.box.empty),
+                            item2.box.id,
+                            true
+                          )
+                        }
+                      />
+                      <Form.Check
+                        className="my-auto ms-3"
+                        label="Fragile"
+                        checked={item2.box.fragile}
+                        onChange={() =>
+                          this.updateEmpty(
+                            (item2.box.fragile = !item2.box.fragile),
+                            item2.box.id,
+                            false
+                          )
+                        }
+                      />
+                    </ButtonGroup>
+                    <div>
+                      <small>Pièce : {item2.box.room.name}</small>
+                    </div>
+                    <div>
+                      <small>Tag : {item.name}</small>
+                    </div>
+                  </ListGroup.Item>
+                ))}
+              </div>
+            ))}
+          </ListGroup>
+        </div>
       </div>
     );
   }

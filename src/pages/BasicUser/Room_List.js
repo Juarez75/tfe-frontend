@@ -11,11 +11,14 @@ import {
   Form,
   Modal,
   ModalTitle,
+  ModalBody,
+  Breadcrumb,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { withRouter } from "../../withRouter";
 import { NavigationBar } from "../Component/NavUser";
 import _, { isUndefined } from "lodash";
+import ErrorHappened from "../Component/ErrorHappened";
 
 class Room_List extends React.Component {
   constructor(props) {
@@ -24,20 +27,21 @@ class Room_List extends React.Component {
       room: [],
       type: localStorage.getItem("type"),
       color: localStorage.getItem("color"),
-      society_code: localStorage.getItem("society_code"),
+      id_society: localStorage.getItem("id_society"),
       show: false,
       selectedTag: "",
       typeRoom: "",
       stage: "0",
       name: "",
-      comment: "",
       tags: [],
+      EMPTY_NAME: false,
+      ERROR_HAPPENED: false,
     };
     this.onCreate = this.onCreate.bind(this);
     this.loadTag = this.loadTag.bind(this);
     this.loadRoom = this.loadRoom.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-    this.onSelectChange = this.onSelectChange.bind(this);
+
     this.handleChange = this.handleChange.bind(this);
 
     this.loadRoom();
@@ -53,42 +57,56 @@ class Room_List extends React.Component {
       .then((res) => {
         this.setState({ room: res.data });
       })
-      .catch(function (error) {
-        console.log(error.response.data);
+      .catch((error) => {
+        if (error.response.statusText == "Unauthorized")
+          this.props.router.navigate("/");
+        else if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
       });
   }
 
   loadTag() {
-    axios
-      .get("http://localhost:3001/tag/society", { withCredentials: true })
-      .then((res) => {
-        this.setState({ tags: res.data });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    if (this.state.id_society != "null") {
+      axios
+        .get("http://localhost:3001/tag/society", { withCredentials: true })
+        .then((res) => {
+          this.setState({ tags: res.data });
+        })
+        .catch((error) => {
+          if (error.response.data == "ERROR") {
+            this.setState({ ERROR_HAPPENED: true });
+            setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+          }
+        });
+    }
   }
 
   onSubmit() {
-    axios
-      .post(
-        `http://localhost:3001/room/create`,
-        {
-          name: this.state.name,
-          comment: this.state.comment,
-          type: this.state.typeRoom,
-          stage: this.state.stage,
-          tag: this.state.selectedTag,
-        },
-        { withCredentials: true }
-      )
-      .then((res) => {
-        this.loadRoom();
-        this.setState({ show: false });
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    if (this.state.name != "") {
+      axios
+        .post(
+          `http://localhost:3001/room/create`,
+          {
+            name: this.state.name,
+            type: this.state.typeRoom,
+            stage: this.state.stage,
+            tag: this.state.selectedTag,
+          },
+          { withCredentials: true }
+        )
+        .then((res) => {
+          this.loadRoom();
+          this.setState({ show: false });
+        })
+        .catch(function (error) {
+          if (error.response.data == "ERROR") {
+            this.setState({ ERROR_HAPPENED: true });
+            setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+          }
+        });
+    } else this.setState({ EMPTY_NAME: true });
   }
 
   onCreate() {
@@ -97,10 +115,6 @@ class Room_List extends React.Component {
 
   onClick(id) {
     this.props.router.navigate(`/room/${id}`);
-  }
-
-  onSelectChange(event) {
-    this.setState({ [event.target.name]: event.target.value });
   }
 
   render() {
@@ -113,7 +127,7 @@ class Room_List extends React.Component {
     ];
     var tagView = "";
     var color;
-    if (this.state.society_code != 0) {
+    if (this.state.id_society != "null") {
       this.loadTag();
       tagView = (
         <Row className>
@@ -123,7 +137,7 @@ class Room_List extends React.Component {
               aria-label="Exemple"
               name="selectedTag"
               value={this.state.selectedTag}
-              onChange={this.onSelectChange}
+              onChange={this.handleChange}
             >
               <option>--Sélectionne--</option>
               {this.state.tags.map((item) => (
@@ -142,7 +156,7 @@ class Room_List extends React.Component {
     }
     const rooms = _.chunk(this.state.room, 3);
     var stages = [];
-    for (var i = 0; i < 164; i++) {
+    for (var i = -10; i < 164; i++) {
       stages.push(
         <option key={i} value={i}>
           {i}
@@ -152,104 +166,112 @@ class Room_List extends React.Component {
     if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>
-        <NavigationBar color={this.state.color} />
-        <h4>Liste des pièces</h4>
-        <Button variant="outline-secondary" onClick={this.onCreate}>
-          Add new room
-        </Button>
         <Modal
-          show={this.state.show}
-          onHide={() => this.setState({ show: false })}
+          show={this.state.ERROR_HAPPENED}
+          onHide={() => this.setState({ ERROR_HAPPENED: false })}
         >
-          <ModalTitle>Créer une pièce</ModalTitle>
-          <Form>
-            <Form.Group className="mb-3" controlId="formBasicText">
-              <Form.Label>Name</Form.Label>
-              <Form.Control
-                name="name"
-                value={this.state.name}
-                type="text"
-                onChange={this.handleChange}
-                placeholder="Enter name"
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="formBasicText">
-              <Form.Label>Comment</Form.Label>
-              <Form.Control
-                name="comment"
-                value={this.state.comment}
-                type="text"
-                onChange={this.handleChange}
-                placeholder="Enter comment"
-              />
-            </Form.Group>
-            <Row>
-              <Col>
-                <Row>
-                  <Form.Group>
-                    <Form.Label>Type de pièce</Form.Label>
-                    <Form.Select
-                      aria-label="Exemple"
-                      name="typeRoom"
-                      onChange={this.onSelectChange}
-                      defaultValue={this.state.typeRoom}
-                    >
-                      <option>--Sélectionne--</option>
-                      {defaultPiece.map((item) => (
-                        <option key={item.id} value={item.id}>
-                          {item.name}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  </Form.Group>
-                </Row>
-                {tagView}
-              </Col>
-              <Col md={2}>
-                <Form.Group>
-                  <Form.Label>Etage</Form.Label>
-                  <Form.Select
-                    aria-label="Exemple"
-                    name="stage"
-                    onChange={this.onSelectChange}
-                    defaultValue={this.state.stage}
-                    htmlSize={4}
-                  >
-                    {stages}
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-            </Row>
-            <br />
-            <Button variant="secondary" onClick={this.onSubmit}>
-              Submit
-            </Button>
-          </Form>
+          <ErrorHappened></ErrorHappened>
         </Modal>
-        {rooms.map((row, i) => (
-          <Row key={i}>
-            {row.map((item) => (
-              <Col key={item.id} md={4}>
-                <div className="d-grip">
-                  <ButtonGroup className=" my-2 mx-auto d-grid">
-                    <Button
-                      style={{
-                        backgroundColor: isUndefined(item.TagOnRoom[0])
-                          ? (color = "#707070")
-                          : (color = item.TagOnRoom[0].tag.color),
-                      }}
-                      variant="secondary"
-                      onClick={() => this.onClick(item.id)}
-                    >
-                      <h5>{item.name}</h5>
-                    </Button>
-                  </ButtonGroup>
-                </div>
-              </Col>
-            ))}
-          </Row>
-        ))}
+        <NavigationBar color={this.state.color} />
+        <div id="center_list">
+          <h4>Liste des pièces</h4>
+          <Button variant="outline-secondary" onClick={this.onCreate}>
+            Ajouter une pièce
+          </Button>
+          <Modal
+            show={this.state.show}
+            onHide={() => this.setState({ show: false })}
+          >
+            <ModalTitle>Créer une pièce</ModalTitle>
+            <ModalBody>
+              <Form>
+                <Form.Group className="mb-3" controlId="formBasicText">
+                  <Form.Label>Nom</Form.Label>
+                  <Form.Control
+                    style={{
+                      backgroundColor: this.state.EMPTY_NAME ? "#f7786f" : " ",
+                    }}
+                    name="name"
+                    value={this.state.name}
+                    type="text"
+                    onChange={this.handleChange}
+                    placeholder="Exemple"
+                  />
+                </Form.Group>
+                <Row>
+                  <Col>
+                    <Row>
+                      <Form.Group>
+                        <Form.Label>Type de pièce</Form.Label>
+                        <Form.Select
+                          aria-label="Exemple"
+                          name="typeRoom"
+                          onChange={this.handleChange}
+                          defaultValue={this.state.typeRoom}
+                        >
+                          <option>--Sélectionne--</option>
+                          {defaultPiece.map((item) => (
+                            <option key={item.id} value={item.id}>
+                              {item.name}
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </Form.Group>
+                    </Row>
+                    {tagView}
+                  </Col>
+                  <Col md={3}>
+                    <Form.Group>
+                      <Form.Label>Etage</Form.Label>
+                      <Form.Select
+                        aria-label="Exemple"
+                        name="stage"
+                        onChange={this.handleChange}
+                        defaultValue={this.state.stage}
+                      >
+                        {stages}
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <br />
+                <Button variant="secondary" onClick={this.onSubmit}>
+                  Ajouter
+                </Button>
+              </Form>
+            </ModalBody>
+          </Modal>
+          {rooms.map((row, i) => (
+            <Row key={i}>
+              {row.map((item) => (
+                <Col key={item.id} md={4}>
+                  <div className="d-grip">
+                    <ButtonGroup className=" my-2 mx-auto d-grid">
+                      <Button
+                        style={{
+                          backgroundColor:
+                            item.id_TagSociety == null
+                              ? (color = "#707070")
+                              : (color = item.TagSociety.color),
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          flexDirection: "column",
+                          padding: "1rem",
+                        }}
+                        variant="secondary"
+                        onClick={() => this.onClick(item.id)}
+                      >
+                        <h5 className="h5Room">{item.name}</h5>
+                        <small>Nombre de caisses: {item._count.box}</small>
+                      </Button>
+                    </ButtonGroup>
+                  </div>
+                </Col>
+              ))}
+            </Row>
+          ))}
+        </div>
       </div>
     );
   }
