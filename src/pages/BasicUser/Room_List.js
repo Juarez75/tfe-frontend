@@ -36,6 +36,7 @@ class Room_List extends React.Component {
       tags: [],
       EMPTY_NAME: false,
       ERROR_HAPPENED: false,
+      isLoading: true,
     };
     this.onCreate = this.onCreate.bind(this);
     this.loadTag = this.loadTag.bind(this);
@@ -55,12 +56,12 @@ class Room_List extends React.Component {
     axios
       .get(`http://localhost:3001/room/list`, { withCredentials: true })
       .then((res) => {
-        this.setState({ room: res.data });
+        console.log(res);
+        this.loadTag();
+        this.setState({ room: res.data, isLoading: false });
       })
       .catch((error) => {
-        if (error.response.statusText == "Unauthorized")
-          this.props.router.navigate("/");
-        else if (error.response.data == "ERROR") {
+        if (error.response.data == "ERROR") {
           this.setState({ ERROR_HAPPENED: true });
           setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
         }
@@ -118,6 +119,9 @@ class Room_List extends React.Component {
   }
 
   render() {
+    if (this.state.isLoading) {
+      return <div></div>;
+    }
     const defaultPiece = [
       { id: 1, name: "Chambre" },
       { id: 2, name: "Cuisine" },
@@ -128,7 +132,6 @@ class Room_List extends React.Component {
     var tagView = "";
     var color;
     if (this.state.id_society != "null") {
-      this.loadTag();
       tagView = (
         <Row className>
           <Form.Group>

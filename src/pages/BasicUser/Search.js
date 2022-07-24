@@ -43,36 +43,41 @@ class Search extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.loadData = this.loadData.bind(this);
     this.updateEmpty = this.updateEmpty.bind(this);
+    this.timer = null;
   }
   loadData(search) {
     if (search !== "") {
-      axios
-        .post(
-          "http://localhost:3001/search",
-          {
-            search: search,
-          },
-          {
-            withCredentials: true,
-          }
-        )
-        .then((res) => {
-          this.setState({
-            room: res.data.room,
-            box: res.data.box,
-            object: res.data.object,
-            tag: res.data.tag,
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
+        axios
+          .post(
+            "http://localhost:3001/search",
+            {
+              search: search,
+            },
+            {
+              withCredentials: true,
+            }
+          )
+          .then((res) => {
+            this.setState({
+              room: res.data.room,
+              box: res.data.box,
+              object: res.data.object,
+              tag: res.data.tag,
+            });
+          })
+          .catch((error) => {
+            if (error.response.statusText == "Unauthorized")
+              this.props.router.navigate("/");
+            else if (error.response.data == "ERROR") {
+              this.setState({ ERROR_HAPPENED: true });
+              setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+            }
           });
-        })
-        .catch((error) => {
-          if (error.response.statusText == "Unauthorized")
-            this.props.router.navigate("/");
-          else if (error.response.data == "ERROR") {
-            this.setState({ ERROR_HAPPENED: true });
-            setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
-          }
-        });
+      }, 300);
     } else {
+      clearTimeout(this.timer);
       this.setState({ room: [], box: [], object: [], tag: [] });
     }
   }

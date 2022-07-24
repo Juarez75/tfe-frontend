@@ -12,6 +12,7 @@ class User_List extends React.Component {
     super(props);
     this.state = {
       user: [],
+      visibleUser: [],
       search: "",
       type: localStorage.getItem("type"),
       color: localStorage.getItem("color"),
@@ -25,7 +26,7 @@ class User_List extends React.Component {
     axios
       .get(`http://localhost:3001/society/users`, { withCredentials: true })
       .then((res) => {
-        this.setState({ user: res.data });
+        this.setState({ user: res.data, visibleUser: res.data });
       })
       .catch((error) => {
         if (error.response.statusText == "Unauthorized")
@@ -40,29 +41,19 @@ class User_List extends React.Component {
   handleChange(event) {
     this.setState({ [event.target.name]: event.target.value });
     if (event.target.value !== "") {
-      axios
-        .post(
-          "http://localhost:3001/society/search",
-          {
-            search: event.target.value,
-          },
-          {
-            withCredentials: true,
-          }
-        )
-        .then((res) => {
-          this.setState({
-            user: res.data,
-          });
-        })
-        .catch((error) => {
-          if (error.response.data == "ERROR") {
-            this.setState({ ERROR_HAPPENED: true });
-            setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
-          }
-        });
+      const results = this.state.user.filter((user) => {
+        return (
+          user.firstname
+            .toLowerCase()
+            .startsWith(event.target.value.toLowerCase()) ||
+          user.lastname
+            .toLowerCase()
+            .startsWith(event.target.value.toLowerCase())
+        );
+      });
+      this.setState({ visibleUser: results });
     } else {
-      this.loadData();
+      this.setState({ visibleUser: this.state.user });
     }
   }
 
@@ -89,7 +80,7 @@ class User_List extends React.Component {
             />
           </Col>
           <ListGroup>
-            {this.state.user.map((item) => (
+            {this.state.visibleUser.map((item) => (
               <ListGroup.Item key={item.id}>
                 <Button
                   variant="outline-dark"

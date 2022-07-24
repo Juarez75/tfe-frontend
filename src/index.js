@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./style.css";
+import "./interceptor/axios.js";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";

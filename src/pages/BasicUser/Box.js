@@ -45,6 +45,7 @@ class Room_List extends React.Component {
       type_delete: "",
       WRONG_PAGE: false,
       ERROR_HAPPENED: false,
+      isLoading: true,
     };
     this.loadData = this.loadData.bind(this);
     this.onDelete = this.onDelete.bind(this);
@@ -66,6 +67,7 @@ class Room_List extends React.Component {
           box: res.data,
           objects: res.data.objects,
           room: res.data.room,
+          isLoading: false,
         });
       })
       .catch((error) => {
@@ -155,6 +157,7 @@ class Room_List extends React.Component {
 
   render() {
     if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
+    if (this.state.isLoading) return <></>;
     var listDefault = [
       "Verre",
       "Livre",

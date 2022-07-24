@@ -58,6 +58,7 @@ class Room_List extends React.Component {
       EMPTY_NAME: false,
       WRONG_PAGE: false,
       ERROR_HAPPENED: false,
+      isLoading: true,
     };
     this.onRoomDelete = this.onRoomDelete.bind(this);
     this.onRoomModify = this.onRoomModify.bind(this);
@@ -88,6 +89,7 @@ class Room_List extends React.Component {
             stage: res.data.stage,
             box: res.data.box,
             number_box: res.data._count.box,
+            isLoading: false,
           });
         } else {
           this.setState({
@@ -242,6 +244,7 @@ class Room_List extends React.Component {
   }
 
   render() {
+    if (this.state.isLoading) return <></>;
     var createBox = [];
     for (var i = 1; i < 51; i++) {
       createBox.push(

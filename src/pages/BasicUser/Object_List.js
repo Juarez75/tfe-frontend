@@ -28,11 +28,12 @@ class Box_List extends React.Component {
       url_return: "",
       type_delete: "",
       ERROR_HAPPENED: false,
+      isLoading: true,
     };
     axios
       .get(`http://localhost:3001/object/list`, { withCredentials: true })
       .then((res) => {
-        this.setState({ objects: res.data });
+        this.setState({ objects: res.data, isLoading: false });
       })
       .catch((error) => {
         if (error.response.statusText == "Unauthorized")
@@ -60,6 +61,7 @@ class Box_List extends React.Component {
 
   render() {
     if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
+    if (this.state.isLoading) return <></>;
     return (
       <div>
         <Modal
