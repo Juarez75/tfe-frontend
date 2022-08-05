@@ -29,9 +29,7 @@ class User_List extends React.Component {
         this.setState({ user: res.data, visibleUser: res.data });
       })
       .catch((error) => {
-        if (error.response.statusText == "Unauthorized")
-          this.props.router.navigate("/");
-        else if (error.response.data == "ERROR") {
+        if (error.response.data == "ERROR") {
           this.setState({ ERROR_HAPPENED: true });
           setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
         }

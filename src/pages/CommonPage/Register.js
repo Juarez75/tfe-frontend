@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { Form, Button, Navbar, Container } from "react-bootstrap";
-import { withRouter } from "../withRouter";
+import { withRouter } from "../../withRouter";
 
 class Register extends React.Component {
   constructor(props) {

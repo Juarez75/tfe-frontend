@@ -46,6 +46,8 @@ export class NavigationBar extends React.Component {
                 <NavDropdown.Item href="/box/list">Caisses</NavDropdown.Item>
                 <NavDropdown.Item href="/object/list">Objets</NavDropdown.Item>
               </NavDropdown>
+              <Nav.Link href="/scanQR">QR Code</Nav.Link>
+
               <Nav.Link href="/search">Recherche</Nav.Link>
             </Nav>
             <Nav id="disconnect">
@@ -89,6 +91,7 @@ export class NavigationBar extends React.Component {
                 Objets
               </NavDropdown.Item>
             </NavDropdown>
+            <Nav.Link href="/scanQR">QR Code</Nav.Link>
             <Nav.Link href="/search">Recherche</Nav.Link>
             <Nav.Link
               href="/"

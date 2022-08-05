@@ -5,6 +5,12 @@ body{
 #selectNumber{
     width: 4em;
 }
+#video{
+    width: auto !important;
+}
+#box{
+    width: 300px;
+}
 #pdf{
     text-decoration:none;
     color: white;

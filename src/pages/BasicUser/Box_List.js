@@ -74,42 +74,23 @@ class Box_List extends React.Component {
   onClick(id) {
     this.props.router.navigate(`/box/${id}`);
   }
-  updateEmpty(data, id, empty) {
-    if (empty) {
-      axios
-        .post(
-          "http://localhost:3001/box/empty",
-          {
-            id: id,
-            empty: data,
-          },
-          { withCredentials: true }
-        )
-        .then(() => this.loadData())
-        .catch((error) => {
-          if (error.response.data == "ERROR") {
-            this.setState({ ERROR_HAPPENED: true });
-            setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
-          }
-        });
-    } else {
-      axios
-        .post(
-          "http://localhost:3001/box/fragile",
-          {
-            id: id,
-            fragile: data,
-          },
-          { withCredentials: true }
-        )
-        .then(() => this.loadData())
-        .catch((error) => {
-          if (error.response.data == "ERROR") {
-            this.setState({ ERROR_HAPPENED: true });
-            setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
-          }
-        });
-    }
+  updateFragile(data, id) {
+    axios
+      .post(
+        "http://localhost:3001/box/fragile",
+        {
+          id: id,
+          fragile: data,
+        },
+        { withCredentials: true }
+      )
+      .then(() => this.loadData(this.state.search))
+      .catch((error) => {
+        if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
+      });
   }
 
   render() {
@@ -147,7 +128,13 @@ class Box_List extends React.Component {
           <ListGroup>
             {this.state.box.map((item) => (
               <ListGroup.Item
-                variant={item.empty ? "danger" : ""}
+                variant={
+                  item.state == 2
+                    ? "danger"
+                    : "" || item.state == 1
+                    ? "success"
+                    : ""
+                }
                 key={item.id}
               >
                 <ButtonGroup>
@@ -164,27 +151,21 @@ class Box_List extends React.Component {
                       Supprimer
                     </Dropdown.Item>
                   </DropdownButton>
-                  <Form.Check
-                    className="my-auto ms-3"
-                    label="Vidée"
-                    checked={item.empty}
-                    onChange={() =>
-                      this.updateEmpty(
-                        (item.empty = !item.empty),
-                        item.id,
-                        true
-                      )
-                    }
-                  />
+                  <small className="my-auto ms-3">
+                    {item.state == 2
+                      ? "Vidée"
+                      : "" || item.state == 1
+                      ? "Déménagée"
+                      : ""}
+                  </small>
                   <Form.Check
                     className="my-auto ms-3"
                     label="Fragile"
                     checked={item.fragile}
                     onChange={() =>
-                      this.updateEmpty(
+                      this.updateFragile(
                         (item.fragile = !item.fragile),
-                        item.id,
-                        false
+                        item.id
                       )
                     }
                   />

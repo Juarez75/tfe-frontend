@@ -117,20 +117,30 @@ class Pdf extends React.Component {
                       {item.fragile ? (
                         <Image
                           src={Fragile}
-                          style={{ height: "130", width: "130" }}
+                          style={{
+                            height: "130",
+                            width: "130",
+                          }}
                         />
                       ) : (
                         ""
                       )}
                     </Text>
-                    <Text
+                    {/* <Text
                       style={{
                         fontSize: "117",
                         backgroundColor: "white",
                       }}
                     >
                       {item.room.stage}
-                    </Text>
+                    </Text> */}
+                    <Image
+                      src={
+                        "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" +
+                        item.id
+                      }
+                      style={{ height: "130", width: "130" }}
+                    ></Image>
                   </View>
                 ))}
               </Page>

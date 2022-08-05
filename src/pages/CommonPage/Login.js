@@ -3,7 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { Form, Button, Nav, Container, Navbar, Alert } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { withRouter } from "../withRouter";
+import { withRouter } from "../../withRouter";
 
 class Login extends React.Component {
   constructor(props) {
@@ -45,8 +45,9 @@ class Login extends React.Component {
           if (res.data.type == 1) this.props.router.navigate("/society/users");
         })
         .catch((error) => {
-          if (error.response.data == "WRONG_LOGIN")
-            this.setState({ WRONG_LOGIN: true });
+          console.log(error);
+          //  if (error.response.data == "WRONG_LOGIN")
+          //     this.setState({ WRONG_LOGIN: true });
         });
     }
   }

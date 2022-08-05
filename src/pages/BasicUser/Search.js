@@ -42,7 +42,7 @@ class Search extends React.Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.loadData = this.loadData.bind(this);
-    this.updateEmpty = this.updateEmpty.bind(this);
+    this.updateFragile = this.updateFragile.bind(this);
     this.timer = null;
   }
   loadData(search) {
@@ -104,42 +104,23 @@ class Search extends React.Component {
       type_delete: 0,
     });
   }
-  updateEmpty(data, id, empty) {
-    if (empty) {
-      axios
-        .post(
-          "http://localhost:3001/box/empty",
-          {
-            id: id,
-            empty: data,
-          },
-          { withCredentials: true }
-        )
-        .then(() => this.loadData(this.state.search))
-        .catch((error) => {
-          if (error.response.data == "ERROR") {
-            this.setState({ ERROR_HAPPENED: true });
-            setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
-          }
-        });
-    } else {
-      axios
-        .post(
-          "http://localhost:3001/box/fragile",
-          {
-            id: id,
-            fragile: data,
-          },
-          { withCredentials: true }
-        )
-        .then(() => this.loadData(this.state.search))
-        .catch((error) => {
-          if (error.response.data == "ERROR") {
-            this.setState({ ERROR_HAPPENED: true });
-            setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
-          }
-        });
-    }
+  updateFragile(data, id) {
+    axios
+      .post(
+        "http://localhost:3001/box/fragile",
+        {
+          id: id,
+          fragile: data,
+        },
+        { withCredentials: true }
+      )
+      .then(() => this.loadData(this.state.search))
+      .catch((error) => {
+        if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
+      });
   }
   render() {
     if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
@@ -222,7 +203,16 @@ class Search extends React.Component {
           {this.state.box[0] == undefined ? "" : <h5>Caisses :</h5>}
           <ListGroup>
             {this.state.box.map((item, i) => (
-              <ListGroup.Item key={i} variant={item.empty ? "danger" : ""}>
+              <ListGroup.Item
+                key={i}
+                variant={
+                  item.state == 2
+                    ? "danger"
+                    : "" || item.state == 1
+                    ? "success"
+                    : ""
+                }
+              >
                 <ButtonGroup>
                   <Button
                     variant="light"
@@ -240,27 +230,21 @@ class Search extends React.Component {
                       Supprimer
                     </Dropdown.Item>
                   </DropdownButton>
-                  <Form.Check
-                    className="my-auto ms-3"
-                    label="Vidée"
-                    checked={item.empty}
-                    onChange={() =>
-                      this.updateEmpty(
-                        (item.empty = !item.empty),
-                        item.id,
-                        true
-                      )
-                    }
-                  />
+                  <small className="my-auto ms-3">
+                    {item.state == 2
+                      ? "Vidée"
+                      : "" || item.state == 1
+                      ? "Déménagée"
+                      : ""}
+                  </small>
                   <Form.Check
                     className="my-auto ms-3"
                     label="Fragile"
                     checked={item.fragile}
                     onChange={() =>
-                      this.updateEmpty(
+                      this.updateFragile(
                         (item.fragile = !item.fragile),
-                        item.id,
-                        false
+                        item.id
                       )
                     }
                   />
@@ -334,27 +318,21 @@ class Search extends React.Component {
                           Supprimer
                         </Dropdown.Item>
                       </DropdownButton>
-                      <Form.Check
-                        className="my-auto ms-3"
-                        label="Vidée"
-                        checked={item2.box.empty}
-                        onChange={() =>
-                          this.updateEmpty(
-                            (item2.box.empty = !item2.box.empty),
-                            item2.box.id,
-                            true
-                          )
-                        }
-                      />
+                      <small className="my-auto ms-3">
+                        {item.state == 2
+                          ? "Vidée"
+                          : "" || item.state == 1
+                          ? "Déménagée"
+                          : ""}
+                      </small>
                       <Form.Check
                         className="my-auto ms-3"
                         label="Fragile"
                         checked={item2.box.fragile}
                         onChange={() =>
-                          this.updateEmpty(
+                          this.updateFragile(
                             (item2.box.fragile = !item2.box.fragile),
-                            item2.box.id,
-                            false
+                            item2.box.id
                           )
                         }
                       />

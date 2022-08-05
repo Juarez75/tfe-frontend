@@ -35,7 +35,7 @@ export class ModifyBox extends React.Component {
       id_box: "",
       room: [],
       EMPTY_NAME: false,
-
+      stateBox: "",
       ERROR_HAPPENED: false,
     };
     this.handleChange = this.handleChange.bind(this);
@@ -55,6 +55,7 @@ export class ModifyBox extends React.Component {
             id_room: res.data.id_room,
             tagBox: res.data.TagOnBox,
             id_box: res.data.id,
+            stateBox: res.data.state,
           });
         } else {
           this.setState({
@@ -63,6 +64,7 @@ export class ModifyBox extends React.Component {
             id_room: res.data.id_room,
             tagBox: res.data.TagOnBox,
             id_box: res.data.id,
+            stateBox: res.data.state,
           });
         }
       })
@@ -111,6 +113,7 @@ export class ModifyBox extends React.Component {
             name: this.state.name,
             comment: this.state.comment,
             id_room: this.state.id_room,
+            state: this.state.stateBox,
           },
           { withCredentials: true }
         )
@@ -277,6 +280,32 @@ export class ModifyBox extends React.Component {
                 placeholder="Ceci est une caisse"
               />
             </Form.Group>
+            <div className="mb-3">
+              <Form.Check
+                inline
+                label="Neutre"
+                type="radio"
+                id="check-box-0"
+                handleChange={() => this.setState({ stateBox: 0 })}
+                checked={this.state.stateBox == 0}
+              />
+              <Form.Check
+                inline
+                label="Déménagée"
+                type="radio"
+                id="check-box-1"
+                handleChange={() => this.setState({ stateBox: 1 })}
+                checked={this.state.stateBox == 1}
+              />
+              <Form.Check
+                inline
+                label="Vide"
+                type="radio"
+                id="check-box-2"
+                handleChange={() => this.setState({ stateBox: 2 })}
+                checked={this.state.stateBox == 2}
+              />
+            </div>
             <Button variant="secondary" onClick={this.onSubmit}>
               Sauvegarder
             </Button>

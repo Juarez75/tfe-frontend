@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { withRouter } from "../withRouter";
+import { withRouter } from "../../withRouter";
 import {
   Button,
   Form,
@@ -11,9 +11,9 @@ import {
   Alert,
   ModalHeader,
 } from "react-bootstrap";
-import { NavigationBar } from "./Component/NavUser";
-import { NavigationBarSociety } from "./Component/NavSociety";
-import Delete from "./Component/Delete";
+import { NavigationBar } from "../Component/NavUser";
+import { NavigationBarSociety } from "../Component/NavSociety";
+import Delete from "../Component/Delete";
 
 class Profile extends React.Component {
   constructor(props) {

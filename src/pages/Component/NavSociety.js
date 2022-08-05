@@ -33,6 +33,7 @@ export class NavigationBarSociety extends React.Component {
             <Nav className="me-auto" id="navComputer">
               <Nav.Link href="/profile">Mon compte</Nav.Link>
               <Nav.Link href="/society/users">Utilisateurs</Nav.Link>
+              <Nav.Link href="/scanQR">QR Code</Nav.Link>
               <Nav.Link href="/society/personalize">Personnalisation</Nav.Link>
             </Nav>
             <Nav id="disconnect">
@@ -66,6 +67,7 @@ export class NavigationBarSociety extends React.Component {
           <div id="menuPhone">
             <Nav.Link href="/profile">Mon compte</Nav.Link>
             <Nav.Link href="/society/users">Utilisateurs</Nav.Link>
+            <Nav.Link href="/scanQR">QR Code</Nav.Link>
             <Nav.Link href="/society/personalize">Personnalisation</Nav.Link>
             <Nav.Link
               href="/"
