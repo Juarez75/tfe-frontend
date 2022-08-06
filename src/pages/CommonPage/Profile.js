@@ -42,6 +42,7 @@ class Profile extends React.Component {
       EMPTY_PASSWORD: false,
       WRONG_PASSWORD: false,
       success: false,
+      isLoading: true,
     };
     this.handleChange = this.handleChange.bind(this);
     this.onUpdate = this.onUpdate.bind(this);
@@ -62,11 +63,11 @@ class Profile extends React.Component {
           lastname: res.data.lastname,
           id_society: res.data.id_society,
           tags: res.data.tag,
+          isLoading: false,
         });
       })
       .catch((error) => {
-        if (error.response.statusText == "Unauthorized")
-          this.props.router.navigate("/");
+        console.log(error);
       });
   }
   handleChange(event) {
@@ -174,6 +175,7 @@ class Profile extends React.Component {
   }
 
   render() {
+    if (this.state.isLoading) return <></>;
     let view;
     let society_view = (
       <div>

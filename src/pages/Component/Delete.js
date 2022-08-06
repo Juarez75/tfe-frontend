@@ -51,8 +51,7 @@ class Delete extends React.Component {
       .post(
         this.state.url,
         {
-          id_room: this.state.id,
-          number: this.state.name,
+          list: this.state.id,
         },
         { withCredentials: true }
       )

@@ -33,6 +33,7 @@ class Personalize extends React.Component {
       type_delete: "",
       ERROR_HAPPENED: false,
       success: false,
+      isLoading: true,
     };
 
     this.loadData = this.loadData.bind(this);
@@ -49,12 +50,10 @@ class Personalize extends React.Component {
     axios
       .get("http://localhost:3001/tag/society", { withCredentials: true })
       .then((res) => {
-        this.setState({ tags: res.data });
+        this.setState({ tags: res.data, isLoading: false });
       })
       .catch((error) => {
-        if (error.response.statusText == "Unauthorized")
-          this.props.router.navigate("/");
-        else if (error.response.data == "ERROR") {
+        if (error.response.data == "ERROR") {
           this.setState({ ERROR_HAPPENED: true });
           setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
         }
@@ -124,6 +123,7 @@ class Personalize extends React.Component {
   }
 
   render() {
+    if (this.state.isLoading) return <></>;
     if (this.state.type == 2 || 0)
       return <div>Nous n'êtes pas autorisé sur cette page</div>;
     return (

@@ -27,18 +27,17 @@ class Room_List extends React.Component {
       color: localStorage.getItem("color"),
       WRONG_PAGE: false,
       ERROR_HAPPENED: false,
+      isLoading: true,
     };
     axios
       .get(`http://localhost:3001/society/user/${this.state.id_user}`, {
         withCredentials: true,
       })
       .then((res) => {
-        this.setState({ room: res.data });
+        this.setState({ room: res.data, isLoading: false });
       })
       .catch((error) => {
-        if (error.response.statusText == "Unauthorized")
-          this.props.router.navigate("/");
-        else if (error.response.data == "WRONG_PAGE")
+        if (error.response.data == "WRONG_PAGE")
           this.setState({ WRONG_PAGE: true });
         else if (error.response.data == "ERROR") {
           this.setState({ ERROR_HAPPENED: true });
@@ -52,6 +51,7 @@ class Room_List extends React.Component {
   }
 
   render() {
+    if (this.state.isLoading) return <></>;
     if (this.state.WRONG_PAGE) return <WrongPage></WrongPage>;
     var color;
     if (this.state.type == 2) return <div>Vous n'avez pas accès à ça</div>;

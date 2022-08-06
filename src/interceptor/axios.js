@@ -50,9 +50,10 @@ axios.interceptors.response.use(
             withCredentials: true,
           }
         );
-        if (refreshed.response.status > 200) throw new Error("refreshed");
+        if (refreshed.status >= 400) throw new Error("refreshed");
         return await axios.request(error.config);
       } catch (e) {
+        console.log(e);
         localStorage.clear("type");
         localStorage.clear("id_society");
         localStorage.clear("color");

@@ -15,6 +15,7 @@ class BoxByQR extends React.Component {
       idBox: props.router.params.id,
       nameBox: "",
       stateBox: "",
+      isLoading: true,
     };
 
     this.loadData = this.loadData.bind(this);
@@ -26,7 +27,11 @@ class BoxByQR extends React.Component {
         withCredentials: true,
       })
       .then((res) => {
-        this.setState({ nameBox: res.data.name, stateBox: res.data.state });
+        this.setState({
+          nameBox: res.data.name,
+          stateBox: res.data.state,
+          isLoading: false,
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -51,6 +56,7 @@ class BoxByQR extends React.Component {
   }
 
   render() {
+    if (this.state.isLoading) return <></>;
     return (
       <>
         {this.state.typeUser == 1 ? (

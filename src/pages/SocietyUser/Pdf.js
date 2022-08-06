@@ -39,9 +39,7 @@ class Pdf extends React.Component {
         this.setState({ box: res.data, isDataFetch: true });
       })
       .catch((error) => {
-        if (error.response.statusText == "Unauthorized")
-          this.props.router.navigate("/");
-        else if (error.response.data == "WRONG_PAGE")
+        if (error.response.data == "WRONG_PAGE")
           this.setState({ WRONG_PAGE: true });
         else if (error.response.data == "ERROR") {
           this.setState({ ERROR_HAPPENED: true });

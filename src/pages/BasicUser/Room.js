@@ -15,6 +15,8 @@ import {
   InputGroup,
   ModalBody,
   Breadcrumb,
+  ModalHeader,
+  ModalFooter,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { withRouter } from "../../withRouter";
@@ -59,6 +61,11 @@ class Room_List extends React.Component {
       WRONG_PAGE: false,
       ERROR_HAPPENED: false,
       isLoading: true,
+      room: [],
+      modalRoom: false,
+      boxChecked: [],
+      updateOk: false,
+      id_room: "",
     };
     this.onRoomDelete = this.onRoomDelete.bind(this);
     this.onRoomModify = this.onRoomModify.bind(this);
@@ -67,6 +74,14 @@ class Room_List extends React.Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.onMultCreate = this.onMultCreate.bind(this);
     this.onBoxDelete = this.onBoxDelete.bind(this);
+
+    this.checkBoxChange = this.checkBoxChange.bind(this);
+    this.selectAll = this.selectAll.bind(this);
+    this.deleteMany = this.deleteMany.bind(this);
+    this.updateManyRoom = this.updateManyRoom.bind(this);
+    this.openModalRoom = this.openModalRoom.bind(this);
+    this.loadRoom = this.loadRoom.bind(this);
+
     this.loadData();
   }
 
@@ -79,7 +94,7 @@ class Room_List extends React.Component {
         }
       )
       .then((res) => {
-        console.log(res);
+        this.loadRoom();
         if (res.data.id_tagSociety == null) {
           this.setState({
             id: res.data.id,
@@ -245,6 +260,53 @@ class Room_List extends React.Component {
     return (
       <div>
         <Modal
+          show={this.state.updateOk}
+          onHide={() => this.setState({ updateOk: false })}
+        >
+          <ModalHeader
+            style={{ backgroundColor: "#77DD77", color: "#00561B" }}
+            closeButton
+          >
+            Modification effectuée !
+          </ModalHeader>
+        </Modal>
+        <Modal
+          show={this.state.modalRoom}
+          onHide={() => this.setState({ modalRoom: false })}
+        >
+          <ModalHeader closeButton>Changer de pièce</ModalHeader>
+          <ModalBody>
+            <Form.Select
+              aria-label="Exemple"
+              className="mx-1 "
+              name=""
+              style={{ maxWidth: "40vh" }}
+              onChange={(event) => {
+                this.setState({ id_room: event.target.value });
+                console.log(event.target.value);
+              }}
+            >
+              <option>--Sélectionne--</option>
+              {this.state.room.map((item, i) => (
+                <option key={i} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </Form.Select>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="outline-success" onClick={this.updateManyRoom}>
+              Sauvegarder
+            </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={() => this.setState({ modalRoom: false })}
+            >
+              Annuler
+            </Button>
+          </ModalFooter>
+        </Modal>
+        <Modal
           show={this.state.ERROR_HAPPENED}
           onHide={() => this.setState({ ERROR_HAPPENED: false })}
         >
@@ -375,34 +437,37 @@ class Room_List extends React.Component {
                     </div>
                   </InputGroup>
                 </Col>
-                <Col md={6}>
-                  <InputGroup>
-                    <Form.Label className="my-auto">
-                      Suppresion rapide de caisses :
-                    </Form.Label>
-                    <div id="multBox">
-                      <div id="selectDelete">
-                        <Form.Select
-                          aria-label="Exemple"
-                          name="selectedDelete"
-                          onChange={this.handleChange}
-                          value={this.state.selectedDelete}
-                          id="test"
-                        >
-                          {deleteBox}
-                        </Form.Select>
-                      </div>
-
-                      <Button
-                        variant="outline-secondary"
-                        onClick={() => this.onMultDelete()}
-                      >
-                        Supprimer
-                      </Button>
-                    </div>
-                  </InputGroup>
-                </Col>
               </Row>
+            </ListGroup.Item>
+            <ListGroup.Item>
+              <Form.Check
+                type="checkbox"
+                onChange={(e) => this.selectAll(e)}
+                style={{ marginRight: 20 }}
+                label="Tout sélectionner"
+                id="selectAll"
+              />
+              {this.state.boxChecked.length != 0 ? (
+                <>
+                  <h5>Caisses sélectionnées :</h5>
+                  <Button
+                    style={{ marginRight: 10, marginTop: 10 }}
+                    variant="outline-secondary"
+                    onClick={() => this.openModalRoom()}
+                  >
+                    Changer de pièce
+                  </Button>
+                  <Button
+                    style={{ marginRight: 10, marginTop: 10 }}
+                    variant="outline-danger"
+                    onClick={() => this.deleteMany()}
+                  >
+                    Supprimer les caisses
+                  </Button>
+                </>
+              ) : (
+                ""
+              )}
             </ListGroup.Item>
 
             {this.state.box.map((item) => (
@@ -417,6 +482,12 @@ class Room_List extends React.Component {
                   }
                 >
                   <ButtonGroup>
+                    <Form.Check
+                      type="checkbox"
+                      id={item.id}
+                      onChange={(event) => this.checkBoxChange(event)}
+                      style={{ alignItems: "center", marginRight: 20 }}
+                    />
                     <Button
                       variant="light"
                       onClick={() => this.onClick(item.id)}
@@ -469,6 +540,104 @@ class Room_List extends React.Component {
         </div>
       </div>
     );
+  }
+
+  loadRoom() {
+    axios
+      .get(`http://localhost:3001/room/list`, { withCredentials: true })
+      .then((res) => {
+        this.setState({ room: res.data });
+      })
+      .catch((error) => {
+        if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
+      });
+  }
+
+  deleteMany() {
+    this.setState({
+      url_data: "http://localhost:3001/box/deletemany",
+      id_data: this.state.boxChecked,
+      name_data: this.state.boxChecked.length,
+      showDelete: true,
+      url_return: "",
+      type_delete: 1,
+    });
+  }
+  openModalRoom() {
+    this.setState({ modalRoom: true });
+  }
+  updateManyRoom() {
+    if (!isNaN(this.state.id_room)) {
+      axios
+        .post(
+          "http://localhost:3001/box/updateManyRoom",
+          {
+            list: this.state.boxChecked,
+            id_room: this.state.id_room,
+          },
+          { withCredentials: true }
+        )
+        .then(() => {
+          this.ifSuccess();
+          this.setState({ modalRoom: false });
+          this.loadData();
+        })
+        .catch((error) => {
+          if (error.response.data == "ERROR") {
+            this.setState({ ERROR_HAPPENED: true });
+            setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+          }
+        });
+    }
+  }
+
+  checkBoxChange(event) {
+    var array = [];
+    var e;
+    if (event.target.checked) {
+      array = this.state.boxChecked.concat(parseInt(event.target.id));
+    } else {
+      array = this.state.boxChecked.filter(
+        (i) => i !== parseInt(event.target.id)
+      );
+    }
+    this.setState({ boxChecked: array });
+    if (array.length != this.state.box.length) {
+      e = document.getElementById("selectAll");
+      e.checked = false;
+    } else if (array.length == this.state.box.length) {
+      e = document.getElementById("selectAll");
+      e.checked = true;
+    }
+  }
+  ifSuccess() {
+    this.setState({ updateOk: true });
+    this.cancelSuccess();
+  }
+  cancelSuccess() {
+    setTimeout(() => this.setState({ updateOk: false }), 500);
+  }
+  selectAll(event) {
+    var array = [];
+    var e;
+    if (event.target.checked) {
+      this.state.box.map((item) => {
+        array.push(item.id);
+        e = document.getElementById(item.id);
+        e.checked = event.target.checked;
+      });
+    } else {
+      array = [];
+      this.state.box.map((item) => {
+        e = document.getElementById(item.id);
+        e.checked = event.target.checked;
+      });
+    }
+
+    this.setState({ boxChecked: array });
   }
 }
 export default withRouter(Room_List);

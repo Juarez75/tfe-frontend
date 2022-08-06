@@ -17,6 +17,7 @@ class User_List extends React.Component {
       type: localStorage.getItem("type"),
       color: localStorage.getItem("color"),
       ERROR_HAPPENED: false,
+      isLoading: true,
     };
     this.loadData = this.loadData.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -26,7 +27,11 @@ class User_List extends React.Component {
     axios
       .get(`http://localhost:3001/society/users`, { withCredentials: true })
       .then((res) => {
-        this.setState({ user: res.data, visibleUser: res.data });
+        this.setState({
+          user: res.data,
+          visibleUser: res.data,
+          isLoading: false,
+        });
       })
       .catch((error) => {
         if (error.response.data == "ERROR") {
@@ -56,6 +61,7 @@ class User_List extends React.Component {
   }
 
   render() {
+    if (this.state.isLoading) return <></>;
     if (this.state.type == 2) return <div>Vous n'avez pas accès à ça</div>;
     return (
       <div>

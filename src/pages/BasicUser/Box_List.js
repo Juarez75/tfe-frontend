@@ -9,6 +9,10 @@ import {
   ButtonGroup,
   Form,
   Modal,
+  ListGroupItem,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { withRouter } from "../../withRouter";
@@ -32,10 +36,21 @@ class Box_List extends React.Component {
       name_data: "",
       url_return: "",
       type_delete: "",
+      id_room: "",
       ERROR_HAPPENED: false,
       isLoading: true,
+      boxChecked: [],
+      updateOk: false,
+      room: [],
+      modalRoom: false,
     };
     this.loadData = this.loadData.bind(this);
+    this.checkBoxChange = this.checkBoxChange.bind(this);
+    this.selectAll = this.selectAll.bind(this);
+    this.deleteMany = this.deleteMany.bind(this);
+    this.updateManyRoom = this.updateManyRoom.bind(this);
+    this.openModalRoom = this.openModalRoom.bind(this);
+    this.loadRoom = this.loadRoom.bind(this);
     this.loadData();
   }
   loadData() {
@@ -43,17 +58,29 @@ class Box_List extends React.Component {
       .get(`http://localhost:3001/box/list`, { withCredentials: true })
       .then((res) => {
         this.setState({ box: res.data, isLoading: false });
+        this.loadRoom();
       })
       .catch((error) => {
-        if (error.response.statusText == "Unauthorized")
-          this.props.router.navigate("/");
-        else if (error.response.data == "ERROR") {
+        if (error.response.data == "ERROR") {
           this.setState({ ERROR_HAPPENED: true });
           setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
         }
       });
   }
 
+  loadRoom() {
+    axios
+      .get(`http://localhost:3001/room/list`, { withCredentials: true })
+      .then((res) => {
+        this.setState({ room: res.data });
+      })
+      .catch((error) => {
+        if (error.response.data == "ERROR") {
+          this.setState({ ERROR_HAPPENED: true });
+          setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+        }
+      });
+  }
   onDelete(id, name) {
     this.setState({
       url_data: "http://localhost:3001/box/delete",
@@ -63,6 +90,43 @@ class Box_List extends React.Component {
       url_return: "",
       type_delete: 0,
     });
+  }
+  deleteMany() {
+    this.setState({
+      url_data: "http://localhost:3001/box/deletemany",
+      id_data: this.state.boxChecked,
+      name_data: this.state.boxChecked.length,
+      showDelete: true,
+      url_return: "",
+      type_delete: 1,
+    });
+  }
+  openModalRoom() {
+    this.setState({ modalRoom: true });
+  }
+  updateManyRoom() {
+    if (!isNaN(this.state.id_room)) {
+      axios
+        .post(
+          "http://localhost:3001/box/updateManyRoom",
+          {
+            list: this.state.boxChecked,
+            id_room: this.state.id_room,
+          },
+          { withCredentials: true }
+        )
+        .then(() => {
+          this.ifSuccess();
+          this.setState({ modalRoom: false });
+          this.loadData();
+        })
+        .catch((error) => {
+          if (error.response.data == "ERROR") {
+            this.setState({ ERROR_HAPPENED: true });
+            setTimeout(() => this.setState({ ERROR_HAPPENED: false }), 3500);
+          }
+        });
+    }
   }
   onModify(id) {
     this.setState({ id_box: id, show: true });
@@ -92,12 +156,104 @@ class Box_List extends React.Component {
         }
       });
   }
+  checkBoxChange(event) {
+    var array = [];
+    var e;
+    if (event.target.checked) {
+      array = this.state.boxChecked.concat(parseInt(event.target.id));
+    } else {
+      array = this.state.boxChecked.filter(
+        (i) => i !== parseInt(event.target.id)
+      );
+    }
+    this.setState({ boxChecked: array });
+    if (array.length == 0) {
+      e = document.getElementById("selectAll");
+      e.checked = false;
+    } else if (array.length == this.state.box.length) {
+      e = document.getElementById("selectAll");
+      e.checked = true;
+    }
+  }
+  ifSuccess() {
+    this.setState({ updateOk: true });
+    this.cancelSuccess();
+  }
+  cancelSuccess() {
+    setTimeout(() => this.setState({ updateOk: false }), 500);
+  }
+  selectAll(event) {
+    var array = [];
+    var e;
+    if (event.target.checked) {
+      this.state.box.map((item) => {
+        array.push(item.id);
+        e = document.getElementById(item.id);
+        e.checked = event.target.checked;
+      });
+    } else {
+      array = [];
+      this.state.box.map((item) => {
+        e = document.getElementById(item.id);
+        e.checked = event.target.checked;
+      });
+    }
+
+    this.setState({ boxChecked: array });
+  }
 
   render() {
     if (this.state.type == 1) return <div>Vous n'avez pas accès à ça</div>;
     if (this.state.isLoading) return <></>;
     return (
       <div>
+        <Modal
+          show={this.state.updateOk}
+          onHide={() => this.setState({ updateOk: false })}
+        >
+          <ModalHeader
+            style={{ backgroundColor: "#77DD77", color: "#00561B" }}
+            closeButton
+          >
+            Modification effectuée !
+          </ModalHeader>
+        </Modal>
+        <Modal
+          show={this.state.modalRoom}
+          onHide={() => this.setState({ modalRoom: false })}
+        >
+          <ModalHeader closeButton>Changer de pièce</ModalHeader>
+          <ModalBody>
+            <Form.Select
+              aria-label="Exemple"
+              className="mx-1 "
+              name=""
+              style={{ maxWidth: "40vh" }}
+              onChange={(event) => {
+                this.setState({ id_room: event.target.value });
+                console.log(event.target.value);
+              }}
+            >
+              <option>--Sélectionne--</option>
+              {this.state.room.map((item, i) => (
+                <option key={i} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </Form.Select>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="outline-success" onClick={this.updateManyRoom}>
+              Sauvegarder
+            </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={() => this.setState({ modalRoom: false })}
+            >
+              Annuler
+            </Button>
+          </ModalFooter>
+        </Modal>
         <Modal
           show={this.state.ERROR_HAPPENED}
           onHide={() => this.setState({ ERROR_HAPPENED: false })}
@@ -126,6 +282,37 @@ class Box_List extends React.Component {
             />
           </Modal>
           <ListGroup>
+            <ListGroup.Item>
+              <Form.Check
+                type="checkbox"
+                onChange={(e) => this.selectAll(e)}
+                style={{ marginRight: 20 }}
+                label="Tout sélectionner"
+                id="selectAll"
+              />
+              {this.state.boxChecked.length != 0 ? (
+                <>
+                  <h5>Caisses sélectionnées :</h5>
+                  <Button
+                    style={{ marginRight: 10, marginTop: 10 }}
+                    variant="outline-secondary"
+                    onClick={() => this.openModalRoom()}
+                  >
+                    Changer de pièce
+                  </Button>
+                  <Button
+                    style={{ marginRight: 10, marginTop: 10 }}
+                    variant="outline-danger"
+                    onClick={() => this.deleteMany}
+                  >
+                    Supprimer les caisses
+                  </Button>
+                </>
+              ) : (
+                ""
+              )}
+            </ListGroup.Item>
+
             {this.state.box.map((item) => (
               <ListGroup.Item
                 variant={
@@ -138,6 +325,12 @@ class Box_List extends React.Component {
                 key={item.id}
               >
                 <ButtonGroup>
+                  <Form.Check
+                    type="checkbox"
+                    id={item.id}
+                    onChange={(event) => this.checkBoxChange(event)}
+                    style={{ alignItems: "center", marginRight: 20 }}
+                  />
                   <Button variant="light" onClick={() => this.onClick(item.id)}>
                     {item.name}
                   </Button>
