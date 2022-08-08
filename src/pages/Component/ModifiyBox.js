@@ -17,6 +17,28 @@ import axios from "axios";
 import { isUndefined } from "lodash";
 import React from "react";
 import ErrorHappened from "./ErrorHappened";
+import { FilePond, registerPlugin } from "react-filepond";
+import Cross from "../../image/cross.svg";
+
+import "filepond/dist/filepond.min.css";
+import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
+import "filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css";
+
+import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
+import FilePondPluginImageResize from "filepond-plugin-image-resize";
+import FilePondPluginImageCrop from "filepond-plugin-image-crop";
+import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
+
+registerPlugin(
+  FilePondPluginImageExifOrientation,
+  FilePondPluginImagePreview,
+  FilePondPluginFileValidateType,
+  FilePondPluginImageResize,
+  FilePondPluginImageCrop,
+  FilePondPluginFileValidateSize
+);
 
 export class ModifyBox extends React.Component {
   constructor(props) {
@@ -37,6 +59,10 @@ export class ModifyBox extends React.Component {
       EMPTY_NAME: false,
       stateBox: "",
       ERROR_HAPPENED: false,
+      file: "",
+      validateImage: false,
+      url_img: "",
+      imgChanged: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -56,6 +82,7 @@ export class ModifyBox extends React.Component {
             tagBox: res.data.TagOnBox,
             id_box: res.data.id,
             stateBox: res.data.state,
+            url_img: res.data.url_img,
           });
         } else {
           this.setState({
@@ -65,6 +92,7 @@ export class ModifyBox extends React.Component {
             tagBox: res.data.TagOnBox,
             id_box: res.data.id,
             stateBox: res.data.state,
+            url_img: res.data.url_img,
           });
         }
       })
@@ -105,18 +133,19 @@ export class ModifyBox extends React.Component {
   }
   onSubmit() {
     if (this.state.name != "") {
+      var formData = new FormData();
+      if (this.state.file[0] != null)
+        formData.append("picture", this.state.file[0].file);
+      formData.append("id_room", this.state.id_room);
+      formData.append("name", this.state.name);
+      formData.append("comment", this.state.comment);
+      formData.append("id", this.state.id);
+      formData.append("state", this.state.stateBox);
+      formData.append("imgChanged", this.state.imgChanged);
       axios
-        .post(
-          `http://localhost:3001/box/update`,
-          {
-            id: this.state.id,
-            name: this.state.name,
-            comment: this.state.comment,
-            id_room: this.state.id_room,
-            state: this.state.stateBox,
-          },
-          { withCredentials: true }
-        )
+        .post(`http://localhost:3001/box/update`, formData, {
+          withCredentials: true,
+        })
         .then((res) => {
           window.location.reload(false);
         })
@@ -189,6 +218,7 @@ export class ModifyBox extends React.Component {
         }
       });
   }
+
   render() {
     var color;
     let tagSelection = (
@@ -224,6 +254,49 @@ export class ModifyBox extends React.Component {
         <ModalBody>
           {" "}
           <Form>
+            {this.state.url_img == null ? (
+              <div style={{ width: 300 }}>
+                <FilePond
+                  ref={(ref) => (this.pond = ref)}
+                  file={this.state.file}
+                  allowReorder={true}
+                  server="/api"
+                  instantUpload={false}
+                  maxFileSize="5MB"
+                  name="file"
+                  id="filePond"
+                  allowProcess={false}
+                  acceptedFileTypes={["image/png", "image/jpeg"]}
+                  imageResizeTargetWidth={300}
+                  imageCropAspectRatio="1:1"
+                  onaddfile={(ref) =>
+                    this.setState({ validateImage: ref == null })
+                  }
+                  onupdatefiles={(fileItem) => {
+                    console.log(fileItem);
+                    // Set currently active file objects to this.state
+                    this.setState({
+                      file: fileItem,
+                      imgChanged: true,
+                    });
+                  }}
+                />
+              </div>
+            ) : (
+              <div id="imgComposent">
+                <img src={this.state.url_img} id="imgModify"></img>
+                <img
+                  src={Cross}
+                  id="crossImg"
+                  onClick={() =>
+                    this.setState({ url_img: null, imgChanged: true })
+                  }
+                ></img>
+              </div>
+            )}
+            <div style={{ fontSize: 12 }}>
+              *Sauvegarer pour confirmer la suppression de l'image
+            </div>
             <Row>
               <Col>
                 <Form.Group className="mb-3" controlId="formBasicText">
@@ -286,7 +359,7 @@ export class ModifyBox extends React.Component {
                 label="Neutre"
                 type="radio"
                 id="check-box-0"
-                handleChange={() => this.setState({ stateBox: 0 })}
+                onChange={() => this.setState({ stateBox: 0 })}
                 checked={this.state.stateBox == 0}
               />
               <Form.Check
@@ -294,7 +367,7 @@ export class ModifyBox extends React.Component {
                 label="Déménagée"
                 type="radio"
                 id="check-box-1"
-                handleChange={() => this.setState({ stateBox: 1 })}
+                onChange={() => this.setState({ stateBox: 1 })}
                 checked={this.state.stateBox == 1}
               />
               <Form.Check
@@ -302,7 +375,7 @@ export class ModifyBox extends React.Component {
                 label="Vide"
                 type="radio"
                 id="check-box-2"
-                handleChange={() => this.setState({ stateBox: 2 })}
+                onChange={() => this.setState({ stateBox: 2 })}
                 checked={this.state.stateBox == 2}
               />
             </div>

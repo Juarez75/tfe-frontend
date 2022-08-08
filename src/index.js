@@ -21,12 +21,14 @@ import { createBrowserHistory } from "history";
 import { unstable_HistoryRouter as HistoryRouter } from "react-router-dom";
 import QrReader from "./pages/CommonPage/QrReader";
 import BoxByQR from "./pages/CommonPage/BoxByQR";
+import CreateBox from "./pages/BasicUser/CreateBox";
 export const history = createBrowserHistory({ window });
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <HistoryRouter history={history}>
     <Routes>
       <Route path="/" element={<Login />}></Route>
+      <Route path="/test" element={<CreateBox />}></Route>
       <Route path="/register" element={<Register />}></Route>
       <Route path="room">
         <Route path="list" element={<RoomList />}></Route>

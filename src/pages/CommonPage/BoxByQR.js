@@ -5,6 +5,7 @@ import { NavigationBarSociety } from "../Component/NavSociety";
 import { NavigationBar } from "../Component/NavUser";
 import Box from "../../image/box.svg";
 import { Button, Form } from "react-bootstrap";
+import Cross from "../../image/cross.svg";
 
 class BoxByQR extends React.Component {
   constructor(props) {
@@ -16,8 +17,9 @@ class BoxByQR extends React.Component {
       nameBox: "",
       stateBox: "",
       isLoading: true,
+      image: "",
+      url_img: "",
     };
-
     this.loadData = this.loadData.bind(this);
     this.loadData();
   }
@@ -31,6 +33,7 @@ class BoxByQR extends React.Component {
           nameBox: res.data.name,
           stateBox: res.data.state,
           isLoading: false,
+          url_img: res.data.url_img,
         });
       })
       .catch((error) => {
@@ -66,7 +69,13 @@ class BoxByQR extends React.Component {
         )}
         <div id="center">
           <h4>{this.state.nameBox}</h4>
-          <img src={Box} id="box"></img>
+          <div id="test">
+            <img
+              src={this.state.url_img == null ? Box : this.state.url_img}
+              id="box"
+            ></img>
+            <img src={Cross} id="crossImg"></img>
+          </div>
           <div className="mb-3">
             <Form.Check
               inline

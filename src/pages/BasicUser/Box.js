@@ -21,6 +21,7 @@ import { ModifyObject } from "../Component/ModifyObject";
 import Delete from "../Component/Delete";
 import WrongPage from "../Component/WrongPage";
 import ErrorHappened from "../Component/ErrorHappened";
+import Box from "../../image/box.svg";
 
 class Room_List extends React.Component {
   constructor(props) {
@@ -252,8 +253,6 @@ class Room_List extends React.Component {
         </Modal>
         <NavigationBar color={this.state.color} />
         <div id="center_list">
-          <h4>Dans la caisse : {this.state.box.name}</h4>
-          <div>Commentaire: {this.state.box.comment}</div>
           <Breadcrumb>
             <Breadcrumb.Item href="/room/list">
               Liste des pièces
@@ -265,6 +264,13 @@ class Room_List extends React.Component {
               {this.state.box.name}
             </Breadcrumb.Item>
           </Breadcrumb>
+          <h4>Dans la caisse : {this.state.box.name}</h4>
+          <div>Commentaire: {this.state.box.comment}</div>
+          <img
+            src={this.state.box.url_img == null ? "" : this.state.box.url_img}
+            id="imgBox"
+          ></img>
+
           <Modal
             show={this.state.showModify}
             onHide={() => this.setState({ showModify: false })}

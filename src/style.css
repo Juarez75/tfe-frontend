@@ -5,15 +5,37 @@ body{
 #selectNumber{
     width: 4em;
 }
+#imgComposent{
+    position: relative;
+}
+#imgModify{
+    width: 12rem;
+}
+#crossImg{
+    position:absolute;
+    top:0;
+    left:0;
+    background-color: #00000033;
+    padding: 5px;
+    border:solid;
+    border-color: #00000000;
+    border-radius: 100%;
+    width: 1.5rem;
+    cursor: pointer;
+}
 #video{
     width: auto !important;
 }
 #box{
-    width: 300px;
+    width: 18rem;
 }
 #pdf{
     text-decoration:none;
     color: white;
+}
+#imgBox{
+    width: 200px;
+    margin:15px
 }
 #text{
     margin: 300px !important;
@@ -79,6 +101,14 @@ max-width: 100vw;}
     }
     .btn-group, .btn-group-vertical{
         max-width: 90%;
+    }
+    #imgBox{
+        width: 150px;
+        margin-left: 20px;
+    }
+    #box{
+        width: 15rem;
+        margin: 2rem;
     }
 
 #navComputer{

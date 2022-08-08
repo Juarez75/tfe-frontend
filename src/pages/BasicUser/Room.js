@@ -27,6 +27,27 @@ import { ModifyBox } from "../Component/ModifiyBox";
 import Delete from "../Component/Delete";
 import WrongPage from "../Component/WrongPage";
 import ErrorHappened from "../Component/ErrorHappened";
+import { FilePond, registerPlugin } from "react-filepond";
+
+import "filepond/dist/filepond.min.css";
+import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
+import "filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css";
+
+import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
+import FilePondPluginImageResize from "filepond-plugin-image-resize";
+import FilePondPluginImageCrop from "filepond-plugin-image-crop";
+import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
+
+registerPlugin(
+  FilePondPluginImageExifOrientation,
+  FilePondPluginImagePreview,
+  FilePondPluginFileValidateType,
+  FilePondPluginImageResize,
+  FilePondPluginImageCrop,
+  FilePondPluginFileValidateSize
+);
 
 class Room_List extends React.Component {
   constructor(props) {
@@ -66,6 +87,8 @@ class Room_List extends React.Component {
       boxChecked: [],
       updateOk: false,
       id_room: "",
+      file: "",
+      validateImage: false,
     };
     this.onRoomDelete = this.onRoomDelete.bind(this);
     this.onRoomModify = this.onRoomModify.bind(this);
@@ -184,16 +207,19 @@ class Room_List extends React.Component {
   }
   onSubmit() {
     if (this.state.name != "") {
+      var formData = new FormData();
+      if (this.state.file[0] != null)
+        formData.append("picture", this.state.file[0].file);
+      formData.append("id_room", this.state.id);
+      formData.append("name", this.state.nameBox);
+      formData.append("comment", this.state.commentBox);
       axios
-        .post(
-          `http://localhost:3001/box/create`,
-          {
-            id_room: this.state.id,
-            name: this.state.nameBox,
-            comment: this.state.commentBox,
+        .post(`http://localhost:3001/box/create`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
           },
-          { withCredentials: true }
-        )
+          withCredentials: true,
+        })
         .then(() => {
           this.loadData();
           this.setState({ showCreateBox: false });
@@ -235,6 +261,9 @@ class Room_List extends React.Component {
       url_return: "",
       type_delete: 1,
     });
+  }
+  handleInit() {
+    console.log("FilePond instance has initialised", this.pond);
   }
 
   render() {
@@ -346,6 +375,35 @@ class Room_List extends React.Component {
           <ModalBody>
             <Form>
               <Form.Group className="mb-3" controlId="formBasicText">
+                <Form.Label>
+                  Ajouter une photo <small>* Non obligatoire</small>
+                </Form.Label>
+                <div style={{ width: 300 }}>
+                  <FilePond
+                    ref={(ref) => (this.pond = ref)}
+                    file={this.state.file}
+                    allowReorder={true}
+                    instantUpload={false}
+                    maxFileSize="5MB"
+                    name="file"
+                    id="filePond"
+                    allowProcess={false}
+                    acceptedFileTypes={["image/png", "image/jpeg"]}
+                    imageResizeTargetWidth={300}
+                    imageCropAspectRatio="1:1"
+                    oninit={() => this.handleInit()}
+                    onaddfile={(ref) =>
+                      this.setState({ validateImage: ref == null })
+                    }
+                    onupdatefiles={(fileItem) => {
+                      console.log(fileItem);
+                      // Set currently active file objects to this.state
+                      this.setState({
+                        file: fileItem,
+                      });
+                    }}
+                  />
+                </div>
                 <Form.Label>Nom</Form.Label>
                 <Form.Control
                   style={{
