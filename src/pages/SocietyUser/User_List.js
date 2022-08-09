@@ -1,11 +1,21 @@
 import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { Button, ListGroup, Form, Col, Modal } from "react-bootstrap";
+import {
+  Button,
+  ListGroup,
+  Form,
+  Col,
+  Modal,
+  InputGroup,
+  ModalTitle,
+  ModalFooter,
+} from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { withRouter } from "../../withRouter";
 import { NavigationBarSociety } from "../Component/NavSociety";
 import ErrorHappened from "../Component/ErrorHappened";
+import Cross from "../../image/crossBlack.svg";
 
 class User_List extends React.Component {
   constructor(props) {
@@ -18,10 +28,14 @@ class User_List extends React.Component {
       color: localStorage.getItem("color"),
       ERROR_HAPPENED: false,
       isLoading: true,
+      id_user: "",
+      modalUnLink: false,
     };
     this.loadData = this.loadData.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.unLinkSociety = this.unLinkSociety.bind(this);
     this.loadData();
+    this.timer = null;
   }
   loadData() {
     axios
@@ -42,22 +56,46 @@ class User_List extends React.Component {
   }
 
   handleChange(event) {
-    this.setState({ [event.target.name]: event.target.value });
     if (event.target.value !== "") {
-      const results = this.state.user.filter((user) => {
-        return (
-          user.firstname
-            .toLowerCase()
-            .startsWith(event.target.value.toLowerCase()) ||
-          user.lastname
-            .toLowerCase()
-            .startsWith(event.target.value.toLowerCase())
-        );
-      });
-      this.setState({ visibleUser: results });
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
+        axios
+          .post(
+            "http://localhost:3001/society/search",
+            {
+              search: event.target.value,
+            },
+            {
+              withCredentials: true,
+            }
+          )
+          .then((res) => {
+            this.setState({ visibleUser: res.data });
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      }, 300);
     } else {
+      clearTimeout(this.timer);
       this.setState({ visibleUser: this.state.user });
     }
+    this.setState({ search: event.target.value });
+  }
+  unLinkSociety() {
+    axios
+      .post(
+        "http://localhost:3001/society/unlink",
+        { id_user: this.state.id_user },
+        { withCredentials: true }
+      )
+      .then(() => {
+        this.loadData();
+        this.setState({ modalUnLink: false });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }
 
   render() {
@@ -70,6 +108,25 @@ class User_List extends React.Component {
           onHide={() => this.setState({ ERROR_HAPPENED: false })}
         >
           <ErrorHappened></ErrorHappened>
+        </Modal>
+        <Modal
+          show={this.state.modalUnLink}
+          onHide={() => this.setState({ modalUnLink: false })}
+        >
+          <ModalTitle>
+            Êtes-vous sûr vous délier cet utilisateur de la société ?
+          </ModalTitle>
+          <ModalFooter>
+            <Button variant="danger" onClick={() => this.unLinkSociety()}>
+              Oui
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => this.setState({ modalUnLink: false })}
+            >
+              Non
+            </Button>
+          </ModalFooter>
         </Modal>
         <NavigationBarSociety color={this.state.color} />
         <div id="center_list">
@@ -86,14 +143,30 @@ class User_List extends React.Component {
           <ListGroup>
             {this.state.visibleUser.map((item) => (
               <ListGroup.Item key={item.id}>
-                <Button
-                  variant="outline-dark"
-                  onClick={() =>
-                    this.props.router.navigate(`/society/user/${item.id}`)
-                  }
-                >
-                  {item.firstname} {item.lastname}
-                </Button>
+                <InputGroup>
+                  <Button
+                    variant="outline-secondary"
+                    onClick={() =>
+                      this.props.router.navigate(`/society/user/${item.id}`)
+                    }
+                  >
+                    {item.firstname} {item.lastname}
+                  </Button>
+                  <Button
+                    variant="outline-secondary"
+                    style={{ paddingRight: 5, paddingLeft: 5, paddingTop: 0 }}
+                    onClick={() =>
+                      this.setState({ modalUnLink: true, id_user: item.id })
+                    }
+                  >
+                    <img
+                      src={Cross}
+                      style={{
+                        width: "1rem",
+                      }}
+                    />
+                  </Button>
+                </InputGroup>
               </ListGroup.Item>
             ))}
           </ListGroup>

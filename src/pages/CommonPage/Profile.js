@@ -10,6 +10,8 @@ import {
   Modal,
   Alert,
   ModalHeader,
+  ModalFooter,
+  ModalTitle,
 } from "react-bootstrap";
 import { NavigationBar } from "../Component/NavUser";
 import { NavigationBarSociety } from "../Component/NavSociety";
@@ -19,6 +21,7 @@ class Profile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      id: "",
       mail: "",
       firstname: "",
       lastname: "",
@@ -43,7 +46,10 @@ class Profile extends React.Component {
       WRONG_PASSWORD: false,
       success: false,
       isLoading: true,
+      modalUnLink: false,
     };
+    this.loadData = this.loadData.bind(this);
+    this.unLinkSociety = this.unLinkSociety.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.onUpdate = this.onUpdate.bind(this);
     this.onUpdatePwd = this.onUpdatePwd.bind(this);
@@ -52,12 +58,17 @@ class Profile extends React.Component {
     this.loadTag = this.loadTag.bind(this);
     this.ifSuccess = this.ifSuccess.bind(this);
     this.cancelSuccess = this.cancelSuccess.bind(this);
+    this.loadData();
+  }
+
+  loadData() {
     axios
       .get(`http://localhost:3001/user/information`, {
         withCredentials: true,
       })
       .then((res) => {
         this.setState({
+          id: res.data.id,
           mail: res.data.mail,
           firstname: res.data.firstname,
           lastname: res.data.lastname,
@@ -173,6 +184,21 @@ class Profile extends React.Component {
       })
       .catch((error) => console.log(error));
   }
+  unLinkSociety() {
+    axios
+      .post(
+        "http://localhost:3001/society/unlink",
+        { id_user: this.state.id },
+        { withCredentials: true }
+      )
+      .then(() => {
+        this.loadData();
+        this.setState({ modalUnLink: false });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
 
   render() {
     if (this.state.isLoading) return <></>;
@@ -191,13 +217,43 @@ class Profile extends React.Component {
         />
       </div>
     );
+    let society_viewUser = (
+      <div>
+        <Form.Label>Code société</Form.Label>
+        <InputGroup>
+          <Form.Control
+            name="id_society"
+            value={this.state.id_society}
+            type="number"
+            onChange={this.handleChange}
+            placeholder=""
+            disabled
+            readOnly
+          />
+          <Button
+            variant="secondary"
+            onClick={() => this.setState({ modalUnLink: true })}
+          >
+            Délier de la société
+          </Button>
+        </InputGroup>
+      </div>
+    );
     if (this.state.id_society == null) {
-      society_view = null;
+      society_viewUser = null;
     }
     if (this.state.type == 2 || this.state.type == 0) {
       view = (
         <div>
           <div id="profile">
+            <Button
+              variant="secondary"
+              style={{ paddingLeft: 20, paddingRight: 20, marginBottom: 30 }}
+            >
+              <a id="pdf" target="_blank" href={`/pdf/${this.state.id}`}>
+                PDF
+              </a>
+            </Button>
             <div className="profile">
               <Form.Label>Prénom</Form.Label>
               <Form.Control
@@ -238,7 +294,7 @@ class Profile extends React.Component {
               />
             </div>
           </div>
-          <div className="profile">{society_view}</div>
+          <div className="profile">{society_viewUser}</div>
           <Button
             className="profile"
             variant="secondary"
@@ -350,7 +406,23 @@ class Profile extends React.Component {
         ) : (
           <NavigationBarSociety color={this.state.color} />
         )}
-
+        <Modal
+          show={this.state.modalUnLink}
+          onHide={() => this.setState({ modalUnLink: false })}
+        >
+          <ModalTitle>Êtes-vous sûr vous délier de la société ?</ModalTitle>
+          <ModalFooter>
+            <Button variant="danger" onClick={() => this.unLinkSociety()}>
+              Oui
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => this.setState({ modalUnLink: false })}
+            >
+              Non
+            </Button>
+          </ModalFooter>
+        </Modal>
         <div id="center">
           {view}
           <h5 className="h5-profile">Changer de mot de passe</h5>

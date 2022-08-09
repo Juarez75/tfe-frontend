@@ -28,7 +28,7 @@ class Pdf extends React.Component {
     };
     axios
       .post(
-        "http://localhost:3001/society/pdf",
+        "http://localhost:3001/user/pdf",
         {
           id_user: this.state.id,
         },
@@ -88,6 +88,7 @@ class Pdf extends React.Component {
                       border: "solid",
                       borderColor: "black",
                       borderWidth: "10px",
+                      position: "relative",
                       backgroundColor:
                         item.room.id_TagSociety == null
                           ? (color = "#FFFFFF")
@@ -100,6 +101,20 @@ class Pdf extends React.Component {
                       maxWidth: "560",
                     }}
                   >
+                    {item.room.id_TagSociety == null ? (
+                      <Text
+                        style={{
+                          position: "absolute",
+                          bottom: 0,
+                          left: 0,
+                          width: 100,
+                        }}
+                      >
+                        {item.room.name}
+                      </Text>
+                    ) : (
+                      ""
+                    )}
                     <Text
                       style={{
                         fontSize: "85",

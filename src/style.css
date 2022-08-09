@@ -8,6 +8,13 @@ body{
 #imgComposent{
     position: relative;
 }
+#topBox{
+    display: flex;
+    flex-direction: row;
+}
+#topBoxRight{
+    margin-top: 1.5rem;
+}
 #imgModify{
     width: 12rem;
 }

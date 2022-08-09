@@ -47,7 +47,7 @@ class Room_List extends React.Component {
   }
 
   onClick(id) {
-    this.props.router.navigate(`/society/pdf/${id}`, { replace: true });
+    this.props.router.navigate(`/pdf/${id}`, { replace: true });
   }
 
   render() {
@@ -68,11 +68,7 @@ class Room_List extends React.Component {
         <div id="center_list">
           <h4>Liste des pièces de l'utilisateur</h4>
           <Button variant="secondary">
-            <a
-              id="pdf"
-              target="_blank"
-              href={`/society/pdf/${this.state.id_user}`}
-            >
+            <a id="pdf" target="_blank" href={`/pdf/${this.state.id_user}`}>
               PDF de l'utilisateur
             </a>
           </Button>

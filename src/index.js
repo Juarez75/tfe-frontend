@@ -16,7 +16,7 @@ import Search from "./pages/BasicUser/Search";
 import UserList from "./pages/SocietyUser/User_List";
 import User from "./pages/SocietyUser/User";
 import Personalize from "./pages/SocietyUser/Personalize";
-import Pdf from "./pages/SocietyUser/Pdf";
+import Pdf from "./pages/CommonPage/Pdf";
 import { createBrowserHistory } from "history";
 import { unstable_HistoryRouter as HistoryRouter } from "react-router-dom";
 import QrReader from "./pages/CommonPage/QrReader";
@@ -43,10 +43,10 @@ root.render(
         <Route path="list" element={<ObjectList />}></Route>
       </Route>
       <Route path="/profile" element={<Profile />}></Route>
+      <Route path="/pdf/:id" element={<Pdf />}></Route>
       <Route path="/search" element={<Search />}></Route>
       <Route path="/scanQR" element={<QrReader />}></Route>
       <Route path="society">
-        <Route path="pdf/:id" element={<Pdf />}></Route>
         <Route path="users" element={<UserList />}></Route>
         <Route path="user/:id" element={<User />}></Route>
         <Route path="personalize" element={<Personalize />}></Route>
