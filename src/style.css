@@ -18,6 +18,9 @@ body{
 #imgModify{
     width: 12rem;
 }
+#graphicUser{
+    width: 100%;
+}
 #crossImg{
     position:absolute;
     top:0;
@@ -117,6 +120,9 @@ max-width: 100vw;}
         width: 15rem;
         margin: 2rem;
     }
+    .graphicUserText{
+        font-size: 1rem;
+    }
 
 #navComputer{
     display: none;
@@ -145,7 +151,7 @@ max-width: 100vw;}
     text-align: center;
     
 }
-.nav-link{
+.navBarLink{
     color: white !important;
     font-size: 1.2rem ;
 }

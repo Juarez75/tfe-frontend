@@ -40,18 +40,31 @@ export class NavigationBar extends React.Component {
               <img src={burgerButton}></img>
             </Nav>
             <Nav className="me-auto" id="navComputer">
-              <Nav.Link href="/profile">Mon compte</Nav.Link>
+              <Nav.Link href="/profile" className="navBarLink">
+                Mon compte
+              </Nav.Link>
               <NavDropdown title="Liste">
-                <NavDropdown.Item href="/room/list">Pièces</NavDropdown.Item>
-                <NavDropdown.Item href="/box/list">Caisses</NavDropdown.Item>
-                <NavDropdown.Item href="/object/list">Objets</NavDropdown.Item>
+                <NavDropdown.Item href="/room/list" className="navBarLink">
+                  Pièces
+                </NavDropdown.Item>
+                <NavDropdown.Item href="/box/list" className="navBarLink">
+                  Caisses
+                </NavDropdown.Item>
+                <NavDropdown.Item href="/object/list" className="navBarLink">
+                  Objets
+                </NavDropdown.Item>
               </NavDropdown>
-              <Nav.Link href="/scanQR">QR Code</Nav.Link>
+              <Nav.Link href="/scanQR" className="navBarLink">
+                QR Code
+              </Nav.Link>
 
-              <Nav.Link href="/search">Recherche</Nav.Link>
+              <Nav.Link href="/search" className="navBarLink">
+                Recherche
+              </Nav.Link>
             </Nav>
             <Nav id="disconnect">
               <Nav.Link
+                className="navBarLink"
                 href="/"
                 onClick={() =>
                   axios
@@ -79,22 +92,41 @@ export class NavigationBar extends React.Component {
         </Navbar>
         {this.state.menuPhone ? (
           <div id="menuPhone">
-            <Nav.Link href="/profile">Mon compte</Nav.Link>
+            <Nav.Link href="/profile" className="navBarLink">
+              Mon compte
+            </Nav.Link>
             <NavDropdown title="Liste" id="dropdown_menu">
-              <NavDropdown.Item href="/room/list" class="navdropdown">
+              <NavDropdown.Item
+                href="/room/list"
+                class="navdropdown"
+                className="navBarLink"
+              >
                 Pièces
               </NavDropdown.Item>
-              <NavDropdown.Item href="/box/list" class="navdropdown">
+              <NavDropdown.Item
+                href="/box/list"
+                class="navdropdown"
+                className="navBarLink"
+              >
                 Caisses
               </NavDropdown.Item>
-              <NavDropdown.Item href="/object/list" class="navdropdown">
+              <NavDropdown.Item
+                href="/object/list"
+                class="navdropdown"
+                className="navBarLink"
+              >
                 Objets
               </NavDropdown.Item>
             </NavDropdown>
-            <Nav.Link href="/scanQR">QR Code</Nav.Link>
-            <Nav.Link href="/search">Recherche</Nav.Link>
+            <Nav.Link href="/scanQR" className="navBarLink">
+              QR Code
+            </Nav.Link>
+            <Nav.Link href="/search" className="navBarLink">
+              Recherche
+            </Nav.Link>
             <Nav.Link
               href="/"
+              className="navBarLink"
               onClick={() =>
                 axios
                   .get(

@@ -14,10 +14,12 @@ import {
   ModalTitle,
 } from "react-bootstrap";
 import { NavigationBar } from "../Component/NavUser";
-import { NavigationBarSociety } from "../Component/NavSociety";
 import Delete from "../Component/Delete";
+import CreateBox from "./CreateBox";
+import GraphicUser from "../Component/GraphicUser";
 
-class Profile extends React.Component {
+class ProfileBasic extends React.Component {
+  node = document.createElement("svg");
   constructor(props) {
     super(props);
     this.state = {
@@ -47,7 +49,9 @@ class Profile extends React.Component {
       success: false,
       isLoading: true,
       modalUnLink: false,
+      graphData: [],
     };
+
     this.loadData = this.loadData.bind(this);
     this.unLinkSociety = this.unLinkSociety.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -57,7 +61,7 @@ class Profile extends React.Component {
     this.onDeleteTag = this.onDeleteTag.bind(this);
     this.loadTag = this.loadTag.bind(this);
     this.ifSuccess = this.ifSuccess.bind(this);
-    this.cancelSuccess = this.cancelSuccess.bind(this);
+
     this.loadData();
   }
 
@@ -75,6 +79,7 @@ class Profile extends React.Component {
           id_society: res.data.id_society,
           tags: res.data.tag,
           isLoading: false,
+          graphData: res.data.graphData,
         });
       })
       .catch((error) => {
@@ -86,9 +91,6 @@ class Profile extends React.Component {
   }
   ifSuccess() {
     this.setState({ success: true });
-    this.cancelSuccess(true);
-  }
-  cancelSuccess() {
     setTimeout(() => this.setState({ success: false }), 500);
   }
   onUpdate() {
@@ -150,7 +152,6 @@ class Profile extends React.Component {
         });
     } else this.setState({ EMPTY_PASSWORD: true });
   }
-
   onCreateTag() {
     axios
       .post(
@@ -202,193 +203,35 @@ class Profile extends React.Component {
 
   render() {
     if (this.state.isLoading) return <></>;
-    let view;
-    let society_view = (
-      <div>
-        <Form.Label>Code société</Form.Label>
-        <Form.Control
-          name="id_society"
-          value={this.state.id_society}
-          type="number"
-          onChange={this.handleChange}
-          placeholder=""
-          disabled
-          readOnly
-        />
-      </div>
-    );
-    let society_viewUser = (
-      <div>
-        <Form.Label>Code société</Form.Label>
-        <InputGroup>
-          <Form.Control
-            name="id_society"
-            value={this.state.id_society}
-            type="number"
-            onChange={this.handleChange}
-            placeholder=""
-            disabled
-            readOnly
-          />
-          <Button
-            variant="secondary"
-            onClick={() => this.setState({ modalUnLink: true })}
-          >
-            Délier de la société
-          </Button>
-        </InputGroup>
-      </div>
-    );
-    if (this.state.id_society == null) {
-      society_viewUser = null;
-    }
-    if (this.state.type == 2 || this.state.type == 0) {
-      view = (
+    let society_viewUser = "";
+    if (this.state.id_society != null) {
+      society_viewUser = (
         <div>
-          <div id="profile">
+          <Form.Label>Code société</Form.Label>
+          <InputGroup>
+            <Form.Control
+              name="id_society"
+              value={this.state.id_society}
+              type="number"
+              onChange={this.handleChange}
+              placeholder=""
+              disabled
+              readOnly
+            />
             <Button
               variant="secondary"
-              style={{ paddingLeft: 20, paddingRight: 20, marginBottom: 30 }}
+              onClick={() => this.setState({ modalUnLink: true })}
             >
-              <a id="pdf" target="_blank" href={`/pdf/${this.state.id}`}>
-                PDF
-              </a>
+              Délier de la société
             </Button>
-            <div className="profile">
-              <Form.Label>Prénom</Form.Label>
-              <Form.Control
-                style={{
-                  backgroundColor: this.state.EMPTY_FIRSTNAME ? "#f7786f" : " ",
-                }}
-                name="firstname"
-                value={this.state.firstname}
-                type="text"
-                onChange={this.handleChange}
-                placeholder="Exemple"
-              />
-            </div>
-            <div className="profile">
-              <Form.Label>Nom de famille</Form.Label>
-              <Form.Control
-                style={{
-                  backgroundColor: this.state.EMPTY_LASTNAME ? "#f7786f" : " ",
-                }}
-                name="lastname"
-                value={this.state.lastname}
-                type="lastname"
-                onChange={this.handleChange}
-                placeholder="Exemple"
-              />
-            </div>
-            <div className="profile">
-              <Form.Label>E-mail</Form.Label>
-              <Form.Control
-                style={{
-                  backgroundColor: this.state.EMPTY_MAIL ? "#f7786f" : " ",
-                }}
-                name="mail"
-                value={this.state.mail}
-                type="mail"
-                onChange={this.handleChange}
-                placeholder="exemple@test.be"
-              />
-            </div>
-          </div>
-          <div className="profile">{society_viewUser}</div>
-          <Button
-            className="profile"
-            variant="secondary"
-            type="button"
-            onClick={this.onUpdate}
-          >
-            Sauvegarder
-          </Button>
-          <br />
-          <div>
-            <h5 className="h5-profile">Tag</h5>
-            <div className="profile">
-              <InputGroup>
-                <Form.Select
-                  aria-label="Exemple"
-                  name="selectedTag"
-                  onChange={this.handleChange}
-                >
-                  <option>--Sélectionne--</option>
-                  {this.state.tags.map((item, i) => (
-                    <option key={item.id} value={i}>
-                      {item.name}
-                    </option>
-                  ))}
-                </Form.Select>
-                <Button variant="secondary" onClick={this.onDeleteTag}>
-                  Supprimer
-                </Button>
-              </InputGroup>
-            </div>
-            <div className="profile">
-              <InputGroup>
-                <Form.Control
-                  type="text"
-                  name="nameTag"
-                  value={this.state.nameTag}
-                  onChange={this.handleChange}
-                  placeholder="Ajouter tag"
-                />
-                <Button variant="secondary" onClick={this.onCreateTag}>
-                  Ajouter
-                </Button>
-              </InputGroup>
-            </div>
-          </div>
-        </div>
-      );
-    } else if (this.state.type == 1) {
-      view = (
-        <div>
-          <div>
-            <div className="profile">
-              <Form.Label>Nom</Form.Label>
-              <Form.Control
-                style={{
-                  backgroundColor: this.state.EMPTY_FIRSTNAME ? "#f7786f" : " ",
-                }}
-                name="firstname"
-                value={this.state.firstname}
-                type="text"
-                onChange={this.handleChange}
-                placeholder="Exemple"
-              />
-            </div>
-            <div className="profile">
-              <Form.Label>E-mail</Form.Label>
-              <Form.Control
-                style={{
-                  backgroundColor: this.state.EMPTY_MAIL ? "#f7786f" : " ",
-                }}
-                name="mail"
-                value={this.state.mail}
-                type="mail"
-                onChange={this.handleChange}
-                placeholder="exemple@test.be"
-              />
-            </div>
-          </div>
-          <Row>
-            <Col md={6}>{society_view}</Col>
-          </Row>
-          <Button
-            variant="secondary"
-            type="button"
-            onClick={this.onUpdate}
-            style={{ marginTop: "1rem" }}
-          >
-            Sauvegarder
-          </Button>
+          </InputGroup>
         </div>
       );
     }
+    console.log(this.state.svg);
     return (
       <div>
+        {/* Modal de suppression */}
         <Modal
           show={this.state.showDelete}
           onHide={() => this.setState({ showDelete: false })}
@@ -401,11 +244,7 @@ class Profile extends React.Component {
             type={this.state.type_delete}
           />
         </Modal>
-        {this.state.type == 2 || this.state.type == 0 ? (
-          <NavigationBar color={this.state.color} />
-        ) : (
-          <NavigationBarSociety color={this.state.color} />
-        )}
+        {/* Modal d'unLink la société */}
         <Modal
           show={this.state.modalUnLink}
           onHide={() => this.setState({ modalUnLink: false })}
@@ -423,8 +262,113 @@ class Profile extends React.Component {
             </Button>
           </ModalFooter>
         </Modal>
+        {/* Début de la page */}
+        <NavigationBar color={this.state.color} />
         <div id="center">
-          {view}
+          <div>
+            <div id="profile">
+              <Button
+                variant="secondary"
+                style={{ paddingLeft: 20, paddingRight: 20, marginBottom: 5 }}
+              >
+                <a id="pdf" target="_blank" href={`/pdf/${this.state.id}`}>
+                  PDF
+                </a>
+              </Button>
+              <h5>Statistiques</h5>
+              <GraphicUser data={this.state.graphData} />
+              <h5 className="h5-profile">Données personnelles</h5>
+              <div className="profile">
+                <Form.Label>Prénom</Form.Label>
+                <Form.Control
+                  style={{
+                    backgroundColor: this.state.EMPTY_FIRSTNAME
+                      ? "#f7786f"
+                      : " ",
+                  }}
+                  name="firstname"
+                  value={this.state.firstname}
+                  type="text"
+                  onChange={this.handleChange}
+                  placeholder="Exemple"
+                />
+              </div>
+              <div className="profile">
+                <Form.Label>Nom de famille</Form.Label>
+                <Form.Control
+                  style={{
+                    backgroundColor: this.state.EMPTY_LASTNAME
+                      ? "#f7786f"
+                      : " ",
+                  }}
+                  name="lastname"
+                  value={this.state.lastname}
+                  type="lastname"
+                  onChange={this.handleChange}
+                  placeholder="Exemple"
+                />
+              </div>
+              <div className="profile">
+                <Form.Label>E-mail</Form.Label>
+                <Form.Control
+                  style={{
+                    backgroundColor: this.state.EMPTY_MAIL ? "#f7786f" : " ",
+                  }}
+                  name="mail"
+                  value={this.state.mail}
+                  type="mail"
+                  onChange={this.handleChange}
+                  placeholder="exemple@test.be"
+                />
+              </div>
+            </div>
+            <div className="profile">{society_viewUser}</div>
+            <Button
+              className="profile"
+              variant="secondary"
+              type="button"
+              onClick={this.onUpdate}
+            >
+              Sauvegarder
+            </Button>
+            <br />
+            <div>
+              <h5 className="h5-profile">Tag</h5>
+              <div className="profile">
+                <InputGroup>
+                  <Form.Select
+                    aria-label="Exemple"
+                    name="selectedTag"
+                    onChange={this.handleChange}
+                  >
+                    <option>--Sélectionne--</option>
+                    {this.state.tags.map((item, i) => (
+                      <option key={item.id} value={i}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                  <Button variant="secondary" onClick={this.onDeleteTag}>
+                    Supprimer
+                  </Button>
+                </InputGroup>
+              </div>
+              <div className="profile">
+                <InputGroup>
+                  <Form.Control
+                    type="text"
+                    name="nameTag"
+                    value={this.state.nameTag}
+                    onChange={this.handleChange}
+                    placeholder="Ajouter tag"
+                  />
+                  <Button variant="secondary" onClick={this.onCreateTag}>
+                    Ajouter
+                  </Button>
+                </InputGroup>
+              </div>
+            </div>
+          </div>
           <h5 className="h5-profile">Changer de mot de passe</h5>
           <div>
             <div className="profile">
@@ -476,4 +420,4 @@ class Profile extends React.Component {
     );
   }
 }
-export default withRouter(Profile);
+export default withRouter(ProfileBasic);

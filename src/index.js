@@ -11,7 +11,7 @@ import Room from "./pages/BasicUser/Room";
 import Box from "./pages/BasicUser/Box";
 import BoxList from "./pages/BasicUser/Box_List";
 import ObjectList from "./pages/BasicUser/Object_List";
-import Profile from "./pages/CommonPage/Profile";
+import ProfileBasic from "./pages/BasicUser/ProfileBasic";
 import Search from "./pages/BasicUser/Search";
 import UserList from "./pages/SocietyUser/User_List";
 import User from "./pages/SocietyUser/User";
@@ -22,6 +22,7 @@ import { unstable_HistoryRouter as HistoryRouter } from "react-router-dom";
 import QrReader from "./pages/CommonPage/QrReader";
 import BoxByQR from "./pages/CommonPage/BoxByQR";
 import CreateBox from "./pages/BasicUser/CreateBox";
+import ProfileSociety from "./pages/SocietyUser/ProfileSociety";
 export const history = createBrowserHistory({ window });
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -42,7 +43,7 @@ root.render(
       <Route path="object">
         <Route path="list" element={<ObjectList />}></Route>
       </Route>
-      <Route path="/profile" element={<Profile />}></Route>
+      <Route path="/profile" element={<ProfileBasic />}></Route>
       <Route path="/pdf/:id" element={<Pdf />}></Route>
       <Route path="/search" element={<Search />}></Route>
       <Route path="/scanQR" element={<QrReader />}></Route>
@@ -50,6 +51,7 @@ root.render(
         <Route path="users" element={<UserList />}></Route>
         <Route path="user/:id" element={<User />}></Route>
         <Route path="personalize" element={<Personalize />}></Route>
+        <Route path="profile" element={<ProfileSociety />}></Route>
       </Route>
     </Routes>
   </HistoryRouter>

@@ -31,13 +31,22 @@ export class NavigationBarSociety extends React.Component {
               <img src={burgerButton}></img>
             </Nav>
             <Nav className="me-auto" id="navComputer">
-              <Nav.Link href="/profile">Mon compte</Nav.Link>
-              <Nav.Link href="/society/users">Utilisateurs</Nav.Link>
-              <Nav.Link href="/scanQR">QR Code</Nav.Link>
-              <Nav.Link href="/society/personalize">Personnalisation</Nav.Link>
+              <Nav.Link href="/society/profile" className="navBarLink">
+                Mon compte
+              </Nav.Link>
+              <Nav.Link href="/society/users" className="navBarLink">
+                Utilisateurs
+              </Nav.Link>
+              <Nav.Link href="/scanQR" className="navBarLink">
+                QR Code
+              </Nav.Link>
+              <Nav.Link href="/society/personalize" className="navBarLink">
+                Personnalisation
+              </Nav.Link>
             </Nav>
             <Nav id="disconnect">
               <Nav.Link
+                className="navBarLink"
                 href="/"
                 onClick={() =>
                   axios
@@ -65,11 +74,20 @@ export class NavigationBarSociety extends React.Component {
         </Navbar>
         {this.state.menuPhone ? (
           <div id="menuPhone">
-            <Nav.Link href="/profile">Mon compte</Nav.Link>
-            <Nav.Link href="/society/users">Utilisateurs</Nav.Link>
-            <Nav.Link href="/scanQR">QR Code</Nav.Link>
-            <Nav.Link href="/society/personalize">Personnalisation</Nav.Link>
+            <Nav.Link href="/society/profile" className="navBarLink">
+              Mon compte
+            </Nav.Link>
+            <Nav.Link href="/society/users" className="navBarLink">
+              Utilisateurs
+            </Nav.Link>
+            <Nav.Link href="/scanQR" className="navBarLink">
+              QR Code
+            </Nav.Link>
+            <Nav.Link href="/society/personalize" className="navBarLink">
+              Personnalisation
+            </Nav.Link>
             <Nav.Link
+              className="navBarLink"
               href="/"
               onClick={() =>
                 axios

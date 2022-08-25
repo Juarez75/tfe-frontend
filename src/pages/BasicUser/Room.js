@@ -1,6 +1,5 @@
 import React from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import {
   Button,
   ListGroup,
@@ -21,7 +20,6 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 import { withRouter } from "../../withRouter";
 import { NavigationBar } from "../Component/NavUser";
-import { create, isUndefined } from "lodash";
 import { ModifyRoom } from "../Component/ModifyRoom";
 import { ModifyBox } from "../Component/ModifiyBox";
 import Delete from "../Component/Delete";
@@ -130,6 +128,7 @@ class Room_List extends React.Component {
             isLoading: false,
           });
         } else {
+          console.log(res.data);
           this.setState({
             name: res.data.name,
             comment: res.data.comment,
@@ -206,9 +205,9 @@ class Room_List extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
   }
   onSubmit() {
-    if (this.state.name != "") {
+    if (this.state.name !== "") {
       var formData = new FormData();
-      if (this.state.file[0] != null)
+      if (this.state.file[0] !== null)
         formData.append("picture", this.state.file[0].file);
       formData.append("id_room", this.state.id);
       formData.append("name", this.state.nameBox);
@@ -277,10 +276,10 @@ class Room_List extends React.Component {
       );
     }
     var deleteBox = [];
-    for (var i = 1; i <= this.state.number_box; i++) {
+    for (var y = 1; y <= this.state.number_box; y++) {
       deleteBox.push(
-        <option key={i} value={i}>
-          {i}
+        <option key={y} value={y}>
+          {y}
         </option>
       );
     }
@@ -505,7 +504,7 @@ class Room_List extends React.Component {
                 label="Tout sélectionner"
                 id="selectAll"
               />
-              {this.state.boxChecked.length != 0 ? (
+              {this.state.boxChecked.length !== 0 ? (
                 <>
                   <h5>Caisses sélectionnées :</h5>
                   <Button
@@ -663,7 +662,7 @@ class Room_List extends React.Component {
       );
     }
     this.setState({ boxChecked: array });
-    if (array.length != this.state.box.length) {
+    if (array.length !== this.state.box.length) {
       e = document.getElementById("selectAll");
       e.checked = false;
     } else if (array.length == this.state.box.length) {
