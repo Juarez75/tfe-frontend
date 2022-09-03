@@ -101,23 +101,19 @@ class Pdf extends React.Component {
                       maxWidth: "560",
                     }}
                   >
-                    {item.room.id_TagSociety == null ? (
-                      <Text
-                        style={{
-                          position: "absolute",
-                          bottom: 0,
-                          left: 0,
-                          width: 100,
-                        }}
-                      >
-                        {item.room.name}
-                      </Text>
-                    ) : (
-                      ""
-                    )}
                     <Text
                       style={{
-                        fontSize: "85",
+                        position: "absolute",
+                        bottom: 0,
+                        left: 0,
+                        width: 150,
+                      }}
+                    >
+                      {item.room.id_TagSociety == null ? item.room.name : ""}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: "80",
                         maxLines: "1",
                         maxWidth: "350",
                         flexShrink: "1",
@@ -129,24 +125,17 @@ class Pdf extends React.Component {
                     <Text>
                       {item.fragile ? (
                         <Image
-                          src={Fragile}
                           style={{
                             height: "130",
                             width: "130",
                           }}
+                          src={Fragile}
                         />
                       ) : (
                         ""
                       )}
                     </Text>
-                    {/* <Text
-                      style={{
-                        fontSize: "117",
-                        backgroundColor: "white",
-                      }}
-                    >
-                      {item.room.stage}
-                    </Text> */}
+
                     <Image
                       src={
                         "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" +

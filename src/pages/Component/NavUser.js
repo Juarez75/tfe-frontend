@@ -96,25 +96,13 @@ export class NavigationBar extends React.Component {
               Mon compte
             </Nav.Link>
             <NavDropdown title="Liste" id="dropdown_menu">
-              <NavDropdown.Item
-                href="/room/list"
-                class="navdropdown"
-                className="navBarLink"
-              >
+              <NavDropdown.Item href="/room/list" class="navdropdown">
                 Pièces
               </NavDropdown.Item>
-              <NavDropdown.Item
-                href="/box/list"
-                class="navdropdown"
-                className="navBarLink"
-              >
+              <NavDropdown.Item href="/box/list" class="navdropdown">
                 Caisses
               </NavDropdown.Item>
-              <NavDropdown.Item
-                href="/object/list"
-                class="navdropdown"
-                className="navBarLink"
-              >
+              <NavDropdown.Item href="/object/list" class="navdropdown">
                 Objets
               </NavDropdown.Item>
             </NavDropdown>

@@ -67,12 +67,22 @@ class GraphicSociety extends React.Component {
     svg.append("g").call(yAxis);
 
     svg
-      .selectAll(".line")
-      .data(data)
-      .join("path")
-      .attr("d", (d) => generateScaledLine(d.value))
+      .append("path")
+      .datum(data)
       .attr("fill", "none")
-      .attr("stroke", "black");
+      .attr("stroke", "#69b3a2")
+      .attr("stroke-width", 1.5)
+      .attr(
+        "d",
+        d3
+          .line()
+          .x(function (d) {
+            return xScale(new Date(d.date));
+          })
+          .y(function (d) {
+            return yScale(d.value);
+          })
+      );
     svg
       .append("g")
       .selectAll("dot")

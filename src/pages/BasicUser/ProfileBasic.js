@@ -270,13 +270,20 @@ class ProfileBasic extends React.Component {
               <Button
                 variant="secondary"
                 style={{ paddingLeft: 20, paddingRight: 20, marginBottom: 5 }}
+                onClick={() =>
+                  this.props.router.navigate(`/pdf/${this.state.id}`)
+                }
               >
-                <a id="pdf" target="_blank" href={`/pdf/${this.state.id}`}>
-                  PDF
-                </a>
+                {/* <a id="pdf" target="_blank" href={`/pdf/${this.state.id}`}> */}
+                PDF
+                {/* </a> */}
               </Button>
               <h5>Statistiques</h5>
-              <GraphicUser data={this.state.graphData} />
+              <h6>Nombres de caisses dans les différents états</h6>
+              <GraphicUser
+                data={this.state.graphData}
+                color={this.state.color}
+              />
               <h5 className="h5-profile">Données personnelles</h5>
               <div className="profile">
                 <Form.Label>Prénom</Form.Label>

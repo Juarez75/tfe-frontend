@@ -46,7 +46,7 @@ class Search extends React.Component {
     this.timer = null;
   }
   loadData(search) {
-    if (search !== "") {
+    if (search != "") {
       clearTimeout(this.timer);
       this.timer = setTimeout(() => {
         axios
@@ -173,6 +173,7 @@ class Search extends React.Component {
             onChange={this.handleChange}
             placeholder="Exemple"
           />
+          {/* Pièces */}
           {this.state.room[0] == undefined ? "" : <h5>Pièces :</h5>}
           <ListGroup>
             {this.state.room.map((item, i) => (
@@ -200,6 +201,7 @@ class Search extends React.Component {
               </ListGroup.Item>
             ))}
           </ListGroup>
+          {/* Caisse */}
           {this.state.box[0] == undefined ? "" : <h5>Caisses :</h5>}
           <ListGroup>
             {this.state.box.map((item, i) => (
@@ -257,6 +259,7 @@ class Search extends React.Component {
               </ListGroup.Item>
             ))}
           </ListGroup>
+          {/* Objet */}
           {this.state.object[0] == undefined ? "" : <h5>Objets :</h5>}
           <ListGroup>
             {this.state.object.map((item, i) => (
@@ -289,6 +292,7 @@ class Search extends React.Component {
               </ListGroup.Item>
             ))}
           </ListGroup>
+          {/* Tags */}
           {this.state.tag[0] == undefined ? (
             ""
           ) : (
@@ -302,8 +306,13 @@ class Search extends React.Component {
                     key={i2}
                     variant={item2.box.empty ? "danger" : ""}
                   >
-                    {item2.box.name}
                     <ButtonGroup>
+                      <Button
+                        variant="light"
+                        onClick={() => this.onClick(item2.box.id, "box")}
+                      >
+                        {item2.box.name}
+                      </Button>
                       <DropdownButton title="" variant="light">
                         <Dropdown.Item
                           onClick={() => this.onModify(item2.box.id, "box")}

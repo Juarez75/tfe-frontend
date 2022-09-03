@@ -74,12 +74,11 @@ class BoxByQR extends React.Component {
               src={this.state.url_img == null ? Box : this.state.url_img}
               id="box"
             ></img>
-            <img src={Cross} id="crossImg"></img>
           </div>
           <div className="mb-3">
             <Form.Check
               inline
-              label="Neutre"
+              label="Prête"
               type="radio"
               id="check-box-0"
               checked={this.state.stateBox == 0}
@@ -95,7 +94,7 @@ class BoxByQR extends React.Component {
             />
             <Form.Check
               inline
-              label="Vide"
+              label="Vidée"
               type="radio"
               id="check-box-2"
               checked={this.state.stateBox == 2}

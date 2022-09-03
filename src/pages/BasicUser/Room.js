@@ -205,9 +205,9 @@ class Room_List extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
   }
   onSubmit() {
-    if (this.state.name !== "") {
+    if (this.state.name != "") {
       var formData = new FormData();
-      if (this.state.file[0] !== null)
+      if (this.state.file[0] != null)
         formData.append("picture", this.state.file[0].file);
       formData.append("id_room", this.state.id);
       formData.append("name", this.state.nameBox);
@@ -504,7 +504,7 @@ class Room_List extends React.Component {
                 label="Tout sélectionner"
                 id="selectAll"
               />
-              {this.state.boxChecked.length !== 0 ? (
+              {this.state.boxChecked.length != 0 ? (
                 <>
                   <h5>Caisses sélectionnées :</h5>
                   <Button
@@ -658,11 +658,11 @@ class Room_List extends React.Component {
       array = this.state.boxChecked.concat(parseInt(event.target.id));
     } else {
       array = this.state.boxChecked.filter(
-        (i) => i !== parseInt(event.target.id)
+        (i) => i != parseInt(event.target.id)
       );
     }
     this.setState({ boxChecked: array });
-    if (array.length !== this.state.box.length) {
+    if (array.length != this.state.box.length) {
       e = document.getElementById("selectAll");
       e.checked = false;
     } else if (array.length == this.state.box.length) {

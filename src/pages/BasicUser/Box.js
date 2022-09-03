@@ -266,16 +266,26 @@ class Room_List extends React.Component {
               {this.state.box.name}
             </Breadcrumb.Item>
           </Breadcrumb>
-          <div id="topBox">
-            <img
-              src={this.state.box.url_img == null ? "" : this.state.box.url_img}
-              id="imgBox"
-            ></img>
-            <div id="topBoxRight">
+          {this.state.box.url_img == null ? (
+            <>
               <h4>Dans la caisse : {this.state.box.name}</h4>
               <div>Commentaire: {this.state.box.comment}</div>
+            </>
+          ) : (
+            <div id="topBox">
+              <img
+                src={
+                  this.state.box.url_img == null ? "" : this.state.box.url_img
+                }
+                id="imgBox"
+              ></img>
+              <div id="topBoxRight">
+                <h4>Dans la caisse : {this.state.box.name}</h4>
+                <div>Commentaire: {this.state.box.comment}</div>
+              </div>
             </div>
-          </div>
+          )}
+
           <Modal
             show={this.state.showModify}
             onHide={() => this.setState({ showModify: false })}

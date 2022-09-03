@@ -163,7 +163,7 @@ class Box_List extends React.Component {
       array = this.state.boxChecked.concat(parseInt(event.target.id));
     } else {
       array = this.state.boxChecked.filter(
-        (i) => i !== parseInt(event.target.id)
+        (i) => i != parseInt(event.target.id)
       );
     }
     this.setState({ boxChecked: array });
@@ -303,7 +303,7 @@ class Box_List extends React.Component {
                   <Button
                     style={{ marginRight: 10, marginTop: 10 }}
                     variant="outline-danger"
-                    onClick={() => this.deleteMany}
+                    onClick={() => this.deleteMany()}
                   >
                     Supprimer les caisses
                   </Button>

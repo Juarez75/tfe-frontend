@@ -56,7 +56,7 @@ class User_List extends React.Component {
   }
 
   handleChange(event) {
-    if (event.target.value !== "") {
+    if (event.target.value != "") {
       clearTimeout(this.timer);
       this.timer = setTimeout(() => {
         axios

@@ -10,6 +10,7 @@ class GraphicUser extends React.Component {
     this.state = {
       svg: "",
       data: this.props.data,
+      color: this.props.color,
     };
     this.setGraphic = this.setGraphic.bind(this);
   }
@@ -66,7 +67,8 @@ class GraphicUser extends React.Component {
       .attr("width", x.bandwidth())
       .attr("height", function (d) {
         return height - y(d.value);
-      });
+      })
+      .attr("fill", this.state.color);
   }
   componentDidMount() {
     this.setGraphic();

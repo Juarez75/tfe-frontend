@@ -171,7 +171,6 @@ class ProfileSociety extends React.Component {
         withCredentials: true,
       })
       .then((res) => {
-        console.log(res.data);
         this.setState({
           dataGraphLastMonth: res.data,
         });
@@ -282,8 +281,11 @@ class ProfileSociety extends React.Component {
         <NavigationBarSociety color={this.state.color} />
         <div id="center">
           <div>
-            <Tabs defaultActiveKey="profile">
+            <Tabs defaultActiveKey="home">
               <Tab eventKey="home" title="30 derniers jours" id="tag1">
+                <h6>
+                  Nombre de caisses déménagées durant les 30 derniers jours
+                </h6>
                 {this.state.dataGraphLastMonth != null ? (
                   <GraphicSociety dataGraph={this.state.dataGraphLastMonth} />
                 ) : (
@@ -305,6 +307,7 @@ class ProfileSociety extends React.Component {
                       </option>
                     ))}
                 </Form.Select>
+                <h6>Nombre de caisses déménagées durant le mois choisi</h6>
                 {this.state.dataGraphMonth != null ? (
                   <GraphicSociety dataGraph={this.state.dataGraphMonth} />
                 ) : (

@@ -356,7 +356,7 @@ export class ModifyBox extends React.Component {
             <div className="mb-3">
               <Form.Check
                 inline
-                label="Neutre"
+                label="Prête"
                 type="radio"
                 id="check-box-0"
                 onChange={() => this.setState({ stateBox: 0 })}
@@ -372,7 +372,7 @@ export class ModifyBox extends React.Component {
               />
               <Form.Check
                 inline
-                label="Vide"
+                label="Vidée"
                 type="radio"
                 id="check-box-2"
                 onChange={() => this.setState({ stateBox: 2 })}
