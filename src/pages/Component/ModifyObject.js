@@ -17,9 +17,12 @@ export class ModifyObject extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     axios
-      .get(`http://localhost:3001/object/information/${this.state.id}`, {
-        withCredentials: true,
-      })
+      .get(
+        process.env.REACT_APP_URL_API + `/object/information/${this.state.id}`,
+        {
+          withCredentials: true,
+        }
+      )
       .then((res) => {
         this.setState({ name: res.data.name, id_box: res.data.id_box });
       })
@@ -37,7 +40,7 @@ export class ModifyObject extends React.Component {
     if (this.state.name != "") {
       axios
         .post(
-          `http://localhost:3001/object/update`,
+          process.env.REACT_APP_URL_API + `/object/update`,
           {
             id: this.state.id,
             name: this.state.name,

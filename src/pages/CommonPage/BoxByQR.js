@@ -25,7 +25,7 @@ class BoxByQR extends React.Component {
   }
   loadData() {
     axios
-      .get(`http://localhost:3001/box/qrcode/${this.state.idBox}`, {
+      .get(process.env.REACT_APP_URL_API + `/box/qrcode/${this.state.idBox}`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -43,7 +43,7 @@ class BoxByQR extends React.Component {
   handleChange(state) {
     axios
       .post(
-        "http://localhost:3001/box/state",
+        process.env.REACT_APP_URL_API + "/box/state",
         {
           id: this.state.idBox,
           state: state,

@@ -28,7 +28,7 @@ class Pdf extends React.Component {
     };
     axios
       .post(
-        "http://localhost:3001/user/pdf",
+        process.env.REACT_APP_URL_API + "/user/pdf",
         {
           id_user: this.state.id,
         },

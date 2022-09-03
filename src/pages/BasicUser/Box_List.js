@@ -55,7 +55,9 @@ class Box_List extends React.Component {
   }
   loadData() {
     axios
-      .get(`http://localhost:3001/box/list`, { withCredentials: true })
+      .get(process.env.REACT_APP_URL_API + `/box/list`, {
+        withCredentials: true,
+      })
       .then((res) => {
         this.setState({ box: res.data, isLoading: false });
         this.loadRoom();
@@ -70,7 +72,9 @@ class Box_List extends React.Component {
 
   loadRoom() {
     axios
-      .get(`http://localhost:3001/room/list`, { withCredentials: true })
+      .get(process.env.REACT_APP_URL_API + `/room/list`, {
+        withCredentials: true,
+      })
       .then((res) => {
         this.setState({ room: res.data });
       })
@@ -83,7 +87,7 @@ class Box_List extends React.Component {
   }
   onDelete(id, name) {
     this.setState({
-      url_data: "http://localhost:3001/box/delete",
+      url_data: process.env.REACT_APP_URL_API + "/box/delete",
       id_data: id,
       name_data: name,
       showDelete: true,
@@ -93,7 +97,7 @@ class Box_List extends React.Component {
   }
   deleteMany() {
     this.setState({
-      url_data: "http://localhost:3001/box/deletemany",
+      url_data: process.env.REACT_APP_URL_API + "/box/deletemany",
       id_data: this.state.boxChecked,
       name_data: this.state.boxChecked.length,
       showDelete: true,
@@ -108,7 +112,7 @@ class Box_List extends React.Component {
     if (!isNaN(this.state.id_room)) {
       axios
         .post(
-          "http://localhost:3001/box/updateManyRoom",
+          process.env.REACT_APP_URL_API + "/box/updateManyRoom",
           {
             list: this.state.boxChecked,
             id_room: this.state.id_room,
@@ -141,7 +145,7 @@ class Box_List extends React.Component {
   updateFragile(data, id) {
     axios
       .post(
-        "http://localhost:3001/box/fragile",
+        process.env.REACT_APP_URL_API + "/box/fragile",
         {
           id: id,
           fragile: data,

@@ -109,7 +109,8 @@ class Room_List extends React.Component {
   loadData() {
     axios
       .get(
-        `http://localhost:3001/room/${parseInt(this.props.router.params.id)}`,
+        process.env.REACT_APP_URL_API +
+          `/room/${parseInt(this.props.router.params.id)}`,
         {
           withCredentials: true,
         }
@@ -153,7 +154,7 @@ class Room_List extends React.Component {
 
   onBoxDelete(id, name) {
     this.setState({
-      url_data: "http://localhost:3001/box/delete",
+      url_data: process.env.REACT_APP_URL_API + "/box/delete",
       id_data: id,
       name_data: name,
       showDelete: true,
@@ -172,7 +173,7 @@ class Room_List extends React.Component {
   }
   onRoomDelete() {
     this.setState({
-      url_data: "http://localhost:3001/room/delete",
+      url_data: process.env.REACT_APP_URL_API + "/room/delete",
       id_data: this.state.id,
       name_data: this.state.name,
       showDelete: true,
@@ -186,7 +187,7 @@ class Room_List extends React.Component {
   updateFragile(data, id) {
     axios
       .post(
-        "http://localhost:3001/box/fragile",
+        process.env.REACT_APP_URL_API + "/box/fragile",
         {
           id: id,
           fragile: data,
@@ -213,7 +214,7 @@ class Room_List extends React.Component {
       formData.append("name", this.state.nameBox);
       formData.append("comment", this.state.commentBox);
       axios
-        .post(`http://localhost:3001/box/create`, formData, {
+        .post(process.env.REACT_APP_URL_API + `/box/create`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -234,7 +235,7 @@ class Room_List extends React.Component {
   onMultCreate() {
     axios
       .post(
-        "http://localhost:3001/box/createmany",
+        process.env.REACT_APP_URL_API + "/box/createmany",
         {
           id_room: this.state.id,
           number: this.state.selectedNumber,
@@ -253,7 +254,7 @@ class Room_List extends React.Component {
   }
   onMultDelete() {
     this.setState({
-      url_data: "http://localhost:3001/box/deletemany",
+      url_data: process.env.REACT_APP_URL_API + "/box/deletemany",
       id_data: this.state.id,
       name_data: this.state.selectedDelete,
       showDelete: true,
@@ -601,7 +602,9 @@ class Room_List extends React.Component {
 
   loadRoom() {
     axios
-      .get(`http://localhost:3001/room/list`, { withCredentials: true })
+      .get(process.env.REACT_APP_URL_API + `/room/list`, {
+        withCredentials: true,
+      })
       .then((res) => {
         this.setState({ room: res.data });
       })
@@ -615,7 +618,7 @@ class Room_List extends React.Component {
 
   deleteMany() {
     this.setState({
-      url_data: "http://localhost:3001/box/deletemany",
+      url_data: process.env.REACT_APP_URL_API + "/box/deletemany",
       id_data: this.state.boxChecked,
       name_data: this.state.boxChecked.length,
       showDelete: true,
@@ -630,7 +633,7 @@ class Room_List extends React.Component {
     if (!isNaN(this.state.id_room)) {
       axios
         .post(
-          "http://localhost:3001/box/updateManyRoom",
+          process.env.REACT_APP_URL_API + "/box/updateManyRoom",
           {
             list: this.state.boxChecked,
             id_room: this.state.id_room,

@@ -69,7 +69,7 @@ export class NavigationBar extends React.Component {
                 onClick={() =>
                   axios
                     .get(
-                      `http://localhost:3001/user/disconnect`,
+                      process.env.REACT_APP_URL_API + `/user/disconnect`,
 
                       {
                         withCredentials: true,
@@ -118,7 +118,7 @@ export class NavigationBar extends React.Component {
               onClick={() =>
                 axios
                   .get(
-                    `http://localhost:3001/user/disconnect`,
+                    process.env.REACT_APP_URL_API + `/user/disconnect`,
 
                     {
                       withCredentials: true,

@@ -10,7 +10,7 @@
 //     if (error.response.status == 401 && !refresh) {
 //       refresh = true;
 //       await axios
-//         .get("http://localhost:3001/refreshToken", { withCredentials: true })
+//         .get(process.env.REACT_APP_URL_API+"/refreshToken", { withCredentials: true })
 //         .then(() => {
 //           axios.request(error.config).then((res) => {
 //             console.log("pq 1");
@@ -45,7 +45,7 @@ axios.interceptors.response.use(
       refresh = true;
       try {
         const refreshed = await axios.get(
-          "http://localhost:3001/refreshToken",
+          process.env.REACT_APP_URL_API + "/refreshToken",
           {
             withCredentials: true,
           }

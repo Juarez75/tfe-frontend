@@ -51,7 +51,7 @@ class Search extends React.Component {
       this.timer = setTimeout(() => {
         axios
           .post(
-            "http://localhost:3001/search",
+            process.env.REACT_APP_URL_API + "/search",
             {
               search: search,
             },
@@ -96,7 +96,7 @@ class Search extends React.Component {
   }
   onDelete(id, type, name) {
     this.setState({
-      url_data: `http://localhost:3001/${type}/delete`,
+      url_data: process.env.REACT_APP_URL_API + `/${type}/delete`,
       id_data: id,
       name_data: name,
       showDelete: true,
@@ -107,7 +107,7 @@ class Search extends React.Component {
   updateFragile(data, id) {
     axios
       .post(
-        "http://localhost:3001/box/fragile",
+        process.env.REACT_APP_URL_API + "/box/fragile",
         {
           id: id,
           fragile: data,

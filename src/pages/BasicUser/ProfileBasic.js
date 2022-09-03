@@ -67,7 +67,7 @@ class ProfileBasic extends React.Component {
 
   loadData() {
     axios
-      .get(`http://localhost:3001/user/information`, {
+      .get(process.env.REACT_APP_URL_API + `/user/information`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -114,7 +114,7 @@ class ProfileBasic extends React.Component {
       else {
         axios
           .post(
-            `http://localhost:3001/user/update`,
+            process.env.REACT_APP_URL_API + `/user/update`,
             {
               mail: this.state.mail,
               firstname: this.state.firstname,
@@ -135,7 +135,7 @@ class ProfileBasic extends React.Component {
     if (this.state.newPwd != "") {
       axios
         .post(
-          `http://localhost:3001/user/updatePwd`,
+          process.env.REACT_APP_URL_API + `/user/updatePwd`,
           {
             lastPwd: this.state.lastPwd,
             newPwd: this.state.newPwd,
@@ -155,7 +155,7 @@ class ProfileBasic extends React.Component {
   onCreateTag() {
     axios
       .post(
-        "http://localhost:3001/tag/user/create",
+        process.env.REACT_APP_URL_API + "/tag/user/create",
         {
           name: this.state.nameTag,
         },
@@ -169,7 +169,7 @@ class ProfileBasic extends React.Component {
   }
   onDeleteTag() {
     this.setState({
-      url_data: "http://localhost:3001/tag/user/delete",
+      url_data: process.env.REACT_APP_URL_API + "/tag/user/delete",
       id_data: this.state.tags[parseInt(this.state.selectedTag)].id,
       name_data: this.state.tags[parseInt(this.state.selectedTag)].name,
       showDelete: true,
@@ -179,7 +179,9 @@ class ProfileBasic extends React.Component {
   }
   loadTag() {
     axios
-      .get("http://localhost:3001/tag/user", { withCredentials: true })
+      .get(process.env.REACT_APP_URL_API + "/tag/user", {
+        withCredentials: true,
+      })
       .then((res) => {
         this.setState({ tags: res.data });
       })
@@ -188,7 +190,7 @@ class ProfileBasic extends React.Component {
   unLinkSociety() {
     axios
       .post(
-        "http://localhost:3001/society/unlink",
+        process.env.REACT_APP_URL_API + "/society/unlink",
         { id_user: this.state.id },
         { withCredentials: true }
       )

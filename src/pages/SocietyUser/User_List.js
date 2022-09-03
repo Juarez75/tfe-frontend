@@ -39,7 +39,9 @@ class User_List extends React.Component {
   }
   loadData() {
     axios
-      .get(`http://localhost:3001/society/users`, { withCredentials: true })
+      .get(process.env.REACT_APP_URL_API + `/society/users`, {
+        withCredentials: true,
+      })
       .then((res) => {
         this.setState({
           user: res.data,
@@ -61,7 +63,7 @@ class User_List extends React.Component {
       this.timer = setTimeout(() => {
         axios
           .post(
-            "http://localhost:3001/society/search",
+            process.env.REACT_APP_URL_API + "/society/search",
             {
               search: event.target.value,
             },
@@ -85,7 +87,7 @@ class User_List extends React.Component {
   unLinkSociety() {
     axios
       .post(
-        "http://localhost:3001/society/unlink",
+        process.env.REACT_APP_URL_API + "/society/unlink",
         { id_user: this.state.id_user },
         { withCredentials: true }
       )

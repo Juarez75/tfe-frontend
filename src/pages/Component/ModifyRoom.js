@@ -45,7 +45,7 @@ export class ModifyRoom extends React.Component {
   }
   loadData() {
     axios
-      .get(`http://localhost:3001/room/${this.state.id}`, {
+      .get(process.env.REACT_APP_URL_API + `/room/${this.state.id}`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -75,7 +75,9 @@ export class ModifyRoom extends React.Component {
   }
   loadTag() {
     axios
-      .get("http://localhost:3001/tag/society", { withCredentials: true })
+      .get(process.env.REACT_APP_URL_API + "/tag/society", {
+        withCredentials: true,
+      })
       .then((res) => {
         this.setState({ tags: res.data });
       })
@@ -96,7 +98,7 @@ export class ModifyRoom extends React.Component {
     if (this.state.name != "") {
       axios
         .post(
-          `http://localhost:3001/room/update`,
+          process.env.REACT_APP_URL_API + `/room/update`,
           {
             id: this.state.id,
             name: this.state.name,
@@ -120,7 +122,7 @@ export class ModifyRoom extends React.Component {
   deleteTag() {
     axios
       .post(
-        "http://localhost:3001/tag/society/deletelink",
+        process.env.REACT_APP_URL_API + "/tag/society/deletelink",
         {
           id_room: this.state.id,
           id_tag: this.state.selectedTag.id,

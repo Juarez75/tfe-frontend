@@ -55,7 +55,9 @@ class Room_List extends React.Component {
 
   loadRoom() {
     axios
-      .get(`http://localhost:3001/room/list`, { withCredentials: true })
+      .get(process.env.REACT_APP_URL_API + `/room/list`, {
+        withCredentials: true,
+      })
       .then((res) => {
         console.log(res);
         this.loadTag();
@@ -72,7 +74,9 @@ class Room_List extends React.Component {
   loadTag() {
     if (this.state.id_society != "null") {
       axios
-        .get("http://localhost:3001/tag/society", { withCredentials: true })
+        .get(process.env.REACT_APP_URL_API + "/tag/society", {
+          withCredentials: true,
+        })
         .then((res) => {
           this.setState({ tags: res.data });
         })
@@ -89,7 +93,7 @@ class Room_List extends React.Component {
     if (this.state.name != "") {
       axios
         .post(
-          `http://localhost:3001/room/create`,
+          process.env.REACT_APP_URL_API + `/room/create`,
           {
             name: this.state.name,
             type: this.state.typeRoom,

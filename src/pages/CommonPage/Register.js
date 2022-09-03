@@ -53,7 +53,7 @@ class Register extends React.Component {
         this.setState({ EMPTY_LASTNAME: true });
       else {
         axios
-          .post(`http://localhost:3001/user/create`, {
+          .post(process.env.REACT_APP_URL_API + `/user/create`, {
             mail: this.state.mail,
             password: this.state.password,
             firstname: this.state.firstname,

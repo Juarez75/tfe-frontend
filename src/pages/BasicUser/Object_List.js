@@ -31,7 +31,9 @@ class Box_List extends React.Component {
       isLoading: true,
     };
     axios
-      .get(`http://localhost:3001/object/list`, { withCredentials: true })
+      .get(process.env.REACT_APP_URL_API + `/object/list`, {
+        withCredentials: true,
+      })
       .then((res) => {
         this.setState({ objects: res.data, isLoading: false });
       })
@@ -45,7 +47,7 @@ class Box_List extends React.Component {
 
   onDelete(id, name) {
     this.setState({
-      url_data: "http://localhost:3001/object/delete",
+      url_data: process.env.REACT_APP_URL_API + "/object/delete",
       id_data: id,
       name_data: name,
       showDelete: true,

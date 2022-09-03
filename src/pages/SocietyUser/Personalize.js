@@ -48,7 +48,9 @@ class Personalize extends React.Component {
 
   loadData() {
     axios
-      .get("http://localhost:3001/tag/society", { withCredentials: true })
+      .get(process.env.REACT_APP_URL_API + "/tag/society", {
+        withCredentials: true,
+      })
       .then((res) => {
         this.setState({ tags: res.data, isLoading: false });
       })
@@ -69,7 +71,7 @@ class Personalize extends React.Component {
   }
   deleteTag() {
     this.setState({
-      url_data: "http://localhost:3001/tag/society/delete",
+      url_data: process.env.REACT_APP_URL_API + "/tag/society/delete",
       id_data: this.state.tags[parseInt(this.state.selectedTag)].id,
       name_data: this.state.tags[parseInt(this.state.selectedTag)].name,
       showDelete: true,
@@ -82,7 +84,7 @@ class Personalize extends React.Component {
     if (this.state.name != "") {
       axios
         .post(
-          "http://localhost:3001/tag/society/create",
+          process.env.REACT_APP_URL_API + "/tag/society/create",
           {
             name: this.state.nameTag,
             color: this.state.tagColor,
@@ -105,7 +107,7 @@ class Personalize extends React.Component {
   updateColor() {
     axios
       .post(
-        "http://localhost:3001/society/updateColor",
+        process.env.REACT_APP_URL_API + "/society/updateColor",
         {
           color: this.state.color,
         },

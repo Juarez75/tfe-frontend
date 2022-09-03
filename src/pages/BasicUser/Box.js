@@ -61,7 +61,7 @@ class Room_List extends React.Component {
   }
   loadData() {
     axios
-      .get(`http://localhost:3001/box/${this.state.id}`, {
+      .get(process.env.REACT_APP_URL_API + `/box/${this.state.id}`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -85,7 +85,7 @@ class Room_List extends React.Component {
 
   onDelete(id, name) {
     this.setState({
-      url_data: "http://localhost:3001/object/delete",
+      url_data: process.env.REACT_APP_URL_API + "/object/delete",
       id_data: id,
       name_data: name,
       showDelete: true,
@@ -107,7 +107,7 @@ class Room_List extends React.Component {
     if (name != "") {
       axios
         .post(
-          `http://localhost:3001/object/create`,
+          process.env.REACT_APP_URL_API + `/object/create`,
           {
             id_box: this.state.box.id,
             name: name,
@@ -129,7 +129,7 @@ class Room_List extends React.Component {
   onAdd(name) {
     axios
       .post(
-        `http://localhost:3001/object/create`,
+        process.env.REACT_APP_URL_API + `/object/create`,
         {
           id_box: this.state.box.id,
           name: name,

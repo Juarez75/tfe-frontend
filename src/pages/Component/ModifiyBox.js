@@ -71,9 +71,12 @@ export class ModifyBox extends React.Component {
     this.loadTag = this.loadTag.bind(this);
     this.loadRoom = this.loadRoom.bind(this);
     axios
-      .get(`http://localhost:3001/box/information/${this.state.id}`, {
-        withCredentials: true,
-      })
+      .get(
+        process.env.REACT_APP_URL_API + `/box/information/${this.state.id}`,
+        {
+          withCredentials: true,
+        }
+      )
       .then((res) => {
         if (res.data.comment == null) {
           this.setState({
@@ -103,7 +106,9 @@ export class ModifyBox extends React.Component {
         }
       });
     axios
-      .get("http://localhost:3001/tag/user", { withCredentials: true })
+      .get(process.env.REACT_APP_URL_API + "/tag/user", {
+        withCredentials: true,
+      })
       .then((res) => {
         this.setState({ tags: res.data });
       })
@@ -117,7 +122,9 @@ export class ModifyBox extends React.Component {
   }
   loadRoom() {
     axios
-      .get(`http://localhost:3001/room/list`, { withCredentials: true })
+      .get(process.env.REACT_APP_URL_API + `/room/list`, {
+        withCredentials: true,
+      })
       .then((res) => {
         this.setState({ room: res.data, EMPTY_NAME: false });
       })
@@ -143,7 +150,7 @@ export class ModifyBox extends React.Component {
       formData.append("state", this.state.stateBox);
       formData.append("imgChanged", this.state.imgChanged);
       axios
-        .post(`http://localhost:3001/box/update`, formData, {
+        .post(process.env.REACT_APP_URL_API + `/box/update`, formData, {
           withCredentials: true,
         })
         .then((res) => {
@@ -164,7 +171,7 @@ export class ModifyBox extends React.Component {
     if (isNaN(this.state.selectedTag)) return;
     axios
       .post(
-        "http://localhost:3001/tag/linkbox",
+        process.env.REACT_APP_URL_API + "/tag/linkbox",
         {
           id_box: this.state.id_box,
           id_tag: this.state.selectedTag,
@@ -185,7 +192,7 @@ export class ModifyBox extends React.Component {
   deleteTag(id_box, id_tag) {
     axios
       .post(
-        "http://localhost:3001/tag/user/deletelink",
+        process.env.REACT_APP_URL_API + "/tag/user/deletelink",
         {
           id_box: id_box,
           id_tag: id_tag,
@@ -205,7 +212,7 @@ export class ModifyBox extends React.Component {
   }
   loadTag() {
     axios
-      .get("http://localhost:3001/tag/box/" + this.state.id_box, {
+      .get(process.env.REACT_APP_URL_API + "/tag/box/" + this.state.id_box, {
         withCredentials: true,
       })
       .then((res) => {

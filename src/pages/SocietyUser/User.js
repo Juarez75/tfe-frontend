@@ -30,9 +30,12 @@ class Room_List extends React.Component {
       isLoading: true,
     };
     axios
-      .get(`http://localhost:3001/society/user/${this.state.id_user}`, {
-        withCredentials: true,
-      })
+      .get(
+        process.env.REACT_APP_URL_API + `/society/user/${this.state.id_user}`,
+        {
+          withCredentials: true,
+        }
+      )
       .then((res) => {
         this.setState({ room: res.data, isLoading: false });
       })

@@ -56,7 +56,7 @@ class ProfileSociety extends React.Component {
   }
   loadData() {
     axios
-      .get(`http://localhost:3001/society/profile`, {
+      .get(process.env.REACT_APP_URL_API + `/society/profile`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -167,7 +167,7 @@ class ProfileSociety extends React.Component {
   graphData() {
     const date = new Date();
     axios
-      .get("http://localhost:3001/society/graphLastDays", {
+      .get(process.env.REACT_APP_URL_API + "/society/graphLastDays", {
         withCredentials: true,
       })
       .then((res) => {
@@ -180,7 +180,7 @@ class ProfileSociety extends React.Component {
       });
     axios
       .post(
-        "http://localhost:3001/society/graphMonth",
+        process.env.REACT_APP_URL_API + "/society/graphMonth",
         {
           month: date.getMonth(),
           year: date.getFullYear(),
@@ -215,7 +215,7 @@ class ProfileSociety extends React.Component {
       else {
         axios
           .post(
-            `http://localhost:3001/user/update`,
+            process.env.REACT_APP_URL_API + `/user/update`,
             {
               mail: this.state.mail,
               firstname: this.state.firstname,
@@ -236,7 +236,7 @@ class ProfileSociety extends React.Component {
     if (this.state.newPwd != "") {
       axios
         .post(
-          `http://localhost:3001/user/updatePwd`,
+          process.env.REACT_APP_URL_API + `/user/updatePwd`,
           {
             lastPwd: this.state.lastPwd,
             newPwd: this.state.newPwd,
@@ -260,7 +260,7 @@ class ProfileSociety extends React.Component {
     const reversedArray = this.state.monthsGraph.slice(0).reverse();
     axios
       .post(
-        "http://localhost:3001/society/graphMonth",
+        process.env.REACT_APP_URL_API + "/society/graphMonth",
         {
           month: reversedArray[key].monthId,
           year: reversedArray[key].year,
