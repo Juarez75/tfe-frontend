@@ -50,8 +50,13 @@ axios.interceptors.response.use(
             withCredentials: true,
           }
         );
-        if (refreshed.status >= 400) throw new Error("refreshed");
-        return await axios.request(error.config);
+        var isError = false;
+        try {
+          if (refreshed.response.status >= 400) isError = true;
+        } catch (e) {
+          return await axios.request(error.config);
+        }
+        if (isError) throw new Error("refreshed");
       } catch (e) {
         console.log(e);
         localStorage.clear("type");

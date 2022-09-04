@@ -3,6 +3,7 @@ import React from "react";
 import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
 import disconnectLogo from "../../image/arrow.svg";
 import burgerButton from "../../image/hamburger.svg";
+import { history } from "../../index";
 
 export class NavigationBarSociety extends React.Component {
   constructor(props) {
@@ -47,7 +48,6 @@ export class NavigationBarSociety extends React.Component {
             <Nav id="disconnect">
               <Nav.Link
                 className="navBarLink"
-                href="/"
                 onClick={() =>
                   axios
                     .get(
@@ -61,6 +61,7 @@ export class NavigationBarSociety extends React.Component {
                       localStorage.clear("type");
                       localStorage.clear("id_society");
                       localStorage.clear("color");
+                      history.replace("/");
                     })
                     .catch(function (error) {
                       console.log(error);
@@ -88,7 +89,6 @@ export class NavigationBarSociety extends React.Component {
             </Nav.Link>
             <Nav.Link
               className="navBarLink"
-              href="/"
               onClick={() =>
                 axios
                   .get(
@@ -102,6 +102,7 @@ export class NavigationBarSociety extends React.Component {
                     localStorage.clear("type");
                     localStorage.clear("id_society");
                     localStorage.clear("color");
+                    history.replace("/");
                   })
                   .catch(function (error) {
                     console.log(error);

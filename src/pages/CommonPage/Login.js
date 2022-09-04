@@ -12,7 +12,35 @@ class Login extends React.Component {
       mail: "",
       password: "",
       WRONG_LOGIN: false,
+      isLoading: true,
     };
+    axios
+      .get(process.env.REACT_APP_URL_API + "/isconnected", {
+        withCredentials: true,
+      })
+      .then((res) => {
+        try {
+          if (res.response.status != 200) {
+            this.setState({ isLoading: false });
+          } else {
+            if (
+              localStorage.getItem("type") == 2 ||
+              localStorage.getItem("type") == 0
+            )
+              this.props.router.navigate("/room/list");
+            else if (localStorage.getItem("type") == 1)
+              this.props.router.navigate("/society/users");
+          }
+        } catch (error) {
+          if (
+            localStorage.getItem("type") == 2 ||
+            localStorage.getItem("type") == 0
+          )
+            this.props.router.navigate("/room/list");
+          else if (localStorage.getItem("type") == 1)
+            this.props.router.navigate("/society/users");
+        }
+      });
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
@@ -53,6 +81,7 @@ class Login extends React.Component {
   }
 
   render() {
+    if (this.state.isLoading) return <></>;
     return (
       <div>
         <Navbar bg="dark" variant="dark">

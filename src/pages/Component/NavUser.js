@@ -11,6 +11,7 @@ import {
 } from "react-bootstrap";
 import disconnectLogo from "../../image/arrow.svg";
 import burgerButton from "../../image/hamburger.svg";
+import { history } from "../../index";
 
 export class NavigationBar extends React.Component {
   constructor(props) {
@@ -65,7 +66,6 @@ export class NavigationBar extends React.Component {
             <Nav id="disconnect">
               <Nav.Link
                 className="navBarLink"
-                href="/"
                 onClick={() =>
                   axios
                     .get(
@@ -79,6 +79,7 @@ export class NavigationBar extends React.Component {
                       localStorage.clear("type");
                       localStorage.clear("id_society");
                       localStorage.clear("color");
+                      history.replace("/");
                     })
                     .catch(function (error) {
                       console.log(error);
@@ -113,21 +114,17 @@ export class NavigationBar extends React.Component {
               Recherche
             </Nav.Link>
             <Nav.Link
-              href="/"
               className="navBarLink"
               onClick={() =>
                 axios
-                  .get(
-                    process.env.REACT_APP_URL_API + `/user/disconnect`,
-
-                    {
-                      withCredentials: true,
-                    }
-                  )
+                  .get(process.env.REACT_APP_URL_API + `/user/disconnect`, {
+                    withCredentials: true,
+                  })
                   .then(() => {
                     localStorage.clear("type");
                     localStorage.clear("id_society");
                     localStorage.clear("color");
+                    history.replace("/");
                   })
                   .catch(function (error) {
                     console.log(error);
